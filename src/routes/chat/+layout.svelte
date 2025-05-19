@@ -2,4 +2,6 @@
 	const { children } = $props();
 </script>
 
-{@render children()}
+<main class="h-[100vh]">
+	{@render children()}
+</main>

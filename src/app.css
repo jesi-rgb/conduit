@@ -3,14 +3,20 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@plugin "daisyui" {
+	logs: true;
+	root: ":root";
+	themes: reallol, barelycookie;
+}
+
 @plugin "daisyui/theme" {
 	name: "reallol";
 	default: true;
 	prefersdark: false;
 	color-scheme: "light";
 	--color-base-100: oklch(98% 0.002 47.839);
-	--color-base-200: oklch(96% 0.003 264.542);
-	--color-base-300: oklch(92% 0.006 264.531);
+	--color-base-200: oklch(96% 0.006 47.839);
+	--color-base-300: oklch(92% 0.006 47.839);
 	--color-base-content: oklch(21% 0.034 264.665);
 	--color-primary: oklch(78% 0.115 274.713);
 	--color-primary-content: oklch(25% 0.09 281.288);
@@ -73,11 +79,6 @@
 	--noise: 0;
 }
 
-@plugin "daisyui" {
-	logs: true;
-	root: ":root";
-	themes: reallol, barelycookie;
-}
 
 :root {
 	font-family: 'Plein';

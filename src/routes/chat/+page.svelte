@@ -46,7 +46,7 @@
 					placeholder="Type your message..."
 					class="input input-border w-full"
 				/>
-				<button class="btn" type="submit"> Send </button>
+				<button class="btn" type="submit"> {chatState.isLoading ? 'Loading...' : 'Send'} </button>
 			</form>
 		</div>
 	</section>

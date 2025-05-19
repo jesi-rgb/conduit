@@ -1,0 +1,84 @@
+@import url('https://api.fontshare.com/v2/css?f[]=plein@1,2&display=swap');
+
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@plugin "daisyui/theme" {
+	name: "reallol";
+	default: true;
+	prefersdark: false;
+	color-scheme: "light";
+	--color-base-100: oklch(98% 0.002 47.839);
+	--color-base-200: oklch(96% 0.003 264.542);
+	--color-base-300: oklch(92% 0.006 264.531);
+	--color-base-content: oklch(21% 0.034 264.665);
+	--color-primary: oklch(78% 0.115 274.713);
+	--color-primary-content: oklch(25% 0.09 281.288);
+	--color-secondary: oklch(85% 0.138 181.071);
+	--color-secondary-content: oklch(27% 0.046 192.524);
+	--color-accent: oklch(86% 0.127 207.078);
+	--color-accent-content: oklch(30% 0.056 229.695);
+	--color-neutral: oklch(21% 0.034 264.665);
+	--color-neutral-content: oklch(98% 0.002 247.839);
+	--color-info: oklch(68% 0.169 237.323);
+	--color-info-content: oklch(97% 0.013 236.62);
+	--color-success: oklch(76% 0.233 130.85);
+	--color-success-content: oklch(98% 0.031 120.757);
+	--color-warning: oklch(70% 0.213 47.604);
+	--color-warning-content: oklch(98% 0.016 73.684);
+	--color-error: oklch(44% 0.177 26.899);
+	--color-error-content: oklch(97% 0.013 17.38);
+	--radius-selector: 0.25rem;
+	--radius-field: 1rem;
+	--radius-box: 1rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1.5px;
+	--depth: 1;
+	--noise: 0;
+}
+
+@plugin "daisyui/theme" {
+	name: "barelycookie";
+	default: false;
+	prefersdark: true;
+	color-scheme: "dark";
+	--color-base-100: oklch(26% 0 0);
+	--color-base-200: oklch(37% 0 0);
+	--color-base-300: oklch(43% 0 0);
+	--color-base-content: oklch(96% 0.007 247.896);
+	--color-primary: oklch(54% 0.245 262.881);
+	--color-primary-content: oklch(97% 0.014 254.604);
+	--color-secondary: oklch(66% 0.179 58.318);
+	--color-secondary-content: oklch(98% 0.022 95.277);
+	--color-accent: oklch(60% 0.118 184.704);
+	--color-accent-content: oklch(98% 0.014 180.72);
+	--color-neutral: oklch(21% 0.006 56.043);
+	--color-neutral-content: oklch(97% 0.001 106.424);
+	--color-info: oklch(78% 0.154 211.53);
+	--color-info-content: oklch(30% 0.056 229.695);
+	--color-success: oklch(84% 0.238 128.85);
+	--color-success-content: oklch(27% 0.072 132.109);
+	--color-warning: oklch(85% 0.199 91.936);
+	--color-warning-content: oklch(28% 0.066 53.813);
+	--color-error: oklch(71% 0.194 13.428);
+	--color-error-content: oklch(27% 0.105 12.094);
+	--radius-selector: 0;
+	--radius-field: 0;
+	--radius-box: 0;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}
+
+@plugin "daisyui" {
+	logs: true;
+	root: ":root";
+	themes: reallol, barelycookie;
+}
+
+:root {
+	font-family: 'Plein';
+}

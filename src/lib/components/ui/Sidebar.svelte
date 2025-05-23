@@ -1,9 +1,8 @@
 <script>
 	import Icon from '@iconify/svelte';
 	import { Pane, PaneResizer } from 'paneforge';
-	const fakeConvs = Array.from({ length: 20 }, (_, i) => i + 1);
 
-	console.log(fakeConvs);
+	const conversations = [];
 </script>
 
 <Pane defaultSize={15}>
@@ -12,7 +11,7 @@
 		shadow-lg"
 	>
 		<div class="border-red flex flex-col gap-2">
-			{#each fakeConvs as conv}
+			{#each conversations as conv}
 				<div class="flex items-center justify-between gap-3">
 					<p>
 						Conversation {conv}

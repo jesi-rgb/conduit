@@ -3,9 +3,9 @@
 	import Sidebar from '$lib/components/ui/Sidebar.svelte';
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 	import { ChatStateClass } from './ChatState.svelte';
-	import Icon from '@iconify/svelte';
+	import { page } from '$app/state';
 
-	const chatState = new ChatStateClass();
+	const chatState = new ChatStateClass(page.params.id);
 
 	let message = $state('');
 	const fakeConvs = Array.from({ length: 20 }, (_, i) => i + 1);

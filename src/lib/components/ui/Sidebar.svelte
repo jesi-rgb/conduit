@@ -1,8 +1,12 @@
 <script>
 	import Icon from '@iconify/svelte';
-	import { Pane, PaneResizer } from 'paneforge';
+	import { Pane } from 'paneforge';
+	import { globalState } from '../../../stores/stores.svelte';
 
-	const conversations = [];
+	const conversations = ['1'];
+
+	const user = $derived(globalState.user);
+	$inspect(user);
 </script>
 
 <Pane defaultSize={15}>
@@ -16,11 +20,15 @@
 					<p>
 						Conversation {conv}
 					</p>
-					<Icon icon="solar:trash-bin-trash-bold-duotone" class="text-error" />
+					<Icon
+						icon="solar:trash-bin-trash-bold-duotone"
+						class="text-base-content/20 hover:text-error
+						btn btn-circle btn-xs btn-ghost transition-colors"
+					/>
 				</div>
 			{/each}
 		</div>
 
-		<div>Username</div>
+		<div>{user?.user_metadata.full_name}</div>
 	</section>
 </Pane>

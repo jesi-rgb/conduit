@@ -6,6 +6,13 @@ export class ChatStateClass implements ChatState {
 
 	constructor(conv_id: string) {
 		this.conversation_id = conv_id
+		this.chat_messages = [{
+			role: 'assistant',
+			content: 'Hello! How can I help you today?',
+			id: crypto.randomUUID(),
+			created_at: new Date(),
+			conversation_id: this.conversation_id
+		}]
 	}
 
 	isLoading = $state(false);

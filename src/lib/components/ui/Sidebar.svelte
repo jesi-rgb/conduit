@@ -2,11 +2,39 @@
 	import Icon from '@iconify/svelte';
 	import { Pane } from 'paneforge';
 	import { globalState } from '../../../stores/stores.svelte';
+	import { supabase } from '$lib/client/supabase';
+	import { goto } from '$app/navigation';
 
 	const conversations = ['1'];
 
 	const user = $derived(globalState.user);
-	$inspect(user);
+
+	async function logout() {
+		await supabase.auth.signOut();
+		globalState.user = null;
+		goto('/');
+	}
+
+	async function handleGoogleLogin() {
+		const { data } = await supabase.auth.getUser();
+
+		if (data.user) {
+			goto('/chat');
+		}
+
+		try {
+			const { error: authError } = await supabase.auth.signInWithOAuth({
+				provider: 'google'
+			});
+
+			if (authError) throw authError;
+
+			// No need to redirect, as Supabase OAuth will handle it
+		} catch (e) {
+			console.error('Google login error:', e);
+		}
+	}
+	$inspect('aaaaaaaa', user);
 </script>
 
 <Pane defaultSize={15}>
@@ -17,7 +45,7 @@
 		<div class="border-red flex flex-col gap-2">
 			{#each conversations as conv}
 				<div class="flex items-center justify-between gap-3">
-					<p>
+					<p class="truncate">
 						Conversation {conv}
 					</p>
 					<Icon
@@ -29,6 +57,23 @@
 			{/each}
 		</div>
 
-		<div>{user?.user_metadata.full_name}</div>
+		<div class="flex items-center justify-between text-xs">
+			<div>
+				{#if user?.is_anonymous}
+					<button class="btn btn-xs" onclick={handleGoogleLogin}>Anonymous</button>
+				{:else}
+					<div>{user?.user_metadata.full_name}</div>
+				{/if}
+			</div>
+
+			<div>
+				<button
+					onclick={logout}
+					class="btn btn-xs text-base-content/20 hover:text-error text-base transition-colors"
+				>
+					<Icon icon="solar:logout-2-bold-duotone" />
+				</button>
+			</div>
+		</div>
 	</section>
 </Pane>

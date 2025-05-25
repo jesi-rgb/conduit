@@ -9,7 +9,6 @@ export class GlobalState {
 
 	set user(user: User) {
 		this.user_data = user
-		console.log('set user successfully', this.user_data)
 	}
 	get user(): User | null {
 		if (this.user_data)

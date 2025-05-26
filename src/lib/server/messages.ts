@@ -35,8 +35,6 @@ export async function createMessage({
 		return null;
 	}
 
-	console.log(`Creating message for conversation: ${conversationId}, role: ${role}`);
-
 	// First create the message
 	const result = await db.insert(messages)
 		.values({
@@ -53,6 +51,5 @@ export async function createMessage({
 		})
 		.where(eq(conversations.id, conversationId));
 
-	console.log('Message created:', result[0]);
 	return result[0];
 }

@@ -5,14 +5,14 @@ interface GlobalStateType {
 }
 
 export class GlobalState {
-	user_data: User | null = $state(null)
+	#user_data: User | null = $state(null)
 
 	set user(user: User) {
-		this.user_data = user
+		this.#user_data = user
 	}
 	get user(): User | null {
-		if (this.user_data)
-			return this.user_data
+		if (this.#user_data)
+			return this.#user_data
 		else return null
 	}
 }

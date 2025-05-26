@@ -4,7 +4,8 @@ export class ChatStateClass implements ChatState {
 	#conversation_id = $state('');
 	#chat_messages = $state<Message[]>([]);
 	isLoading = $state(false);
-	fetchMessages = async () => { };
+	fetchMessages = () => { };
+	onFinishSend = () => { };
 
 	constructor(conv_id: string) {
 		this.conversation_id = conv_id
@@ -23,27 +24,26 @@ export class ChatStateClass implements ChatState {
 		return this.#conversation_id;
 	}
 
-
-
-	sendMessage = (message: string) => {
+	sendMessage = async (message: string) => {
 		this.isLoading = true;
 
 		//here we would send to database?
-		this.#chat_messages.push({
+		const newMsg: Message = {
 			role: 'user',
 			content: message,
 			id: crypto.randomUUID(),
 			created_at: new Date(),
 			conversation_id: this.conversation_id
-		});
+		}
+		this.#chat_messages.push(newMsg);
 
-		// TODO: this should be called from api
-		// db.insert(messages).values({
-		// 	conversation_id: this.chat_messages[this.chat_messages.length - 1].id,
-		// 	role: 'user',
-		// 	content: message,
-		// 	created_at: new Date()
-		// });
+		await fetch(`/api/messages/${this.conversation_id}`, {
+			method: 'POST',
+			body: JSON.stringify(newMsg)
+		})
+
+		this.isLoading = false;
+		this.onFinishSend()
 	};
 
 }

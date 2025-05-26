@@ -20,6 +20,7 @@ export interface ChatState {
 	isLoading: boolean;
 	sendMessage: (message: string) => void;
 	fetchMessages: () => void;
+	onFinishSend: () => void;
 }
 
 

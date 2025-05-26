@@ -1,35 +1,64 @@
 <script lang="ts">
-	import { ChatStateClass } from './ChatState.svelte';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import type { ChatState } from '$lib/types';
+	import { ChatStateClass } from './ChatState.svelte.js';
 
 	let { data } = $props();
 
-	let chatState: ChatState | null = $derived(data.chatState);
+	let chatState: ChatStateClass | null = $derived(data.chatState);
+
+	const scrollToBottom = (node: HTMLElement) => {
+		node.scroll({ top: node.scrollHeight, behavior: 'smooth' });
+	};
 
 	let message = $state('');
+	let chatContainer: HTMLDivElement | null = $state(null);
+	onMount(() => {
+		chatState.onFinishSend = () => {
+			scrollToBottom(chatContainer!);
+		};
+		console.log(chatState.onFinishSend);
+	});
 </script>
 
 {#if chatState?.messages}
 	<section id="convo-view " class="flex h-full w-full flex-col">
-		<div class="h-10 p-2 pl-6 font-bold shadow-sm">{page.params.id}</div>
-		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-0">
-			<div class="h-20 grow overflow-y-scroll">
+		<div class="h-10 p-2 pl-6 font-bold shadow-md">{page.params.id}</div>
+		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-1">
+			<div bind:this={chatContainer} class="h-20 grow overflow-y-scroll">
 				{#each chatState.messages as message}
-					{#if message.role === 'user'}
-						<div class="chat chat-end">
-							<div class="chat-bubble">
-								{message.content}
+					<div id="msg-{message.id}" class="group">
+						{#if message.role === 'user'}
+							<div class="chat chat-end">
+								<p class="chat-bubble">
+									{message.content}
+								</p>
+								<div
+									class="chat-footer font-mono opacity-0
+									transition-opacity duration-100
+									group-hover:opacity-50"
+								>
+									{new Date(message.created_at).toLocaleString('es-ES')}
+								</div>
 							</div>
-						</div>
-					{:else if message.role === 'assistant'}
-						<div class="chat chat-start">
-							<div class="p-3">
-								{message.content}
+						{:else if message.role === 'assistant'}
+							<div class="chat chat-start">
+								<div class="flex flex-col p-3">
+									<p class="">
+										{message.content}
+									</p>
+
+									<div
+										class="place-self-start font-mono text-xs opacity-0
+										transition-opacity duration-100
+										group-hover:opacity-50"
+									>
+										{new Date(message.created_at).toLocaleString('es-ES')}
+									</div>
+								</div>
 							</div>
-						</div>
-					{/if}
+						{/if}
+					</div>
 				{/each}
 			</div>
 
@@ -38,8 +67,11 @@
 			"
 				onsubmit={(e) => {
 					e.preventDefault();
-					chatState.sendMessage(message);
-					message = '';
+					if (message) {
+						chatState.sendMessage(message);
+						message = '';
+						chatState.onFinishSend();
+					}
 				}}
 			>
 				<input

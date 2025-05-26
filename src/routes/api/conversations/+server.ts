@@ -1,11 +1,11 @@
 
 import { json } from '@sveltejs/kit';
-import { getCurrentUser } from '$lib/server/auth';
+import { getCurrentUser } from '$lib/server/auth/user';
 import {
 	getConversations,
 	createConversation,
 	deleteConversation
-} from '$lib/server/services/conversation';
+} from '$lib/server/conversation';
 
 export async function GET({ request }: { request: Request }) {
 	const user = await getCurrentUser(request);

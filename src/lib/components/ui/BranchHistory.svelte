@@ -2,8 +2,6 @@
 	import { Pane } from 'paneforge';
 
 	const fakeConvs = Array.from({ length: 20 }, (_, i) => i + 1);
-
-	console.log(fakeConvs);
 </script>
 
 <Pane defaultSize={15}>

@@ -42,6 +42,7 @@
 		"drizzle-orm": "^0.40.0",
 		"paneforge": "^0.0.6",
 		"postgres": "^3.4.5",
-		"supabase": "^2.23.4"
+		"supabase": "^2.23.4",
+		"uuid": "^11.1.0"
 	}
 }

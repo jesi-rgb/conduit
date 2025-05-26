@@ -4,10 +4,17 @@
 	import { globalState } from '../../../stores/stores.svelte';
 	import { supabase } from '$lib/client/supabase';
 	import { goto } from '$app/navigation';
+	import { fetchWithAuth } from '$lib/client/auth';
+	import { onMount } from 'svelte';
 
-	const conversations = ['1', 'yeah', 'nice'];
+	let conversations = $state([]);
 
 	const user = $derived(globalState.user);
+
+	onMount(async () => {
+		const response = await fetchWithAuth('/api/conversations');
+		conversations = (await response.json()).conversations;
+	});
 
 	async function logout() {
 		await supabase.auth.signOut();
@@ -44,8 +51,8 @@
 		<div class="border-red flex flex-col gap-2">
 			{#each conversations as conv}
 				<div class="flex items-center justify-between gap-3">
-					<a href="/chat/{conv}" class="truncate">
-						Conversation {conv}
+					<a href="/chat/{conv.id}" class="truncate">
+						{conv.title}
 					</a>
 					<Icon
 						icon="solar:trash-bin-trash-bold-duotone"

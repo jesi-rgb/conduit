@@ -15,7 +15,7 @@ export type Message = {
 }
 
 export interface ChatState {
-	chat_messages: Message[];
+	messages: Message[];
 	conversation_id: string;
 	isLoading: boolean;
 	sendMessage: (message: string) => void;

@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import { globalState } from '../stores/stores.svelte';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 
@@ -11,7 +12,9 @@
 		const { data } = await supabase.auth.getUser();
 		if (data.user) {
 			globalState.user = data.user;
-			goto('/chat');
+			if (page.route.id === '/') {
+				goto('/chat');
+			}
 		}
 	}
 

@@ -5,7 +5,7 @@
 	import { supabase } from '$lib/client/supabase';
 	import { goto } from '$app/navigation';
 
-	const conversations = ['1'];
+	const conversations = ['1', 'yeah', 'nice'];
 
 	const user = $derived(globalState.user);
 
@@ -34,7 +34,6 @@
 			console.error('Google login error:', e);
 		}
 	}
-	$inspect('aaaaaaaa', user);
 </script>
 
 <Pane defaultSize={15}>
@@ -45,9 +44,9 @@
 		<div class="border-red flex flex-col gap-2">
 			{#each conversations as conv}
 				<div class="flex items-center justify-between gap-3">
-					<p class="truncate">
+					<a href="/chat/{conv}" class="truncate">
 						Conversation {conv}
-					</p>
+					</a>
 					<Icon
 						icon="solar:trash-bin-trash-bold-duotone"
 						class="text-base-content/20 hover:text-error

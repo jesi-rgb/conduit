@@ -6,6 +6,14 @@ export type User = {
 	created_at: Date;
 }
 
+export type Conversation = {
+	id: string;
+	title: string;
+	user_id: string;
+	created_at: Date;
+	updated_at: Date;
+}
+
 export type Message = {
 	id: string;
 	conversation_id: string;
@@ -17,6 +25,7 @@ export type Message = {
 export interface ChatState {
 	messages: Message[];
 	conversation_id: string;
+	title: string;
 	isLoading: boolean;
 	sendMessage: (message: string) => void;
 	fetchMessages: () => void;

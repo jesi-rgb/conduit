@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Pane } from 'paneforge';
 	import { globalState } from '../../../stores/stores.svelte';
@@ -7,13 +7,17 @@
 	import { fetchWithAuth } from '$lib/client/auth';
 	import { onMount } from 'svelte';
 
-	let conversations = $state([]);
+	import type { Conversation } from '$lib/types';
+	import { page } from '$app/state';
+
+	const convId = $derived(page.params.id);
+
+	let conversations: Conversation[] = $derived(globalState.conversations);
 
 	const user = $derived(globalState.user);
 
 	onMount(async () => {
-		const response = await fetchWithAuth('/api/conversations');
-		conversations = (await response.json()).conversations;
+		globalState.fetchConversations();
 	});
 
 	async function logout() {
@@ -41,25 +45,52 @@
 			console.error('Google login error:', e);
 		}
 	}
+
+	async function deleteConversation(convId: string) {
+		await fetchWithAuth(`/api/conversation/${convId}`, {
+			method: 'DELETE'
+		});
+		conversations = conversations.filter((conv) => conv.id !== convId);
+	}
+
+	async function newConversation() {
+		const nextConv = conversations.length + 1;
+		await fetchWithAuth(`/api/conversations/`, {
+			method: 'POST',
+			body: JSON.stringify({ title: `Chat ${nextConv}` })
+		});
+		globalState.fetchConversations();
+	}
 </script>
 
-<Pane defaultSize={15}>
+<Pane defaultSize={10}>
 	<section
-		class="border-base-content/10 bg-base-200 flex h-full flex-col justify-between gap-10 border p-3
-		shadow-lg"
+		class="border-base-content/10 bg-base-200 flex h-full flex-col justify-between gap-10 border
+		p-1 shadow-lg"
 	>
 		<div class="border-red flex flex-col gap-2">
+			<button onclick={newConversation} class="btn group hover:btn-primary w-full"
+				><Icon
+					icon="solar:add-square-bold-duotone"
+					class="text-primary group-hover:text-primary-content text-2xl"
+				/></button
+			>
 			{#each conversations as conv}
-				<div class="flex items-center justify-between gap-3">
-					<a href="/chat/{conv.id}" class="truncate">
-						{conv.title}
-					</a>
-					<Icon
-						icon="solar:trash-bin-trash-bold-duotone"
+				<a
+					href="/chat/{conv.id}"
+					class:border-primary={conv.id === convId}
+					class="btn justify-between"
+				>
+					{conv.title}
+
+					<button
 						class="text-base-content/20 hover:text-error
-						btn btn-circle btn-xs btn-ghost transition-colors"
-					/>
-				</div>
+						btn btn-circle btn-sm btn-ghost transition-colors"
+						onclick={() => deleteConversation(conv.id)}
+					>
+						<Icon icon="solar:trash-bin-trash-bold-duotone" class="text-base" />
+					</button>
+				</a>
 			{/each}
 		</div>
 
@@ -83,3 +114,9 @@
 		</div>
 	</section>
 </Pane>
+
+<style>
+	.conv-active {
+		background-color: var(--color-base-300);
+	}
+</style>

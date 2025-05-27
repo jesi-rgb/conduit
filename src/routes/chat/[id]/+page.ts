@@ -8,7 +8,6 @@ export async function load({ params, fetch }) {
 	chatState.fetchMessages = async () => {
 		const response = await fetch(`/api/messages/${chatState.conversation_id}`)
 		const msgs = (await response.json()).messages;
-		console.log(msgs)
 		chatState.messages = msgs
 	}
 

@@ -23,7 +23,7 @@
 
 {#if chatState?.messages}
 	<section id="convo-view " class="flex h-full w-full flex-col">
-		<div class="h-10 p-2 pl-6 font-bold shadow-md">{page.params.id}</div>
+		<div class="h-10 p-2 pl-6 font-bold shadow-md">{chatState.title}</div>
 		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-1">
 			<div bind:this={chatContainer} class="h-20 grow overflow-y-scroll">
 				{#each chatState.messages as message}

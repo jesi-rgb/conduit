@@ -1,10 +1,10 @@
 type SidebarState = {
-	conversation_ids: string[];
+	conversations: string[];
 }
 
 export class SidebarStateClass implements SidebarState {
 
-	conversation_ids = $state<string[]>([])
+	conversations = $state<string[]>([])
 
 	constructor() {
 		this.conversation_ids = []

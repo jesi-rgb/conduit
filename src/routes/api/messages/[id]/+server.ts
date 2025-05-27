@@ -16,7 +16,6 @@ export async function GET({ params, request }: { request: Request }) {
 export async function POST({ params, request }: { request: Request }) {
 	const { id } = params
 	const msgText: Message = (await request.json());
-	console.log(msgText)
 	await createMessage({ conversationId: id, role: msgText.role, content: msgText.content })
 
 	// return 200 OK

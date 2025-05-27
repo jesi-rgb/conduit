@@ -15,7 +15,6 @@ export async function getMessages(conversationId: string) {
 		.where(eq(messages.conversation_id, conversationId))
 		.orderBy(messages.created_at);
 
-	console.log(conversationMessages)
 	return conversationMessages;
 
 }

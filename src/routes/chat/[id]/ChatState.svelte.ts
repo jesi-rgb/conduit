@@ -12,9 +12,6 @@ export class ChatStateClass implements ChatState {
 	constructor(conv_id: string) {
 		this.conversation_id = conv_id
 		// this.#title = globalState.conversations.filter(conv => conv.id == this.conversation_id)
-		console.log('AAAAAAAAAAAAA')
-		console.log(globalState.conversations)
-		console.log(globalState.conversations.find(conv => conv.id == this.conversation_id))
 	}
 	get messages() {
 		return this.#messages

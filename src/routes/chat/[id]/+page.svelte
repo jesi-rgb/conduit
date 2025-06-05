@@ -23,9 +23,13 @@
 
 {#if chatState?.messages}
 	<section id="convo-view " class="flex h-full w-full flex-col">
-		<div class="h-10 p-2 pl-6 font-bold shadow-md">{chatState.title}</div>
+		<div class="border-base-300 h-10 border-b p-2 pl-6 font-bold">{chatState.title}</div>
 		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-1">
-			<div bind:this={chatContainer} class="h-20 grow overflow-y-scroll">
+			<div
+				bind:this={chatContainer}
+				class="h-20 grow overflow-y-scroll
+				pt-2"
+			>
 				{#each chatState.messages as message}
 					<div id="msg-{message.id}" class="group">
 						{#if message.role === 'user'}
@@ -82,6 +86,9 @@
 				/>
 				<button class="btn" type="submit">
 					{chatState.isLoading ? 'Loading...' : 'Send'}
+				</button>
+				<button class="btn" type="submit">
+					{chatState.isLoading ? 'Loading...' : 'Branch'}
 				</button>
 			</form>
 		</div>

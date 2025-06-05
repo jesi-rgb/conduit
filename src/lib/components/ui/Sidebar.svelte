@@ -9,6 +9,7 @@
 
 	import type { Conversation } from '$lib/types';
 	import { page } from '$app/state';
+	import { fly, slide } from 'svelte/transition';
 
 	const convId = $derived(page.params.id);
 
@@ -65,8 +66,9 @@
 
 <Pane defaultSize={10}>
 	<section
-		class="border-base-content/10 bg-base-200 flex h-full flex-col justify-between gap-10 border
-		p-1 shadow-lg"
+		class="border-base-content/10 bg-base-200 flex h-full flex-col
+		justify-between gap-10 border-r
+		p-2 shadow-lg"
 	>
 		<div class="border-red flex flex-col gap-2">
 			<button onclick={newConversation} class="btn group hover:btn-primary w-full"
@@ -77,18 +79,24 @@
 			>
 			{#each conversations as conv}
 				<a
+					transition:slide={{ axis: 'x' }}
 					href="/chat/{conv.id}"
 					class:border-primary={conv.id === convId}
-					class="btn justify-between"
+					class="btn justify-between rounded-full pr-1"
 				>
-					{conv.title}
+					<span class="truncate">
+						{conv.title}
+					</span>
 
 					<button
-						class="text-base-content/20 hover:text-error
-						btn btn-circle btn-sm btn-ghost transition-colors"
+						class="text-base-content/20 hover:btn-error group
+						btn btn-sm btn-ghost rounded-full transition-colors"
 						onclick={() => deleteConversation(conv.id)}
 					>
-						<Icon icon="solar:trash-bin-trash-bold-duotone" class="text-base" />
+						<Icon
+							icon="solar:trash-bin-trash-bold-duotone"
+							class="group-hover:text-error-content text-base"
+						/>
 					</button>
 				</a>
 			{/each}
@@ -116,7 +124,7 @@
 </Pane>
 
 <style>
-	.conv-active {
+	:global(.conv-active) {
 		background-color: var(--color-base-300);
 	}
 </style>

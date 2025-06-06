@@ -15,7 +15,7 @@ export type Conversation = {
 }
 
 export type Message = {
-	id: string;
+	id?: string;
 	conversation_id: string;
 	role: 'user' | 'assistant';
 	content: string;
@@ -30,8 +30,17 @@ export interface ChatState {
 	sendMessage: (message: string) => void;
 	fetchMessages: () => void;
 	onFinishSend: () => void;
+	branchOut: () => void;
 }
 
+export type Branch = {
+	id?: string;
+	parent_conversation_id: string;
+	branch_from_message_id: string;
+	branch_name: string;
+	created_at?: Date;
+	updated_at?: Date;
+};
 
 export interface GlobalState {
 	user: User;

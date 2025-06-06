@@ -64,7 +64,7 @@
 	}
 </script>
 
-<Pane defaultSize={10}>
+<Pane minSize={10} defaultSize={10}>
 	<section
 		class="border-base-content/10 bg-base-200 flex h-full flex-col
 		justify-between gap-10 border-r

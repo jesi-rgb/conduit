@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { ChatStateClass } from './ChatState.svelte.js';
+	import { globalState } from '../../../stores/stores.svelte.js';
 
 	let { data } = $props();
 
@@ -17,7 +18,6 @@
 		chatState.onFinishSend = () => {
 			scrollToBottom(chatContainer!);
 		};
-		console.log(chatState.onFinishSend);
 	});
 </script>
 
@@ -63,12 +63,21 @@
 							</div>
 						{/if}
 					</div>
+					{#each globalState.currentBranches as branch}
+						{#if branch.branch_from_message_id === message.id}
+							<a
+								href="/chat/{message.conversation_id}/{branch.id}"
+								class="place-self-end self-end text-right text-xs"
+							>
+								<p class="text-xs">→</p>
+							</a>
+						{/if}
+					{/each}
 				{/each}
 			</div>
 
 			<form
-				class="flex justify-between gap-3 pt-3
-			"
+				class="flex justify-between gap-1 pt-1"
 				onsubmit={(e) => {
 					e.preventDefault();
 					if (message) {
@@ -87,7 +96,7 @@
 				<button class="btn" type="submit">
 					{chatState.isLoading ? 'Loading...' : 'Send'}
 				</button>
-				<button class="btn" type="submit">
+				<button class="btn" onclick={() => chatState.branchOut()}>
 					{chatState.isLoading ? 'Loading...' : 'Branch'}
 				</button>
 			</form>

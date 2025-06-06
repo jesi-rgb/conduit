@@ -20,10 +20,12 @@ export async function getMessages(conversationId: string) {
 }
 
 export async function createMessage({
+	id,
 	conversationId,
 	role,
 	content
 }: {
+	id?: string;
 	conversationId: string;
 	role: 'user' | 'assistant' | 'system';
 	content: string;
@@ -37,6 +39,7 @@ export async function createMessage({
 	// First create the message
 	const result = await db.insert(messages)
 		.values({
+			id: id,
 			conversation_id: conversationId,
 			role,
 			content

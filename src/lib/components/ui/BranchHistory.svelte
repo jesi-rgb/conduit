@@ -1,6 +1,19 @@
 <script>
 	import { Pane } from 'paneforge';
 	import { globalState } from '../../../stores/stores.svelte';
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+
+	onMount(() => {
+		globalState.fetchBranches = async () => {
+			const branchesResponse = await fetch(`/api/branches/${page.params.id}`);
+			globalState.currentBranches = (await branchesResponse.json()).branches;
+		};
+
+		globalState.fetchBranches();
+	});
+
+	$inspect(globalState.currentBranches);
 </script>
 
 <Pane defaultSize={15}>
@@ -13,7 +26,7 @@
 			{#each globalState.currentMessages as msg}
 				<div class="relative w-min">
 					<div
-						class="bg-base-300 absolute flex size-4 items-center
+						class="bg-base-content absolute flex size-4 items-center
 						gap-2 rounded-full"
 					></div>
 					<div
@@ -21,6 +34,13 @@
 						size-2 translate-x-1/2 translate-y-1/2 items-center gap-2 rounded-full"
 					></div>
 				</div>
+				{#each globalState.currentBranches as branch}
+					{#if branch.branch_from_message_id === msg.id}
+						<a href="/chat/{msg.conversation_id}/{branch.id}" class="text-xs"
+							>{branch.id?.slice(0, 6)}</a
+						>
+					{/if}
+				{/each}
 			{/each}
 		</div>
 	</section>

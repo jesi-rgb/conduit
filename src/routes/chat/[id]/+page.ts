@@ -13,6 +13,7 @@ export async function load({ params, fetch }) {
 		globalState.currentMessages = chatState.messages
 	}
 
+
 	chatState.fetchMessages()
 
 	return { chatState };

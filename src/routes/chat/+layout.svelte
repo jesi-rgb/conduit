@@ -4,8 +4,6 @@
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 	import { globalState } from '../../stores/stores.svelte';
 	const { children } = $props();
-
-	$inspect(globalState.currentMessages);
 </script>
 
 <main class="h-[100vh]">

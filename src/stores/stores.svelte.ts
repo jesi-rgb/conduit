@@ -1,5 +1,5 @@
 import type { User } from '@supabase/supabase-js';
-import type { Conversation, Message } from '$lib/types';
+import type { Branch, Conversation, Message } from '$lib/types';
 import { fetchWithAuth } from '$lib/client/auth';
 
 interface GlobalStateType {
@@ -7,6 +7,7 @@ interface GlobalStateType {
 	conversations: Conversation[];
 	currentConversation: Conversation | null;
 	currentMessages: Message[];
+	currentBranches: Branch[];
 }
 
 export class GlobalState implements GlobalStateType {
@@ -14,6 +15,8 @@ export class GlobalState implements GlobalStateType {
 	#conversations_data: Conversation[] = $state([])
 	#currentConversation_data: Conversation | null = $state(null)
 	#currentMessages_data: Message[] = $state([])
+	#currentBranches_data: Branch[] = $state([])
+
 
 	fetchConversations = async () => {
 		console.log('fetching')
@@ -21,6 +24,8 @@ export class GlobalState implements GlobalStateType {
 		this.#conversations_data = (await response.json()).conversations;
 		console.log(this.#conversations_data)
 	}
+
+	fetchBranches = async () => { }
 
 	set user(user: User) {
 		this.#user_data = user
@@ -55,6 +60,15 @@ export class GlobalState implements GlobalStateType {
 	get currentMessages(): Message[] {
 		if (this.#currentMessages_data)
 			return this.#currentMessages_data
+		else return []
+	}
+
+	set currentBranches(branches: Branch[]) {
+		this.#currentBranches_data = branches
+	}
+	get currentBranches(): Branch[] {
+		if (this.#currentBranches_data)
+			return this.#currentBranches_data
 		else return []
 	}
 }

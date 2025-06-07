@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { ChatStateClass } from './ChatState.svelte.js';
 	import { globalState } from '../../../stores/stores.svelte.js';
@@ -14,15 +13,22 @@
 
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
-	onMount(() => {
+	onMount(async () => {
 		chatState.onFinishSend = () => {
 			scrollToBottom(chatContainer!);
 		};
+
+		globalState.fetchBranches = async () => {
+			const response = await fetch(`/api/branches/${chatState.conversation_id}`);
+			const branches = (await response.json()).branches;
+			globalState.currentBranches = branches;
+		};
+		globalState.fetchBranches();
 	});
 </script>
 
 {#if chatState?.messages}
-	<section id="convo-view " class="flex h-full w-full flex-col">
+	<section id="convo-view" class="flex h-full w-full flex-col">
 		<div class="border-base-300 h-10 border-b p-2 pl-6 font-bold">{chatState.title}</div>
 		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-1">
 			<div

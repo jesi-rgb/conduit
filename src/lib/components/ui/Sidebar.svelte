@@ -13,7 +13,9 @@
 
 	const convId = $derived(page.params.id);
 
-	let conversations: Conversation[] = $derived(globalState.conversations);
+	let conversations: Conversation[] = $derived(
+		globalState.conversations.filter((conv) => !conv.parent_conversation_id)
+	);
 
 	const user = $derived(globalState.user);
 

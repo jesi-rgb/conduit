@@ -28,6 +28,7 @@ export interface ChatState {
 	title: string;
 	isLoading: boolean;
 	sendMessage: (message: string) => void;
+	sendMessageInBranch: (message: string, branch: string) => void;
 	fetchMessages: () => void;
 	onFinishSend: () => void;
 	branchOut: () => void;
@@ -35,9 +36,10 @@ export interface ChatState {
 
 export type Branch = {
 	id?: string;
+	title: string;
+	user_id: string;
 	parent_conversation_id: string;
 	branch_from_message_id: string;
-	branch_name: string;
 	created_at?: Date;
 	updated_at?: Date;
 };

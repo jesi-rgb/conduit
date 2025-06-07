@@ -6,6 +6,6 @@ export default defineConfig({
 	out: './drizzle',
 	dialect: 'postgresql', // Note: 'dialect' instead of 'driver'
 	dbCredentials: {
-		url: process.env.DATABASE_URL!, // Note: 'url' instead of 'connectionString'
+		url: process.env.DATABASE_URL_SESSION!, // Note: 'url' instead of 'connectionString'
 	},
 });

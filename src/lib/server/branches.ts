@@ -1,32 +1,38 @@
 
 import { db } from '$lib/server/db';
-import { branches } from '$lib/server/db/schema';
-import { eq, desc } from 'drizzle-orm';
-import { validate as validateUuid } from 'uuid';
+import { conversations } from '$lib/server/db/schema';
+import { eq, desc, isNotNull, and } from 'drizzle-orm';
 
-export async function getBranches(userId: string) {
-	return await db.select()
-		.from(branches)
-		.where(eq(branches.parent_conversation_id, userId))
-		.orderBy(desc(branches.updated_at));
+export async function getBranches(parentConvId: string) {
+	const results = await db.select()
+		.from(conversations)
+		.where(
+			and(
+				eq(conversations.parent_conversation_id, parentConvId),
+			));
+	return results;
 }
 
 export async function getBranch(branchId: string) {
 	return await db.select()
-		.from(branches)
-		.where(eq(branches.id, branchId))
+		.from(conversations)
+		.where(
+			and(
+				eq(conversations.id, branchId),
+			))
 		.limit(1);
 }
 
 
-export async function createBranch({ messageId, parentId, branchName }: { messageId: string, parentId: string, branchName: string }) {
-	if (!branchName) branchName = `${parentId}-${messageId}`
+export async function createBranch({ messageId, parentId, title, userId }: { messageId: string, parentId: string, title: string, userId: string }) {
+	if (!title) title = `${parentId}-${messageId}`
 
-	const result = await db.insert(branches)
+	const result = await db.insert(conversations)
 		.values({
 			parent_conversation_id: parentId,
 			branch_from_message_id: messageId,
-			branch_name: branchName
+			user_id: userId,
+			title: title
 		})
 		.returning();
 

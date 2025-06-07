@@ -19,6 +19,18 @@ export async function getMessages(conversationId: string) {
 
 }
 
+
+export async function getMessagesFromBranch(branchId: string) {
+	const branchMessages = await db.
+		select()
+		.from(messages)
+		.where(eq(messages.conversation_id, branchId))
+		.orderBy(messages.created_at);
+
+	return branchMessages;
+
+}
+
 export async function createMessage({
 	id,
 	conversationId,

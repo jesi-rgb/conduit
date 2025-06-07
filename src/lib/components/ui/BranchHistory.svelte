@@ -1,19 +1,6 @@
 <script>
 	import { Pane } from 'paneforge';
 	import { globalState } from '../../../stores/stores.svelte';
-	import { onMount } from 'svelte';
-	import { page } from '$app/state';
-
-	onMount(() => {
-		globalState.fetchBranches = async () => {
-			const branchesResponse = await fetch(`/api/branches/${page.params.id}`);
-			globalState.currentBranches = (await branchesResponse.json()).branches;
-		};
-
-		globalState.fetchBranches();
-	});
-
-	$inspect(globalState.currentBranches);
 </script>
 
 <Pane defaultSize={15}>

@@ -7,7 +7,6 @@ const supabaseUrl = env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl) {
-	console.log(supabaseUrl)
 	console.error('Missing VITE_SUPABASE_URL');
 }
 

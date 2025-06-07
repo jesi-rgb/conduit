@@ -1,16 +1,15 @@
-import { globalState } from "../../../stores/stores.svelte";
+import { globalState } from "../../../../stores/stores.svelte";
+import { ChatStateClass } from "../ChatState.svelte";
 import type { PageLoad } from "./$types";
-import { ChatStateClass } from "./ChatState.svelte";
 
 export const load: PageLoad = ({ params, fetch }) => {
 
 	const chatState = new ChatStateClass(params.id);
 
-
 	chatState.fetchMessages = async () => {
-		const response = await fetch(`/api/messages/${chatState.conversation_id}`)
-		const msgs = (await response.json()).messages;
-		chatState.messages = msgs
+		const response = await fetch(`/api/messages/${params.id}/${params.branch}`)
+		const branchMsgs = (await response.json()).branch;
+		chatState.messages = branchMsgs
 		globalState.currentMessages = chatState.messages
 	}
 

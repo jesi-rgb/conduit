@@ -15,6 +15,13 @@
       "when": 1749157455954,
       "tag": "0001_branches",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749307811432,
+      "tag": "0002_reflective_emma_frost",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,8 @@ export async function POST({ params, request }: { request: Request }) {
 	await createBranch({
 		messageId: branchData.branch_from_message_id,
 		parentId: branchData.parent_conversation_id,
-		branchName: branchData.branch_name
+		title: branchData.title,
+		userId: branchData.user_id
 	})
 
 	return json({ status: 200 })

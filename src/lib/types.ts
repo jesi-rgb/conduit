@@ -28,6 +28,7 @@ export interface ChatState {
 	title: string;
 	isLoading: boolean;
 	sendMessage: (message: string) => void;
+	streamResponse: () => void;
 	sendMessageInBranch: (message: string, branch: string) => void;
 	fetchMessages: () => void;
 	onFinishSend: () => void;

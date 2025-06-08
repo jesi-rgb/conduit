@@ -1,7 +1,15 @@
 <script lang="ts">
+	import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async';
+	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import { ChatStateClass } from './ChatState.svelte.js';
 	import { globalState } from '../../../stores/stores.svelte.js';
+
+	import Shiki from '@shikijs/markdown-it';
+	import MarkdownItAsync from 'markdown-it-async';
+	import { codeToHtml } from 'shiki';
+
+	const md = MarkdownItAsync();
 
 	let { data } = $props();
 
@@ -24,6 +32,19 @@
 			globalState.currentBranches = branches;
 		};
 		globalState.fetchBranches();
+
+		md.use(
+			fromAsyncCodeToHtml(
+				// Pass the codeToHtml function
+				codeToHtml,
+				{
+					themes: {
+						light: 'vitesse-light',
+						dark: 'vitesse-dark'
+					}
+				}
+			)
+		);
 	});
 </script>
 
@@ -54,8 +75,10 @@
 						{:else if message.role === 'assistant'}
 							<div class="chat chat-start">
 								<div class="flex flex-col p-3">
-									<p class="">
-										{message.content}
+									<p class="prose">
+										{#await md.renderAsync(message.content) then value}
+											{@html value}
+										{/await}
 									</p>
 
 									<div

@@ -19,24 +19,23 @@
 		justify-between gap-10 border-l p-3
 		shadow-lg"
 	>
-		<div class="flex flex-col gap-6">
-			{#each globalState.currentMessages as msg}
+		<div class="flex w-min flex-col items-center">
+			{#each globalState.currentMessages.filter((msg) => msg.role === 'user') as msg, i}
 				{#if msg.role === 'user'}
-					<button
+					<div
 						class="cursor-pointer py-2"
 						onclick={() => {
 							goto(gotoUrl(msg.id!));
 						}}
 					>
-						<div class="flex items-center gap-2">
-							<div
-								class="bg-base-content size-2 shrink-0
+						<div
+							class="bg-base-content size-2 shrink-0
 							items-center gap-2 rounded-full"
-							></div>
-
-							<p class="truncate text-xs">{msg.content}</p>
-						</div>
-					</button>
+						/>
+					</div>
+					{#if i < globalState.currentMessages.filter((msg) => msg.role === 'user').length - 1}
+						<div class="border-base-content/10 h-6 w-0 border"></div>
+					{/if}
 				{/if}
 				{#each globalState.currentBranches as branch}
 					{#if branch.branch_from_message_id === msg.id}

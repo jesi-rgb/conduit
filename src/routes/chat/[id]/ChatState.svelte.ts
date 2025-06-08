@@ -133,8 +133,7 @@ export class ChatStateClass implements ChatState {
 
 
 
-	fetchMessages = async () => {
-	};
+	fetchMessages = async () => { };
 
 	branchOut = async () => {
 		this.isLoading = true;
@@ -158,5 +157,4 @@ export class ChatStateClass implements ChatState {
 
 		this.isLoading = false;
 	}
-
 }

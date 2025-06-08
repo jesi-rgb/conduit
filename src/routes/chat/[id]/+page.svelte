@@ -6,6 +6,7 @@
 	import MarkdownItAsync from 'markdown-it-async';
 	import { codeToHtml } from 'shiki';
 	import { page } from '$app/state';
+	import { fetchWithAuth } from '$lib/client/auth.js';
 
 	const messageNavigation = $derived(page.url.searchParams.get('message'));
 
@@ -39,6 +40,12 @@
 				}
 			)
 		);
+
+		globalState.fetchBranches = async () => {
+			const response = await fetchWithAuth('/api/branches/' + page.params.id);
+			globalState.currentBranches = (await response.json()).branches;
+		};
+		globalState.fetchBranches();
 	});
 
 	$effect(() => {
@@ -122,11 +129,16 @@
 					bind:value={message}
 					placeholder="Type your message..."
 					class="input input-border w-full"
+					disabled={chatState.isLoading || chatState.isStreaming}
 				/>
-				<button class="btn" type="submit">
+				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
 					{chatState.isLoading ? 'Loading...' : 'Send'}
 				</button>
-				<button class="btn" onclick={() => chatState.branchOut()}>
+				<button
+					class="btn"
+					onclick={() => chatState.branchOut()}
+					disabled={chatState.isLoading || chatState.isStreaming}
+				>
 					{chatState.isLoading ? 'Loading...' : 'Branch'}
 				</button>
 			</form>

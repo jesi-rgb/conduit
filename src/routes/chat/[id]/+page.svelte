@@ -8,11 +8,11 @@
 	import { page } from '$app/state';
 	import { fetchWithAuth } from '$lib/client/auth.js';
 
-	const messageNavigation = $derived(page.url.searchParams.get('message'));
-
 	const md = MarkdownItAsync();
 
 	let { data } = $props();
+
+	let messageInUrl = $derived(page.url.searchParams.get('message'));
 
 	let chatState: ChatStateClass | null = $derived(data.chatState);
 
@@ -35,7 +35,7 @@
 				{
 					themes: {
 						light: 'catppuccin-latte',
-						dark: 'vitesse-dark'
+						dark: 'vesper'
 					}
 				}
 			)
@@ -46,13 +46,12 @@
 			globalState.currentBranches = (await response.json()).branches;
 		};
 		globalState.fetchBranches();
+
+		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
 	});
 
 	$effect(() => {
-		if (messageNavigation) {
-			console.log(document.getElementById(messageNavigation));
-			document.getElementById(messageNavigation)?.scrollIntoView({ behavior: 'smooth' });
-		}
+		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
 	});
 </script>
 

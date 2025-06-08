@@ -3,7 +3,12 @@
 	import { globalState } from '../../../stores/stores.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
+	onMount(async () => {
+		globalState.fetchBranches();
+	});
+	$inspect(globalState.currentBranches);
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {
 			return `/chat/${page.params.id}/${page.params.branch}?message=${msgId}`;

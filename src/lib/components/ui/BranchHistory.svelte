@@ -11,16 +11,16 @@
 	>
 		<div class="border-red flex flex-col gap-6">
 			{#each globalState.currentMessages as msg}
-				<div class="relative w-min">
-					<div
-						class="bg-base-content absolute flex size-4 items-center
-						gap-2 rounded-full"
-					></div>
-					<div
-						class="bg-base-200 absolute -top-1/2 -left-1/2 flex
-						size-2 translate-x-1/2 translate-y-1/2 items-center gap-2 rounded-full"
-					></div>
-				</div>
+				{#if msg.role === 'user'}
+					<div class="flex items-center gap-2">
+						<div
+							class="bg-base-content size-2 shrink-0
+							items-center gap-2 rounded-full"
+						></div>
+
+						<p class="truncate text-xs">{msg.content}</p>
+					</div>
+				{/if}
 				{#each globalState.currentBranches as branch}
 					{#if branch.branch_from_message_id === msg.id}
 						<a

@@ -155,6 +155,8 @@ export class ChatStateClass implements ChatState {
 
 		globalState.fetchBranches()
 
+		this.scrollContainer()
+
 		this.isLoading = false;
 	}
 }

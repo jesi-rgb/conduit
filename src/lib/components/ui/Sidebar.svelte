@@ -58,10 +58,12 @@
 
 	async function newConversation() {
 		const nextConv = conversations.length + 1;
-		await fetchWithAuth(`/api/conversations/`, {
+		const data = await fetchWithAuth(`/api/conversations/`, {
 			method: 'POST',
 			body: JSON.stringify({ title: `Chat ${nextConv}` })
 		});
+		const convData = await data.json();
+		goto(`/chat/${convData.conversation.id}`);
 		globalState.fetchConversations();
 	}
 </script>

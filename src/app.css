@@ -9,6 +9,7 @@
 	themes: reallol, barelycookie;
 }
 
+
 @plugin "daisyui/theme" {
 	name: "reallol";
 	default: true;
@@ -46,23 +47,25 @@
 
 
 
+
+
 @plugin "daisyui/theme" {
 	name: "barelycookie";
 	default: false;
 	prefersdark: true;
 	color-scheme: "dark";
-	--color-base-100: oklch(32% 0.034 259.733);
-	--color-base-200: oklch(27% 0.033 256.848);
-	--color-base-300: oklch(21% 0.034 264.665);
+	--color-base-100: oklch(27% 0.006 286.033);
+	--color-base-200: oklch(21% 0.006 285.885);
+	--color-base-300: oklch(14% 0.005 285.823);
 	--color-base-content: oklch(96% 0.007 247.896);
-	--color-primary: oklch(54% 0.245 262.881);
-	--color-primary-content: oklch(97% 0.014 254.604);
+	--color-primary: oklch(54% 0.281 293.009);
+	--color-primary-content: oklch(94% 0.029 294.588);
 	--color-secondary: oklch(66% 0.179 58.318);
 	--color-secondary-content: oklch(98% 0.022 95.277);
-	--color-accent: oklch(60% 0.118 184.704);
-	--color-accent-content: oklch(98% 0.014 180.72);
-	--color-neutral: oklch(21% 0.006 56.043);
-	--color-neutral-content: oklch(97% 0.001 106.424);
+	--color-accent: oklch(90% 0.182 98.111);
+	--color-accent-content: oklch(42% 0.095 57.708);
+	--color-neutral: oklch(21% 0.006 285.885);
+	--color-neutral-content: oklch(92% 0.004 286.32);
 	--color-info: oklch(78% 0.154 211.53);
 	--color-info-content: oklch(30% 0.056 229.695);
 	--color-success: oklch(84% 0.238 128.85);
@@ -82,17 +85,11 @@
 }
 
 
-:root {
-	font-family: 'AT Name Sans Variable', 'Plein Variable', 'Plein', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+@theme {
+	--font-sans: 'AT Name Sans Variable', 'Plein Variable', 'Plein', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--font-mono: 'AT Name Mono';
 }
 
-pre {
-	font-family: 'AT Name Mono';
-}
-
-code {
-	font-family: 'AT Name Mono';
-}
 
 @media (prefers-color-scheme: dark) {
 

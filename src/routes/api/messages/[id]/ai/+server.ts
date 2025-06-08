@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { generateStreamingAIResponse } from '$lib/server/ai';
 import { db } from '$lib/server/db';
-import { conversations, messages } from '$lib/server/db/schema';
+import { messages } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { getCurrentUser } from '$lib/server/auth/user';
 

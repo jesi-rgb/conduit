@@ -27,7 +27,9 @@ export interface ChatState {
 	conversation_id: string;
 	title: string;
 	isLoading: boolean;
+	isStreaming: boolean;
 	sendMessage: (message: string) => void;
+	scrollContainer: () => void;
 	streamResponse: () => void;
 	sendMessageInBranch: (message: string, branch: string) => void;
 	fetchMessages: () => void;

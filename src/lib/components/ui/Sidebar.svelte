@@ -66,7 +66,7 @@
 	}
 </script>
 
-<Pane minSize={10} defaultSize={10}>
+<Pane minSize={10} defaultSize={20}>
 	<section
 		class="border-base-content/10 bg-base-200 flex h-full flex-col
 		justify-between gap-10 border-r
@@ -81,6 +81,7 @@
 			>
 			{#each conversations as conv}
 				<a
+					data-sveltekit-preload-data="tap"
 					transition:slide={{ axis: 'x' }}
 					href="/chat/{conv.id}"
 					class:border-primary={conv.id === convId}

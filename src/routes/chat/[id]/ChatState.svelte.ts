@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '$lib/client/auth';
 import type { Message, ChatState, Branch } from '$lib/types';
 import { globalState } from '../../../stores/stores.svelte';
 
@@ -7,7 +8,9 @@ export class ChatStateClass implements ChatState {
 
 	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
 	isLoading = $state(false);
+	isStreaming = $state(false);
 	onFinishSend = () => { };
+	scrollContainer = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
 
@@ -47,20 +50,22 @@ export class ChatStateClass implements ChatState {
 		this.#messages.push(newMsg);
 
 		// post msg to database
-		await fetch(`/api/messages/${this.conversation_id}`, {
+		await fetchWithAuth(`/api/messages/${this.conversation_id}`, {
 			method: 'POST',
 			body: JSON.stringify(newMsg)
 		})
+
+		this.scrollContainer()
 
 
 		this.streamResponse()
 
 		this.isLoading = false;
-		this.onFinishSend()
 	};
 
 	streamResponse = async () => {
-		const response = await fetch(`/api/messages/${this.conversation_id}/ai`);
+		this.isStreaming = true
+		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/ai`);
 
 		// Create initial streaming message
 		this.#streamingMessage = {
@@ -72,6 +77,7 @@ export class ChatStateClass implements ChatState {
 		};
 
 		this.messages.push(this.#streamingMessage);
+
 
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
@@ -97,7 +103,10 @@ export class ChatStateClass implements ChatState {
 					console.error('Error parsing chunk:', parseError);
 				}
 			}
+			this.scrollContainer()
 		}
+
+		this.isStreaming = false
 	};
 
 	sendMessageInBranch = async (message: string, branch: string) => {
@@ -113,7 +122,7 @@ export class ChatStateClass implements ChatState {
 		};
 		this.messages.push(newMsg);
 
-		await fetch(`/api/messages/${this.conversation_id}/${branch}`, {
+		await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}`, {
 			method: 'POST',
 			body: JSON.stringify(newMsg)
 		});
@@ -140,7 +149,7 @@ export class ChatStateClass implements ChatState {
 			user_id: globalState.user!.id
 		}
 
-		await fetch(`/api/branches/${this.conversation_id}`, {
+		await fetchWithAuth(`/api/branches/${this.conversation_id}`, {
 			method: 'POST',
 			body: JSON.stringify(newBranch)
 		})

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async';
-	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import { ChatStateClass } from './ChatState.svelte.js';
 	import { globalState } from '../../../stores/stores.svelte.js';
-
-	import Shiki from '@shikijs/markdown-it';
 	import MarkdownItAsync from 'markdown-it-async';
 	import { codeToHtml } from 'shiki';
+	import { page } from '$app/state';
+
+	const messageNavigation = $derived(page.url.searchParams.get('message'));
 
 	const md = MarkdownItAsync();
 
@@ -21,17 +21,11 @@
 
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
+
 	onMount(async () => {
-		chatState.onFinishSend = () => {
+		chatState.scrollContainer = () => {
 			scrollToBottom(chatContainer!);
 		};
-
-		globalState.fetchBranches = async () => {
-			const response = await fetch(`/api/branches/${chatState.conversation_id}`);
-			const branches = (await response.json()).branches;
-			globalState.currentBranches = branches;
-		};
-		globalState.fetchBranches();
 
 		md.use(
 			fromAsyncCodeToHtml(
@@ -39,12 +33,19 @@
 				codeToHtml,
 				{
 					themes: {
-						light: 'vitesse-light',
+						light: 'catppuccin-latte',
 						dark: 'vitesse-dark'
 					}
 				}
 			)
 		);
+	});
+
+	$effect(() => {
+		if (messageNavigation) {
+			console.log(document.getElementById(messageNavigation));
+			document.getElementById(messageNavigation)?.scrollIntoView({ behavior: 'smooth' });
+		}
 	});
 </script>
 
@@ -58,7 +59,7 @@
 				pt-2"
 			>
 				{#each chatState.messages as message}
-					<div id="msg-{message.id}" class="group">
+					<div id={message.id} class="group">
 						{#if message.role === 'user'}
 							<div class="chat chat-end">
 								<p class="chat-bubble">
@@ -75,9 +76,9 @@
 						{:else if message.role === 'assistant'}
 							<div class="chat chat-start">
 								<div class="flex flex-col p-3">
-									<p class="prose">
-										{#await md.renderAsync(message.content) then value}
-											{@html value}
+									<p class="prose prose-code:px-0">
+										{#await md.renderAsync(message.content) then markdown}
+											{@html markdown}
 										{/await}
 									</p>
 
@@ -99,7 +100,7 @@
 								href="/chat/{message.conversation_id}/{branch.id}"
 								class="place-self-end self-end text-right text-xs"
 							>
-								<p class="text-xs">→</p>
+								<p class="bg-base-200 py-3 text-xl">→</p>
 							</a>
 						{/if}
 					{/each}
@@ -113,7 +114,6 @@
 					if (message) {
 						chatState.sendMessage(message);
 						message = '';
-						chatState.onFinishSend();
 					}
 				}}
 			>

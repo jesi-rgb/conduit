@@ -23,8 +23,10 @@
 				</div>
 				{#each globalState.currentBranches as branch}
 					{#if branch.branch_from_message_id === msg.id}
-						<a href="/chat/{msg.conversation_id}/{branch.id}" class="text-xs"
-							>{branch.id?.slice(0, 6)}</a
+						<a
+							data-sveltekit-preload-data="tap"
+							href="/chat/{msg.conversation_id}/{branch.id}"
+							class="text-xs">{branch.id?.slice(0, 6)}</a
 						>
 					{/if}
 				{/each}

@@ -72,6 +72,7 @@
 					{#each globalState.currentBranches as branch}
 						{#if branch.branch_from_message_id === message.id}
 							<a
+								data-sveltekit-preload-data="tap"
 								href="/chat/{message.conversation_id}/{branch.id}"
 								class="place-self-end self-end text-right text-xs"
 							>

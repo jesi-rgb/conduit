@@ -19,7 +19,7 @@ export class GlobalState implements GlobalStateType {
 
 
 	fetchConversations = async () => {
-		const response = await fetchWithAuth('/api/conversations');
+		const response = await fetchWithAuth({ url: '/api/conversations' });
 		this.#conversations_data = (await response.json()).conversations;
 	}
 

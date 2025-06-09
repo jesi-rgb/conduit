@@ -1,10 +1,14 @@
 import { supabase } from "$lib/client/supabase";
 
-export async function fetchWithAuth(url: string, svelteFetch?: Function, options: RequestInit = {}) {
+export async function fetchWithAuth({ url, svelteFetch, options = {} }: { url: string, svelteFetch?: Function, options?: RequestInit }) {
 
 	try {
 		// Get the current session
 		const { data: { session } } = await supabase.auth.getSession();
+
+		if (!session) {
+			throw new Error('No session found');
+		}
 
 		// Create a new headers object, preserving any existing headers
 		const headers = new Headers(options.headers);
@@ -15,14 +19,11 @@ export async function fetchWithAuth(url: string, svelteFetch?: Function, options
 		}
 
 		if (svelteFetch) {
-			console.log('svelte fetchiun')
-
 			return svelteFetch(url, {
 				...options,
 				headers
 			});
 		} else {
-
 			return fetch(url, {
 				...options,
 				headers

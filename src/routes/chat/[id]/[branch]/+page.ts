@@ -8,7 +8,7 @@ export const load: PageLoad = ({ params, fetch }) => {
 	const chatState = new ChatStateClass(params.id);
 
 	chatState.fetchMessages = async () => {
-		const response = await fetch(`/api/messages/${params.id}/${params.branch}`)
+		const response = await fetchWithAuth({ url: `/api/messages/${params.id}/${params.branch}`, svelteFetch: fetch });
 		const branchMsgs = (await response.json()).branch;
 		chatState.messages = branchMsgs
 		globalState.currentMessages = chatState.messages
@@ -29,7 +29,7 @@ export const load: PageLoad = ({ params, fetch }) => {
 		chatState.messages.push(chatState.streamingMessage);
 
 
-		const response = await fetchWithAuth(`/api/messages/${chatState.conversation_id}/${params.branch}/ai`);
+		const response = await fetchWithAuth({ url: `/api/messages/${chatState.conversation_id}/${params.branch}/ai`, svelteFetch: fetch });
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 

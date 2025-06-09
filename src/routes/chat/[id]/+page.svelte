@@ -60,7 +60,7 @@
 		};
 
 		globalState.fetchBranches = async () => {
-			const response = await fetchWithAuth('/api/branches/' + page.params.id);
+			const response = await fetchWithAuth({ url: `/api/branches/${page.params.id}` });
 			globalState.currentBranches = (await response.json()).branches;
 		};
 		globalState.fetchBranches();

@@ -54,9 +54,11 @@ export class ChatStateClass implements ChatState {
 		this.#messages.push(newMsg);
 
 		// post msg to database
-		await fetchWithAuth(`/api/messages/${this.conversation_id}`, {
-			method: 'POST',
-			body: JSON.stringify(newMsg)
+		await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}`, options: {
+				method: 'POST',
+				body: JSON.stringify(newMsg)
+			}
 		})
 
 		this.scrollContainer()
@@ -81,7 +83,7 @@ export class ChatStateClass implements ChatState {
 		this.messages.push(this.#streamingMessage);
 
 
-		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/ai`);
+		const response = await fetchWithAuth({ url: `/api/messages/${this.conversation_id}/ai` });
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -119,7 +121,7 @@ export class ChatStateClass implements ChatState {
 	};
 
 	editTitle = async () => {
-		await fetchWithAuth(`/api/title/${this.conversation_id}/ai`, { method: 'POST', body: JSON.stringify({ messages: this.messages }) });
+		await fetchWithAuth({ url: `/api/title/${this.conversation_id}/ai`, options: { method: 'POST', body: JSON.stringify({ messages: this.messages }) } });
 
 		globalState.fetchConversations()
 
@@ -137,9 +139,11 @@ export class ChatStateClass implements ChatState {
 		};
 		this.messages.push(newMsg);
 
-		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}`, {
-			method: 'POST',
-			body: JSON.stringify(newMsg)
+		const response = await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}/${branch}`, options: {
+				method: 'POST',
+				body: JSON.stringify(newMsg)
+			}
 		});
 		const lastMessage: Message = (await response.json()).message
 
@@ -164,10 +168,12 @@ export class ChatStateClass implements ChatState {
 		this.messages.push(this.#streamingMessage);
 
 
-		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}/ai`, {
-			method: 'POST',
-			body:
-				JSON.stringify(lastMessage)
+		const response = await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}/${branch}/ai`, options: {
+				method: 'POST',
+				body:
+					JSON.stringify(lastMessage)
+			}
 		});
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
@@ -215,9 +221,11 @@ export class ChatStateClass implements ChatState {
 			user_id: globalState.user!.id
 		}
 
-		const branchData = await fetchWithAuth(`/api/branches/${this.conversation_id}`, {
-			method: 'POST',
-			body: JSON.stringify(newBranch)
+		const branchData = await fetchWithAuth({
+			url: `/api/branches/${this.conversation_id}`, options: {
+				method: 'POST',
+				body: JSON.stringify(newBranch)
+			}
 		})
 		const branchJson = await branchData.json()
 		const branchId = branchJson.branch.id

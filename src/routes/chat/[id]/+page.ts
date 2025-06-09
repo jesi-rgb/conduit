@@ -9,7 +9,7 @@ export const load: PageLoad = ({ params, fetch }) => {
 
 
 	chatState.fetchMessages = async () => {
-		const response = await fetchWithAuth(`/api/messages/${chatState.conversation_id}`, fetch)
+		const response = await fetchWithAuth({ url: `/api/messages/${chatState.conversation_id}`, svelteFetch: fetch })
 		const msgs = (await response.json()).messages;
 		chatState.messages = msgs
 		globalState.currentMessages = chatState.messages

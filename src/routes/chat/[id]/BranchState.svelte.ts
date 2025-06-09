@@ -1,4 +1,5 @@
 
+import { fetchWithAuth } from '$lib/client/auth';
 import type { Message, ChatState, Branch } from '$lib/types';
 import { globalState } from '../../../stores/stores.svelte';
 
@@ -18,9 +19,8 @@ export class BranchState implements BranchStateType {
 		this.branch_id = branch_id
 	}
 
-
 	fetchBranches = async () => {
-		const branchesResponse = await fetch(`/api/branches/${this.conversation_id}`);
+		const branchesResponse = await fetchWithAuth({ url: `/api/branches/${this.conversation_id}` });
 		this.branches = (await branchesResponse.json()).branches;
 	}
 }

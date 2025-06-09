@@ -50,17 +50,23 @@
 	}
 
 	async function deleteConversation(convId: string) {
-		await fetchWithAuth(`/api/conversation/${convId}`, {
-			method: 'DELETE'
+		await fetchWithAuth({
+			url: `/api/conversation/${convId}`,
+			options: {
+				method: 'DELETE'
+			}
 		});
 		conversations = conversations.filter((conv) => conv.id !== convId);
 	}
 
 	async function newConversation() {
 		const nextConv = conversations.length + 1;
-		const data = await fetchWithAuth(`/api/conversations/`, {
-			method: 'POST',
-			body: JSON.stringify({ title: `Chat ${nextConv}` })
+		const data = await fetchWithAuth({
+			url: `/api/conversations/`,
+			options: {
+				method: 'POST',
+				body: JSON.stringify({ title: `Chat ${nextConv}` })
+			}
 		});
 		const convData = await data.json();
 		goto(`/chat/${convData.conversation.id}`);

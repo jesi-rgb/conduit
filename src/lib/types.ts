@@ -32,6 +32,7 @@ export interface ChatState {
 	scrollContainer: () => void;
 	editTitle: () => void;
 	streamResponse: () => void;
+	streamResponseInBranch: (lastMessage: Message, branch: string) => void;
 	sendMessageInBranch: (message: string, branch: string) => void;
 	fetchMessages: () => void;
 	onFinishSend: () => void;

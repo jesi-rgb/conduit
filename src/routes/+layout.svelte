@@ -51,4 +51,6 @@
 	});
 </script>
 
-{@render children()}
+<main class="selection:bg-primary selection:text-primary-content">
+	{@render children()}
+</main>

@@ -16,8 +16,8 @@
 	--color-base-200: oklch(96% 0.006 47.839);
 	--color-base-300: oklch(92% 0.006 47.839);
 	--color-base-content: oklch(21% 0.034 264.665);
-	--color-primary: oklch(78% 0.115 274.713);
-	--color-primary-content: oklch(25% 0.09 281.288);
+	--color-primary: oklch(67% 0.182 276.935);
+	--color-primary-content: oklch(96% 0.018 272.314);
 	--color-secondary: oklch(85% 0.138 181.071);
 	--color-secondary-content: oklch(27% 0.046 192.524);
 	--color-accent: oklch(86% 0.127 207.078);
@@ -42,19 +42,20 @@
 	--noise: 0;
 }
 
+
 @plugin "daisyui/theme" {
 	name: "barelycookie";
 	default: false;
 	prefersdark: true;
 	color-scheme: "dark";
-	--color-base-100: oklch(27% 0.006 286.033);
-	--color-base-200: oklch(21% 0.006 285.885);
-	--color-base-300: oklch(14% 0.005 285.823);
-	--color-base-content: oklch(96% 0.007 247.896);
+	--color-base-100: oklch(21% 0.006 56.043);
+	--color-base-200: oklch(26% 0.007 34.298);
+	--color-base-300: oklch(37% 0.01 67.558);
+	--color-base-content: oklch(92% 0.006 264.531);
 	--color-primary: oklch(54% 0.281 293.009);
 	--color-primary-content: oklch(94% 0.029 294.588);
-	--color-secondary: oklch(66% 0.179 58.318);
-	--color-secondary-content: oklch(98% 0.022 95.277);
+	--color-secondary: oklch(82% 0.189 84.429);
+	--color-secondary-content: oklch(27% 0.077 45.635);
 	--color-accent: oklch(90% 0.182 98.111);
 	--color-accent-content: oklch(42% 0.095 57.708);
 	--color-neutral: oklch(21% 0.006 285.885);

@@ -1,11 +1,17 @@
-
-
 import { env } from '$env/dynamic/private';
 
 import type { Message } from '$lib/types';
-import { json } from '@sveltejs/kit';
 
-const prompt = 'Generate a title for the conversation that is being had between the user and the AI. The title should be short, no longer than 6 words, and descriptive.'
+const prompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
+Base it on the user's initial question and the assistant's response.
+
+Requirements:
+- Maximum 8 words
+- Focus on the core topic/subject
+- Avoid generic phrases like "Help with" or "Question about"
+- Use specific keywords when possible
+- Make it descriptive enough to identify the conversation later
+`
 
 export async function generateTitle(messages: Message[]): Promise<string> {
 
@@ -26,7 +32,7 @@ export async function generateTitle(messages: Message[]): Promise<string> {
 				...messages
 			],
 			temperature: 0.1,
-			max_tokens: 6,
+			max_tokens: 10,
 		})
 	});
 

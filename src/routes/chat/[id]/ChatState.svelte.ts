@@ -1,3 +1,4 @@
+import { goto } from '$app/navigation';
 import { fetchWithAuth } from '$lib/client/auth';
 import type { Message, ChatState, Branch } from '$lib/types';
 import { globalState } from '../../../stores/stores.svelte';
@@ -17,6 +18,9 @@ export class ChatStateClass implements ChatState {
 	// Add getter for UI to access
 	get streamingMessage() {
 		return this.#streamingMessage;
+	}
+	set streamingMessage(message: Message | null) {
+		this.#streamingMessage = message;
 	}
 
 	constructor(conv_id: string) {
@@ -133,14 +137,70 @@ export class ChatStateClass implements ChatState {
 		};
 		this.messages.push(newMsg);
 
-		await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}`, {
+		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}`, {
 			method: 'POST',
 			body: JSON.stringify(newMsg)
 		});
+		const lastMessage: Message = (await response.json()).message
+
+		this.streamResponseInBranch(lastMessage, branch)
 
 		this.isLoading = false;
 		this.onFinishSend();
 	}
+
+	streamResponseInBranch = async (lastMessage: Message, branch: string) => {
+		this.isStreaming = true
+
+		// Create initial streaming message
+		this.#streamingMessage = {
+			id: crypto.randomUUID(),
+			role: 'assistant',
+			content: '',
+			created_at: new Date(),
+			conversation_id: this.conversation_id
+		};
+
+		this.messages.push(this.#streamingMessage);
+
+
+		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/${branch}/ai`, {
+			method: 'POST',
+			body:
+				JSON.stringify(lastMessage)
+		});
+		const reader = response.body?.getReader();
+		const decoder = new TextDecoder();
+
+		while (true) {
+			const { done, value } = await reader?.read()!;
+			if (done) break;
+
+			const chunk = decoder.decode(value);
+			const lines = chunk.split('\n').filter((line) => line.trim() !== '');
+
+			for (const line of lines) {
+				try {
+					const parsedChunk = JSON.parse(line);
+
+					if (parsedChunk.type === 'chunk') {
+						// Update streaming message content
+						this.#streamingMessage!.content += parsedChunk.content;
+					} else if (parsedChunk.type === 'assistantMessage') {
+						// Replace streaming message with final DB message
+					}
+				} catch (parseError) {
+					console.error('Error parsing chunk:', parseError);
+				}
+			}
+		}
+
+		this.isStreaming = false
+
+		if (this.messages.length == 2) {
+			this.editTitle()
+		}
+	};
 
 
 
@@ -159,14 +219,16 @@ export class ChatStateClass implements ChatState {
 			user_id: globalState.user!.id
 		}
 
-		await fetchWithAuth(`/api/branches/${this.conversation_id}`, {
+		const branchData = await fetchWithAuth(`/api/branches/${this.conversation_id}`, {
 			method: 'POST',
 			body: JSON.stringify(newBranch)
 		})
+		const branchJson = await branchData.json()
+		const branchId = branchJson.branch.id
 
 		globalState.fetchBranches()
 
-		this.scrollContainer()
+		goto(`/chat/${this.conversation_id}/${branchId}`)
 
 		this.isLoading = false;
 	}

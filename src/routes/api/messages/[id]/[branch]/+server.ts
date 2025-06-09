@@ -14,11 +14,10 @@ export async function GET({ params, request }: { request: Request }) {
 export async function POST({ params, request }: { request: Request }) {
 	const { id, branch } = params
 	const msgText = (await request.json());
-	await createMessage({ id: msgText.id, conversationId: branch, role: msgText.role, content: msgText.content })
+	const message = await createMessage({ id: msgText.id, conversationId: branch, role: msgText.role, content: msgText.content })
 
-	// return 200 OK
-
-	return json({ status: 200 })
+	// return the newly created messge
+	return json({ message })
 }
 
 

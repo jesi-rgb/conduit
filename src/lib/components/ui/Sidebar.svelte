@@ -72,42 +72,53 @@
 	<section
 		class="border-base-content/10 bg-base-200 flex h-full flex-col
 		justify-between gap-10 border-r
-		p-2 shadow-lg"
+		p-2 py-4 shadow-lg"
 	>
-		<div class="border-red flex flex-col gap-2">
-			<button onclick={newConversation} class="btn group hover:btn-primary w-full"
+		<div class="flex flex-col gap-5">
+			<div
+				class="text-primary dark:text-primary-content headline mx-auto flex w-min items-center gap-3
+				text-3xl font-bold"
+			>
+				<span>Conduit</span>
+				<Icon icon="solar:star-angle-bold-duotone" class="text-4xl" />
+			</div>
+			<button
+				onclick={newConversation}
+				class="btn border-primary btn-dash group hover:btn-primary w-full"
 				><Icon
 					icon="solar:add-square-bold-duotone"
 					class="text-primary group-hover:text-primary-content text-2xl"
 				/></button
 			>
-			{#each conversations as conv}
-				<a
-					data-sveltekit-preload-data="tap"
-					transition:slide={{ axis: 'x' }}
-					href="/chat/{conv.id}"
-					class:border-primary={conv.id === convId}
-					class="btn justify-between rounded-full pr-1"
-				>
-					<span class="truncate">
-						{conv.title}
-					</span>
-
-					<button
-						class="text-base-content/20 hover:btn-error group
-						btn btn-sm btn-ghost rounded-full transition-colors"
-						onclick={() => deleteConversation(conv.id)}
+			<div class="flex flex-col gap-2">
+				{#each conversations as conv}
+					<a
+						data-sveltekit-preload-data="tap"
+						transition:slide={{ axis: 'x' }}
+						href="/chat/{conv.id}"
+						class:border-primary={conv.id === convId}
+						class="btn btn-ghost border-base-content/10 bg-base-100/50 justify-between rounded-full border pr-1"
 					>
-						<Icon
-							icon="solar:trash-bin-trash-bold-duotone"
-							class="group-hover:text-error-content text-base"
-						/>
-					</button>
-				</a>
-			{/each}
+						<span class="truncate">
+							{conv.title}
+						</span>
+
+						<button
+							class="text-base-content/20 hover:btn-error group
+							btn btn-sm btn-ghost rounded-full transition-colors"
+							onclick={() => deleteConversation(conv.id)}
+						>
+							<Icon
+								icon="solar:trash-bin-trash-bold-duotone"
+								class="group-hover:text-error-content text-base"
+							/>
+						</button>
+					</a>
+				{/each}
+			</div>
 		</div>
 
-		<div class="flex items-center justify-between text-xs">
+		<div class="flex items-center justify-between px-3 text-xs">
 			<div>
 				{#if user?.is_anonymous}
 					<button class="btn btn-xs" onclick={handleGoogleLogin}>Anonymous</button>
@@ -131,5 +142,10 @@
 <style>
 	:global(.conv-active) {
 		background-color: var(--color-base-300);
+	}
+	.headline {
+		font-variation-settings:
+			'wght' 900,
+			'opsz' 70;
 	}
 </style>

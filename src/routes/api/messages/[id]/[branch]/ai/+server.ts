@@ -2,17 +2,28 @@ import { json } from '@sveltejs/kit';
 import { generateStreamingAIResponse } from '$lib/server/ai';
 import { db } from '$lib/server/db';
 import { messages } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, lte, or } from 'drizzle-orm';
 
-export async function GET({ params, request }) {
+export async function POST({ params, request }) {
+	const incomingMessage = await request.json();
 
 	try {
-		// Fetch previous messages for context
+		// here, we fetch all messages belonging to the original conversation
+		// only up until the message we are branching from (filtering by created_at)
+		// and then all the messages within the branch itself
 		const previousMessages = await db.select()
 			.from(messages)
-			.where(eq(messages.conversation_id, params.id))
-			.orderBy(messages.created_at)
-			.limit(30);
+			.where(
+				or(
+					and(
+						eq(messages.conversation_id, params.id),
+						lte(messages.created_at, new Date(incomingMessage.created_at))
+					),
+					eq(messages.conversation_id, params.branch)
+				)
+			)
+			.orderBy(messages.created_at);
+		console.log({ previousMessages })
 
 		// Prepare messages for AI
 		const aiMessages = previousMessages.map(msg => ({
@@ -38,7 +49,7 @@ export async function GET({ params, request }) {
 							if (done) {
 								// Once streaming is complete, save the full AI response
 								const assistantMessageResult = await db.insert(messages).values({
-									conversation_id: params.id,
+									conversation_id: params.branch,
 									content: assistantResponse,
 									role: 'assistant',
 								}).returning();

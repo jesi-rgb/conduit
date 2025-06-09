@@ -11,12 +11,12 @@ export async function GET({ params, request }: { request: Request }) {
 
 export async function POST({ params, request }: { request: Request }) {
 	const branchData: Branch = await request.json()
-	await createBranch({
+	const branch = await createBranch({
 		messageId: branchData.branch_from_message_id,
 		parentId: branchData.parent_conversation_id,
 		title: branchData.title,
 		userId: branchData.user_id
 	})
 
-	return json({ status: 200 })
+	return json({ branch })
 }

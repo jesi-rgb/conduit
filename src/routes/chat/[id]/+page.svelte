@@ -7,6 +7,8 @@
 	import { codeToHtml } from 'shiki';
 	import { page } from '$app/state';
 	import { fetchWithAuth } from '$lib/client/auth.js';
+	import Icon from '@iconify/svelte';
+	import { blur, fade, fly } from 'svelte/transition';
 
 	const md = MarkdownItAsync();
 
@@ -22,6 +24,8 @@
 
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
+
+	let copied = $state(false);
 
 	onMount(async () => {
 		md.use(
@@ -84,7 +88,10 @@
 					<div id={message.id} class="group">
 						{#if message.role === 'user'}
 							<div class="chat chat-end">
-								<p class="chat-bubble">
+								<p
+									class="bg-primary/15 border-primary/30 self-end
+									rounded-2xl rounded-br-xs border px-4 py-2"
+								>
 									{message.content}
 								</p>
 								<div
@@ -105,11 +112,53 @@
 									</p>
 
 									<div
-										class="place-self-start font-mono text-xs opacity-0
-										transition-opacity duration-100
-										group-hover:opacity-50"
+										class="mt-3 flex items-center
+										gap-3 place-self-start
+										font-mono text-xs
+										opacity-0 transition-opacity
+										duration-100 group-hover:opacity-100"
 									>
-										{new Date(message.created_at).toLocaleString('es-ES')}
+										<span class="opacity-50">
+											{new Date(message.created_at).toLocaleString('es-ES')}
+										</span>
+										<button
+											onclick={() => {
+												navigator.clipboard.writeText(message.content);
+												copied = true;
+												setTimeout(() => (copied = false), 1000);
+											}}
+											class="btn btn-xs btn-ghost
+											btn-primary btn-circle relative
+											size-7
+											opacity-100"
+										>
+											{#if copied}
+												<span in:fade={{ duration: 200 }} out:fade={{ duration: 400 }}>
+													<Icon
+														icon="solar:clipboard-check-bold-duotone"
+														class="absolute top-1/2
+														left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg"
+													/>
+												</span>
+											{:else}
+												<span in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
+													<Icon
+														icon="solar:copy-bold-duotone"
+														class="absolute left-1/2
+														-translate-x-1/2 -translate-y-1/2 text-lg"
+													/>
+												</span>
+											{/if}
+										</button>
+										<button
+											class="btn btn-xs btn-ghost
+											btn-primary btn-circle relative
+											size-7
+											opacity-100"
+											onclick={() => chatState.branchOut()}
+										>
+											<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
+										</button>
 									</div>
 								</div>
 							</div>
@@ -122,7 +171,10 @@
 								href="/chat/{message.conversation_id}/{branch.id}"
 								class="place-self-end self-end text-right text-xs"
 							>
-								<p class="bg-base-200 py-3 text-xl">→</p>
+								<div class="my-10 flex items-center gap-3 text-2xl">
+									<span> Branch </span>
+									<Icon class="text-primary" icon="solar:chat-square-arrow-bold-duotone" />
+								</div>
 							</a>
 						{/if}
 					{/each}
@@ -147,14 +199,7 @@
 					disabled={chatState.isLoading || chatState.isStreaming}
 				/>
 				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
-					{chatState.isLoading ? 'Loading...' : 'Send'}
-				</button>
-				<button
-					class="btn"
-					onclick={() => chatState.branchOut()}
-					disabled={chatState.isLoading || chatState.isStreaming}
-				>
-					{chatState.isLoading ? 'Loading...' : 'Branch'}
+					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 				</button>
 			</form>
 		</div>

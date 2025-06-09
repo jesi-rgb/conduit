@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import Icon from '@iconify/svelte';
 
 	onMount(async () => {
 		globalState.fetchBranches();
@@ -27,17 +28,14 @@
 		<div class="flex w-min flex-col items-center">
 			{#each globalState.currentMessages.filter((msg) => msg.role === 'user') as msg, i}
 				{#if msg.role === 'user'}
-					<div
+					<button
 						class="cursor-pointer py-2"
 						onclick={() => {
 							goto(gotoUrl(msg.id!));
 						}}
 					>
-						<div
-							class="bg-base-content size-2 shrink-0
-							items-center gap-2 rounded-full"
-						/>
-					</div>
+						<Icon class="text-primary text-2xl" icon="solar:star-shine-bold-duotone" />
+					</button>
 					{#if i < globalState.currentMessages.filter((msg) => msg.role === 'user').length - 1}
 						<div class="border-base-content/10 h-6 w-0 border"></div>
 					{/if}

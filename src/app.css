@@ -1,5 +1,3 @@
-@import url('https://api.fontshare.com/v2/css?f[]=plein@1,2&display=swap');
-
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
@@ -8,7 +6,6 @@
 	root: ":root";
 	themes: reallol, barelycookie;
 }
-
 
 @plugin "daisyui/theme" {
 	name: "reallol";
@@ -45,10 +42,6 @@
 	--noise: 0;
 }
 
-
-
-
-
 @plugin "daisyui/theme" {
 	name: "barelycookie";
 	default: false;
@@ -84,19 +77,16 @@
 	--noise: 0;
 }
 
-
 @theme {
 	--font-sans: 'AT Name Sans Variable', 'Plein Variable', 'Plein', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 	--font-mono: 'AT Name Mono';
 }
-
 
 @media (prefers-color-scheme: dark) {
 
 	.shiki,
 	.shiki span {
 		color: var(--shiki-dark) !important;
-		background-color: var(--shiki-dark-bg) !important;
 		/* Optional, if you also want font styles */
 		font-style: var(--shiki-dark-font-style) !important;
 		font-weight: var(--shiki-dark-font-weight) !important;

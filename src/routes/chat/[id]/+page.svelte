@@ -24,22 +24,34 @@
 	let chatContainer: HTMLDivElement | null = $state(null);
 
 	onMount(async () => {
-		chatState.scrollContainer = () => {
-			scrollToBottom(chatContainer!);
-		};
-
 		md.use(
 			fromAsyncCodeToHtml(
 				// Pass the codeToHtml function
 				codeToHtml,
 				{
 					themes: {
-						light: 'catppuccin-latte',
+						light: 'vitesse-light',
 						dark: 'vesper'
 					}
 				}
 			)
 		);
+
+		// Override the fence renderer to add language badges
+		const defaultFenceRenderer =
+			md.renderer.rules.fence ||
+			function (tokens, idx, options, env, renderer) {
+				return renderer.renderToken(tokens, idx, options);
+			};
+
+		md.renderer.rules.fence = function (tokens, idx, options, env, renderer) {
+			const token = tokens[idx];
+			const langName = token.info.trim().split(/\s+/g)[0];
+			const langBadge = langName ? `<div class="code-lang-badge">${langName}</div>` : '';
+
+			const originalCode = defaultFenceRenderer(tokens, idx, options, env, renderer);
+			return `<div class="code-block-wrapper">${langBadge}${originalCode}</div>`;
+		};
 
 		globalState.fetchBranches = async () => {
 			const response = await fetchWithAuth('/api/branches/' + page.params.id);
@@ -52,6 +64,10 @@
 
 	$effect(() => {
 		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
+
+		chatState.scrollContainer = () => {
+			scrollToBottom(chatContainer!);
+		};
 	});
 </script>
 
@@ -144,3 +160,25 @@
 		</div>
 	</section>
 {/if}
+
+<style>
+	:global(.code-block-wrapper) {
+		position: relative;
+	}
+
+	:global(.code-lang-badge) {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		background: var(--color-primary);
+		color: var(--color-primary-content);
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-family: monospace;
+		z-index: 1;
+	}
+	:global(.shiki) {
+		background-color: color-mix(in oklch, var(--color-base-200), transparent 40%) !important;
+	}
+</style>

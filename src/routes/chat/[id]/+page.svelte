@@ -27,6 +27,8 @@
 
 	let copied = $state(false);
 
+	$inspect(globalState.currentBranches);
+
 	onMount(async () => {
 		md.use(
 			fromAsyncCodeToHtml(
@@ -159,25 +161,29 @@
 										>
 											<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
 										</button>
+
+										{#each globalState.currentBranches as branch}
+											{#if branch.branch_from_message_id === message.id}
+												<a
+													data-sveltekit-preload-data="tap"
+													href="/chat/{message.conversation_id}/{branch.id}"
+													class="place-self-end self-end text-right text-xs"
+												>
+													<div class="my-10 flex items-center gap-3">
+														<span> Branch </span>
+														<Icon
+															class="text-primary"
+															icon="solar:chat-square-arrow-bold-duotone"
+														/>
+													</div>
+												</a>
+											{/if}
+										{/each}
 									</div>
 								</div>
 							</div>
 						{/if}
 					</div>
-					{#each globalState.currentBranches as branch}
-						{#if branch.branch_from_message_id === message.id}
-							<a
-								data-sveltekit-preload-data="tap"
-								href="/chat/{message.conversation_id}/{branch.id}"
-								class="place-self-end self-end text-right text-xs"
-							>
-								<div class="my-10 flex items-center gap-3 text-2xl">
-									<span> Branch </span>
-									<Icon class="text-primary" icon="solar:chat-square-arrow-bold-duotone" />
-								</div>
-							</a>
-						{/if}
-					{/each}
 				{/each}
 			</div>
 

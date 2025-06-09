@@ -196,10 +196,6 @@ export class ChatStateClass implements ChatState {
 		}
 
 		this.isStreaming = false
-
-		if (this.messages.length == 2) {
-			this.editTitle()
-		}
 	};
 
 

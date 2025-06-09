@@ -14,7 +14,6 @@ export const load: PageLoad = ({ params, fetch }) => {
 		globalState.currentMessages = chatState.messages
 	}
 
-
 	chatState.streamResponse = async () => {
 		chatState.isStreaming = true
 
@@ -61,10 +60,6 @@ export const load: PageLoad = ({ params, fetch }) => {
 		}
 
 		chatState.isStreaming = false
-
-		if (chatState.messages.length == 2) {
-			chatState.editTitle()
-		}
 	};
 
 	chatState.fetchMessages()

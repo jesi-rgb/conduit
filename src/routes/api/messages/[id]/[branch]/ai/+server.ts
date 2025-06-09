@@ -11,19 +11,24 @@ export async function POST({ params, request }) {
 		// here, we fetch all messages belonging to the original conversation
 		// only up until the message we are branching from (filtering by created_at)
 		// and then all the messages within the branch itself
-		const previousMessages = await db.select()
+		// Get messages from original conversation up to branch point
+		const originalMessages = await db.select()
 			.from(messages)
 			.where(
-				or(
-					and(
-						eq(messages.conversation_id, params.id),
-						lte(messages.created_at, new Date(incomingMessage.created_at))
-					),
-					eq(messages.conversation_id, params.branch)
+				and(
+					eq(messages.conversation_id, params.id),
+					lte(messages.created_at, new Date(incomingMessage.created_at))
 				)
 			)
 			.orderBy(messages.created_at);
-		console.log({ previousMessages })
+
+		// Get messages from the branch
+		const branchMessages = await db.select()
+			.from(messages)
+			.where(eq(messages.conversation_id, params.branch))
+			.orderBy(messages.created_at);
+
+		const previousMessages = [...originalMessages, ...branchMessages];
 
 		// Prepare messages for AI
 		const aiMessages = previousMessages.map(msg => ({

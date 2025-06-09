@@ -1,6 +1,7 @@
 import { supabase } from "$lib/client/supabase";
 
-export async function fetchWithAuth(url: string, options: RequestInit = {}) {
+export async function fetchWithAuth(url: string, svelteFetch?: Function, options: RequestInit = {}) {
+
 	try {
 		// Get the current session
 		const { data: { session } } = await supabase.auth.getSession();
@@ -13,14 +14,27 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
 			headers.set('Authorization', `Bearer ${session.access_token}`);
 		}
 
-		// Perform the fetch with the updated headers
-		return fetch(url, {
-			...options,
-			headers
-		});
+		if (svelteFetch) {
+			console.log('svelte fetchiun')
+
+			return svelteFetch(url, {
+				...options,
+				headers
+			});
+		} else {
+
+			return fetch(url, {
+				...options,
+				headers
+			});
+		}
 	} catch (error) {
 		console.error('Error in fetchWithAuth:', error);
 		// Fallback to regular fetch if something goes wrong
-		return fetch(url, options);
+		if (svelteFetch) {
+			return svelteFetch(url, options);
+		} else {
+			return fetch(url, options);
+		}
 	}
 }

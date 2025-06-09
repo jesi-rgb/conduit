@@ -18,10 +18,6 @@
 
 	let chatState: ChatStateClass | null = $derived(data.chatState);
 
-	const scrollToBottom = (node: HTMLElement) => {
-		node.scroll({ top: node.scrollHeight, behavior: 'smooth' });
-	};
-
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
 
@@ -62,16 +58,10 @@
 			globalState.currentBranches = (await response.json()).branches;
 		};
 		globalState.fetchBranches();
-
-		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
 	});
 
 	$effect(() => {
 		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
-
-		chatState.scrollContainer = () => {
-			scrollToBottom(chatContainer!);
-		};
 	});
 </script>
 

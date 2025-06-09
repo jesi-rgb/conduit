@@ -2,6 +2,37 @@
 
 import { env } from '$env/dynamic/private';
 
+import type { Message } from '$lib/types';
+import { json } from '@sveltejs/kit';
+
+const prompt = 'Generate a title for the conversation that is being had between the user and the AI. The title should be short, no longer than 6 words, and descriptive.'
+
+export async function generateTitle(messages: Message[]): Promise<string> {
+
+	if (!env.OPENAI_API_KEY) {
+		return "API key is not configured.";
+	}
+
+	const response = await fetch('https://api.openai.com/v1/chat/completions', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+		},
+		body: JSON.stringify({
+			model: 'gpt-4.1-nano',
+			messages: [
+				{ role: 'system', content: prompt },
+				...messages
+			],
+			temperature: 0.1,
+			max_tokens: 6,
+		})
+	});
+
+	return response.text()
+}
+
 export async function generateStreamingAIResponse(messages: Message[]): Promise<ReadableStream<string>> {
 	// If we don't have an OpenAI API key, return a fallback response
 	if (!env.OPENAI_API_KEY) {

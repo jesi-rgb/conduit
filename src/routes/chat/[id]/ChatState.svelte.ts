@@ -57,7 +57,6 @@ export class ChatStateClass implements ChatState {
 
 		this.scrollContainer()
 
-
 		this.streamResponse()
 
 		this.isLoading = false;
@@ -65,7 +64,6 @@ export class ChatStateClass implements ChatState {
 
 	streamResponse = async () => {
 		this.isStreaming = true
-		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/ai`);
 
 		// Create initial streaming message
 		this.#streamingMessage = {
@@ -79,6 +77,7 @@ export class ChatStateClass implements ChatState {
 		this.messages.push(this.#streamingMessage);
 
 
+		const response = await fetchWithAuth(`/api/messages/${this.conversation_id}/ai`);
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -103,16 +102,28 @@ export class ChatStateClass implements ChatState {
 					console.error('Error parsing chunk:', parseError);
 				}
 			}
-			this.scrollContainer()
+			// this is tricky... scrolling as message streams in
+			// is a bit dizzying at times, maybe should leave disabled
+			// this.scrollContainer()
 		}
 
 		this.isStreaming = false
+
+		if (this.messages.length == 2) {
+			this.editTitle()
+		}
+	};
+
+	editTitle = async () => {
+		await fetchWithAuth(`/api/title/${this.conversation_id}/ai`, { method: 'POST', body: JSON.stringify({ messages: this.messages }) });
+
+		globalState.fetchConversations()
+
 	};
 
 	sendMessageInBranch = async (message: string, branch: string) => {
 		this.isLoading = true;
 
-		//here we would send to database?
 		const newMsg: Message = {
 			id: crypto.randomUUID(),
 			role: 'user',

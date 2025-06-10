@@ -1,4 +1,4 @@
-type ModelInfo = {
+export type ModelInfo = {
 	id: string;
 	name: string;
 	provider: string;
@@ -10,7 +10,7 @@ type ModelInfo = {
 	};
 };
 
-const popularModels: ModelInfo[] = [
+export const popularModels: ModelInfo[] = [
 	{
 		id: "google/gemini-2.5-pro-preview",
 		name: "Gemini 2.5 Pro Preview 06-05",

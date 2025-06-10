@@ -9,6 +9,7 @@
 	import { fetchWithAuth } from '$lib/client/auth.js';
 	import Icon from '@iconify/svelte';
 	import { blur, fade, fly } from 'svelte/transition';
+	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 
 	const md = MarkdownItAsync();
 
@@ -197,6 +198,7 @@
 					}
 				}}
 			>
+				<ModelSelector />
 				<input
 					type="text"
 					bind:value={message}

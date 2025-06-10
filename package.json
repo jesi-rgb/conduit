@@ -29,6 +29,7 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/markdown-it": "^14.1.2",
 		"@types/node": "^20",
+		"bits-ui": "^2.5.0",
 		"daisyui": "^5.0.35",
 		"drizzle-kit": "^0.30.6",
 		"markdown-it-async": "^2.2.0",

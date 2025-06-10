@@ -57,6 +57,7 @@
 			}
 		});
 		conversations = conversations.filter((conv) => conv.id !== convId);
+		goto('/chat');
 	}
 
 	async function newConversation() {
@@ -97,10 +98,11 @@
 				/></button
 			>
 			<div class="flex flex-col gap-2">
-				{#each conversations as conv}
+				{#each conversations as conv (conv.id)}
 					<a
+						id={conv.id}
+						transition:slide={{ duration: 310 }}
 						data-sveltekit-preload-data="tap"
-						transition:slide={{ axis: 'x' }}
 						href="/chat/{conv.id}"
 						class:border-primary={conv.id === convId}
 						class="btn btn-ghost border-base-content/10 bg-base-100/50 justify-between rounded-full border pr-1"
@@ -112,7 +114,10 @@
 						<button
 							class="text-base-content/20 hover:btn-error group
 							btn btn-sm btn-ghost rounded-full transition-colors"
-							onclick={() => deleteConversation(conv.id)}
+							onclick={(e) => {
+								e.preventDefault();
+								deleteConversation(conv.id);
+							}}
 						>
 							<Icon
 								icon="solar:trash-bin-trash-bold-duotone"
@@ -134,6 +139,13 @@
 			</div>
 
 			<div>
+				<a
+					href="/settings"
+					class="btn btn-xs text-base-content/20 hover:text-info text-base transition-colors"
+				>
+					<Icon icon="solar:settings-bold-duotone" />
+				</a>
+
 				<button
 					onclick={logout}
 					class="btn btn-xs text-base-content/20 hover:text-error text-base transition-colors"

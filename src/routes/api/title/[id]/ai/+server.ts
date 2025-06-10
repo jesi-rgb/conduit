@@ -6,7 +6,7 @@ import { json } from "@sveltejs/kit";
 
 export const POST = async ({ request, params, fetch }) => {
 	const { id } = params
-	const { messages } = await request.json();
+	const { messages, model, endpoint, bearerToken } = await request.json();
 
 	const prunedMessages = messages.map((msg: Message) => {
 		return {
@@ -15,7 +15,12 @@ export const POST = async ({ request, params, fetch }) => {
 		}
 	})
 
-	const titleData = await generateTitle(prunedMessages)
+	const titleData = await generateTitle(prunedMessages, {
+		model: model,
+		endpoint: endpoint,
+		bearerToken: bearerToken
+
+	})
 	const title = JSON.parse(titleData)['choices'][0]['message']['content']
 
 	await fetch(`/api/title/${id}`, {

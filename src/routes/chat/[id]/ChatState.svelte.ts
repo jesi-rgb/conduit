@@ -71,6 +71,19 @@ export class ChatStateClass implements ChatState {
 	streamResponse = async () => {
 		this.isStreaming = true
 
+		const response = await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}/ai`,
+			options: {
+				method: 'POST',
+				body:
+					JSON.stringify({
+						model: 'openai/gpt-4.1-nano',
+						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+						messages: this.messages,
+						bearerToken: localStorage.getItem('conduit-open-router')
+					})
+			}
+		});
 		// Create initial streaming message
 		this.#streamingMessage = {
 			id: crypto.randomUUID(),
@@ -83,7 +96,6 @@ export class ChatStateClass implements ChatState {
 		this.messages.push(this.#streamingMessage);
 
 
-		const response = await fetchWithAuth({ url: `/api/messages/${this.conversation_id}/ai` });
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -121,7 +133,16 @@ export class ChatStateClass implements ChatState {
 	};
 
 	editTitle = async () => {
-		await fetchWithAuth({ url: `/api/title/${this.conversation_id}/ai`, options: { method: 'POST', body: JSON.stringify({ messages: this.messages }) } });
+		await fetchWithAuth({
+			url: `/api/title/${this.conversation_id}/ai`, options: {
+				method: 'POST', body: JSON.stringify({
+					messages: this.messages,
+					model: 'openai/gpt-4.1-nano',
+					endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+					bearerToken: localStorage.getItem('conduit-open-router')
+				})
+			}
+		});
 
 		globalState.fetchConversations()
 

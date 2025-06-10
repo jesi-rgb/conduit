@@ -13,20 +13,25 @@ Requirements:
 - Make it descriptive enough to identify the conversation later
 `
 
-export async function generateTitle(messages: Message[]): Promise<string> {
+type AIOptions = {
+	model: string;
+	endpoint: string;
+	bearerToken: string;
+}
 
-	if (!env.OPENAI_API_KEY) {
-		return "API key is not configured.";
+export async function generateTitle(messages: Message[], { model, endpoint, bearerToken }: AIOptions): Promise<string> {
+	if (!bearerToken) {
+		throw Error('API Key is not set')
 	}
 
-	const response = await fetch('https://api.openai.com/v1/chat/completions', {
+	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+			'Authorization': `Bearer ${bearerToken}`,
 		},
 		body: JSON.stringify({
-			model: 'gpt-4.1-nano',
+			model: model,
 			messages: [
 				{ role: 'system', content: prompt },
 				...messages
@@ -39,28 +44,20 @@ export async function generateTitle(messages: Message[]): Promise<string> {
 	return response.text()
 }
 
-export async function generateStreamingAIResponse(messages: Message[]): Promise<ReadableStream<string>> {
-	// If we don't have an OpenAI API key, return a fallback response
-	if (!env.OPENAI_API_KEY) {
-		console.warn('OPENAI_API_KEY is not set. Returning fallback response.');
-
-		return new ReadableStream({
-			start(controller) {
-				controller.enqueue("API key is not configured.");
-				controller.close();
-			}
-		});
+export async function generateStreamingAIResponse(messages: Message[], { model, endpoint, bearerToken }: AIOptions): Promise<ReadableStream<string>> {
+	if (!bearerToken) {
+		throw Error('API Key is not set')
 	}
 
-	const response = await fetch('https://api.openai.com/v1/chat/completions', {
+	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+			'Authorization': `Bearer ${bearerToken}`,
 			'Accept': 'text/event-stream'
 		},
 		body: JSON.stringify({
-			model: 'gpt-4.1-nano',
+			model: model,
 			messages: messages,
 			temperature: 0.1,
 			max_tokens: 800,

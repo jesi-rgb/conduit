@@ -2,12 +2,16 @@ import type { User } from '@supabase/supabase-js';
 import type { Branch, Conversation, Message } from '$lib/types';
 import { fetchWithAuth } from '$lib/client/auth';
 
+type Provider = 'conduit-open-router' | 'conduit-openai' | 'conduit-deepseek';
+
 interface GlobalStateType {
 	user: User | null;
 	conversations: Conversation[];
 	currentConversation: Conversation | null;
 	currentMessages: Message[];
 	currentBranches: Branch[];
+	userKeys: Record<Provider, string>;
+	updateUserKeys: (provider: Provider, key: string) => void
 }
 
 export class GlobalState implements GlobalStateType {
@@ -16,6 +20,11 @@ export class GlobalState implements GlobalStateType {
 	#currentConversation_data: Conversation | null = $state(null)
 	#currentMessages_data: Message[] = $state([])
 	#currentBranches_data: Branch[] = $state([])
+	#userKeys: Record<Provider, string> = $state({
+		'conduit-open-router': '',
+		'conduit-openai': '',
+		'conduit-deepseek': ''
+	})
 
 
 	fetchConversations = async () => {
@@ -69,6 +78,29 @@ export class GlobalState implements GlobalStateType {
 			return this.#currentBranches_data
 		else return []
 	}
+
+	set userKeys(keys: Record<Provider, string>) {
+		this.#userKeys = keys
+
+		Object.entries(keys).forEach(([key, value]) => {
+			localStorage.setItem(key, value)
+		})
+	}
+	get userKeys(): Record<Provider, string> {
+		if (!this.#userKeys) {
+			Object.entries(localStorage).forEach(([key, value]) => {
+				if (key.startsWith('conduit-'))
+					this.#userKeys[key as Provider] = value
+			})
+		}
+		return this.#userKeys
+	}
+	updateUserKeys(provider: Provider, key: string) {
+		this.#userKeys[provider] = key
+		localStorage.setItem(provider, key)
+	}
+
+
 }
 
 export const globalState = new GlobalState()

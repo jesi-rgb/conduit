@@ -145,7 +145,7 @@
 											{:else}
 												<span in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
 													<Icon
-														icon="solar:copy-bold-duotone"
+														icon="solar:notes-bold-duotone"
 														class="absolute left-1/2
 														-translate-x-1/2 -translate-y-1/2 text-lg"
 													/>

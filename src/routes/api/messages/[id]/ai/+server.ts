@@ -1,27 +1,24 @@
 import { json } from '@sveltejs/kit';
 import { generateStreamingAIResponse } from '$lib/server/ai';
 import { db } from '$lib/server/db';
+import type { Message } from '$lib/types';
 import { messages } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
 
-export async function GET({ params, request }) {
+export async function POST({ params, request }) {
+	const { model, messages: incomingMessages, endpoint, bearerToken } = await request.json()
 
 	try {
-		// Fetch previous messages for context
-		const previousMessages = await db.select()
-			.from(messages)
-			.where(eq(messages.conversation_id, params.id))
-			.orderBy(messages.created_at)
-			.limit(30);
-
-		// Prepare messages for AI
-		const aiMessages = previousMessages.map(msg => ({
+		const aiMessages = incomingMessages.map((msg: Message) => ({
 			role: msg.role,
 			content: msg.content
 		}));
 
 		// Create a streaming response
-		const stream = await generateStreamingAIResponse(aiMessages);
+		const stream = await generateStreamingAIResponse(aiMessages, {
+			model: model,
+			bearerToken: bearerToken,
+			endpoint: endpoint
+		});
 
 		// Create a new Response with the streaming content
 		return new Response(
@@ -31,12 +28,11 @@ export async function GET({ params, request }) {
 					let assistantResponse = '';
 
 					try {
-
 						while (true) {
 							const { done, value } = await reader.read();
 
 							if (done) {
-								// Once streaming is complete, save the full AI response
+								console.log(done)
 								const assistantMessageResult = await db.insert(messages).values({
 									conversation_id: params.id,
 									content: assistantResponse,
@@ -45,7 +41,6 @@ export async function GET({ params, request }) {
 
 								const assistantMessage = assistantMessageResult[0];
 
-								// Send the final assistant message
 								controller.enqueue(
 									JSON.stringify({
 										type: 'assistantMessage',

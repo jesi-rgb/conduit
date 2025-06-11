@@ -10,6 +10,7 @@ export type ModelInfo = {
 	};
 };
 
+
 export const popularModels: ModelInfo[] = [
 	{
 		id: "google/gemini-2.5-pro-preview",
@@ -271,4 +272,37 @@ export const popularModels: ModelInfo[] = [
 			completion: "-1",
 		},
 	},
+	{
+		id: "openai/o3",
+		name: "o3",
+		provider: "OpenAI",
+		description: "o3 is a well-rounded and powerful model across domains. It sets a new standard for math, science, coding, and visual reasoning tasks. It also excels at technical writing and instruction-following. Use it to think through multi-step problems that involve analysis across text, code, and images. Note that BYOK is required for this model.",
+		pricing: {
+			prompt: "0.00001",
+			completion: "0.00004",
+			image: "0.00765",
+		},
+	},
+	{
+		id: "openai/o3-mini-high",
+		name: "o3 Mini High",
+		provider: "OpenAI",
+		description: "OpenAI o3-mini-high is the same model as o3-mini with reasoning_effort set to high. o3-mini is a cost-efficient language model optimized for STEM reasoning tasks, particularly excelling in science, mathematics, and coding.",
+		pricing: {
+			prompt: "0.0000011",
+			completion: "0.0000044",
+		},
+	},
+	{
+		id: "openai/o3-mini",
+		name: "o3 Mini",
+		provider: "OpenAI",
+		description: "OpenAI o3-mini is a cost-efficient language model optimized for STEM reasoning tasks, particularly excelling in science, mathematics, and coding. This model supports the `reasoning_effort` parameter, which can be set to \"high\", \"medium\", or \"low\" to control the thinking time of the model.",
+		pricing: {
+			prompt: "0.0000011",
+			completion: "0.0000044",
+		},
+	},
 ];
+
+

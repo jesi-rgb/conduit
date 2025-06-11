@@ -1,11 +1,13 @@
 import type { User } from '@supabase/supabase-js';
 import type { Branch, Conversation, Message } from '$lib/types';
 import { fetchWithAuth } from '$lib/client/auth';
+import type { ModelInfo } from '$lib/models';
 
 type Provider = 'conduit-open-router' | 'conduit-openai' | 'conduit-deepseek';
 
 interface GlobalStateType {
 	user: User | null;
+	modelIdSelected: string;
 	conversations: Conversation[];
 	currentConversation: Conversation | null;
 	currentMessages: Message[];
@@ -15,16 +17,17 @@ interface GlobalStateType {
 }
 
 export class GlobalState implements GlobalStateType {
-	#user_data: User | null = $state(null)
-	#conversations_data: Conversation[] = $state([])
-	#currentConversation_data: Conversation | null = $state(null)
-	#currentMessages_data: Message[] = $state([])
-	#currentBranches_data: Branch[] = $state([])
+	#user_data: User | null = $state(null);
+	#modelIdSelected: string | null = $state(null);
+	#conversations_data: Conversation[] = $state([]);
+	#currentConversation_data: Conversation | null = $state(null);
+	#currentMessages_data: Message[] = $state([]);
+	#currentBranches_data: Branch[] = $state([]);
 	#userKeys: Record<Provider, string> = $state({
 		'conduit-open-router': '',
 		'conduit-openai': '',
 		'conduit-deepseek': ''
-	})
+	});
 
 
 	fetchConversations = async () => {
@@ -100,7 +103,19 @@ export class GlobalState implements GlobalStateType {
 		localStorage.setItem(provider, key)
 	}
 
+	get modelIdSelected(): string {
+		const localStorageModel = localStorage.getItem('conduit-selected-model')
+		if (localStorageModel) {
+			this.#modelIdSelected = localStorageModel
+		}
+		return this.#modelIdSelected || 'google/gemini-2.5-flash-preview-05-20';
+	}
 
+	set modelIdSelected(model: string) {
+		if (localStorage.getItem('conduit-selected-model') !== model)
+			localStorage.setItem('conduit-selected-model', model)
+		this.#modelIdSelected = model
+	}
 }
 
 export const globalState = new GlobalState()

@@ -71,13 +71,14 @@ export class ChatStateClass implements ChatState {
 	streamResponse = async () => {
 		this.isStreaming = true
 
+		console.log('streaming with', globalState.modelIdSelected)
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/ai`,
 			options: {
 				method: 'POST',
 				body:
 					JSON.stringify({
-						model: 'openai/gpt-4.1-nano',
+						model: globalState.modelIdSelected,
 						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
 						messages: this.messages,
 						bearerToken: localStorage.getItem('conduit-open-router')

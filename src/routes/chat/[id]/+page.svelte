@@ -10,6 +10,9 @@
 	import Icon from '@iconify/svelte';
 	import { blur, fade, fly } from 'svelte/transition';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
+	import { CONDUIT_PROVIDER } from '$lib/types.js';
+	import { Tooltip } from 'bits-ui';
+	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 
 	const md = MarkdownItAsync();
 
@@ -30,6 +33,7 @@
 
 	$inspect(globalState.currentBranches);
 
+	let mounted = $state(false);
 	onMount(async () => {
 		md.use(
 			fromAsyncCodeToHtml(
@@ -67,6 +71,7 @@
 		globalState.fetchBranches();
 
 		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
+		mounted = true;
 	});
 
 	$effect(() => {
@@ -188,28 +193,64 @@
 				{/each}
 			</div>
 
-			<form
-				class="flex justify-between gap-1 pt-1"
-				onsubmit={(e) => {
-					e.preventDefault();
-					if (message) {
-						chatState.sendMessage(message);
-						message = '';
-					}
-				}}
-			>
-				<ModelSelector />
-				<input
-					type="text"
-					bind:value={message}
-					placeholder="Type your message..."
-					class="input input-border w-full"
-					disabled={chatState.isLoading || chatState.isStreaming}
-				/>
-				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
-					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
-				</button>
-			</form>
+			{#if mounted}
+				<form
+					class="flex justify-between gap-1 pt-1"
+					onsubmit={(e) => {
+						e.preventDefault();
+						if (message) {
+							chatState.sendMessage(message);
+							message = '';
+						}
+					}}
+				>
+					<ModelSelector />
+
+					<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
+						<Tooltip.Root delayDuration={0}>
+							<Tooltip.Trigger class="flex w-full gap-1">
+								<input
+									type="text"
+									bind:value={message}
+									placeholder="Type your message..."
+									class="input input-border w-full"
+									disabled={chatState.isLoading ||
+										chatState.isStreaming ||
+										!localStorage.getItem(CONDUIT_PROVIDER)}
+								/>
+								<button
+									class="btn"
+									type="submit"
+									disabled={chatState.isLoading ||
+										chatState.isStreaming ||
+										!localStorage.getItem(CONDUIT_PROVIDER)}
+								>
+									<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
+								</button>
+							</Tooltip.Trigger>
+							<Tooltip.Portal>
+								<TooltipContent>
+									<div
+										class="bg-base-200 border-subtle
+										rounded-box max-w-sm border p-3"
+									>
+										<p>Looks like you didn't setup an API key.</p>
+
+										<p>
+											Head to <a
+												class="text-primary font-bold
+												underline"
+												href="/settings">Settings</a
+											>
+											to start chatting!
+										</p>
+									</div>
+								</TooltipContent>
+							</Tooltip.Portal>
+						</Tooltip.Root>
+					</Tooltip.Provider>
+				</form>
+			{/if}
 		</div>
 	</section>
 {/if}

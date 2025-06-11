@@ -20,10 +20,7 @@
 	<a class="btn btn-ghost" href="/chat">← Back</a>
 	<h1 class="mb-10 text-3xl font-bold">Settings</h1>
 
-	<section
-		class="keys border-subtle flex flex-col gap-4
-		rounded-3xl border p-4"
-	>
+	<section class="keys border-subtle flex flex-col gap-4">
 		<div class="mb-2 flex flex-col gap-1">
 			<h2 class="text-2xl font-semibold">Keys</h2>
 			<p class="text-muted">

@@ -1,3 +1,10 @@
+<script>
+	import { globalState } from '../../stores/stores.svelte';
+
+	globalState.currentBranches = [];
+	globalState.currentMessages = [];
+</script>
+
 <main class="prose mx-auto my-10 h-[90vh] w-fit overflow-y-scroll">
 	<h2>Welcome to Conduit!</h2>
 	<p>

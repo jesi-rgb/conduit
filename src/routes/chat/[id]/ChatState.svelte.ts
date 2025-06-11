@@ -95,10 +95,11 @@ export class ChatStateClass implements ChatState {
 			}
 		});
 
-
-
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
+
+		let streamBuffer = ''
+		let timeoutId: NodeJS.Timeout | null = null
 
 		while (true) {
 			const { done, value } = await reader?.read()!;
@@ -107,20 +108,29 @@ export class ChatStateClass implements ChatState {
 			const chunk = decoder.decode(value);
 			const lines = chunk.split('\n').filter((line) => line.trim() !== '');
 
+			if (timeoutId)
+				clearTimeout(timeoutId)
+
 			for (const line of lines) {
 				try {
 					const parsedChunk = JSON.parse(line);
 
 					if (parsedChunk.type === 'chunk') {
 						// Update streaming message content
-						this.#streamingMessage!.content += parsedChunk.content;
-					} else if (parsedChunk.type === 'assistantMessage') {
-						// Replace streaming message with final DB message
+						streamBuffer += parsedChunk.content
+
+						timeoutId = setTimeout(() => {
+							console.log('adding new chunk to ui')
+							this.#streamingMessage!.content += streamBuffer
+							streamBuffer = ''
+							return clearTimeout(timeoutId)
+						}, 600)
 					}
 				} catch (parseError) {
 					console.error('Error parsing chunk:', parseError);
 				}
 			}
+
 			// this is tricky... scrolling as message streams in
 			// is a bit dizzying at times, maybe should leave disabled
 			// this.scrollContainer()

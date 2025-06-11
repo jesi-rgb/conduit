@@ -180,7 +180,7 @@
 					class="input input-border w-full"
 				/>
 				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
-					{chatState.isLoading ? 'Loading...' : 'Send'}
+					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 				</button>
 			</form>
 		</div>

@@ -77,24 +77,28 @@
 
 <Pane minSize={10} defaultSize={20}>
 	<section
-		class="border-base-content/10 bg-base-200 flex h-full flex-col
-		justify-between gap-10 border-r
+		class="border-base-content/10 from-base-100 to-base-200 flex h-full flex-col justify-between
+		gap-10 border-r bg-gradient-to-r
 		p-2 py-4 shadow-lg"
 	>
 		<div class="flex flex-col gap-5">
-			<div
+			<a
+				href="/chat"
 				class="text-primary dark:text-primary-content headline mx-auto flex w-min items-center gap-3
 				text-3xl font-bold"
 			>
 				<span>Conduit</span>
 				<Icon icon="solar:star-angle-bold-duotone" class="text-4xl" />
-			</div>
+			</a>
 			<button
 				onclick={newConversation}
-				class="btn border-primary btn-dash group hover:btn-primary w-full"
-				><Icon
-					icon="solar:add-square-bold-duotone"
-					class="text-primary group-hover:text-primary-content text-2xl"
+				class="btn btn-primary btn-outline group from-primary/5
+				to-primary/30 hover:to-primary-content/30 w-full
+				bg-gradient-to-b from-20% to-130% text-lg hover:bg-gradient-to-t
+				hover:to-90%"
+				>New Conversation <Icon
+					icon="solar:chat-line-bold-duotone"
+					class="text-primary group-hover:text-primary-content"
 				/></button
 			>
 			<div class="flex flex-col gap-2">
@@ -105,24 +109,23 @@
 						data-sveltekit-preload-data="tap"
 						href="/chat/{conv.id}"
 						class:border-primary={conv.id === convId}
-						class="btn btn-ghost border-base-content/10 bg-base-100/50 justify-between rounded-full border pr-1"
+						class="btn btn-ghost border-base-content/10
+						bg-base-100/50 group justify-between rounded-full border pr-1"
 					>
 						<span class="truncate">
 							{conv.title}
 						</span>
 
 						<button
-							class="text-base-content/20 hover:btn-error group
-							btn btn-sm btn-ghost rounded-full transition-colors"
+							class="hover:btn-error btn
+							btn-sm btn-ghost rounded-full opacity-0
+							transition-colors group-hover:opacity-100"
 							onclick={(e) => {
 								e.preventDefault();
 								deleteConversation(conv.id);
 							}}
 						>
-							<Icon
-								icon="solar:trash-bin-trash-bold-duotone"
-								class="group-hover:text-error-content text-base"
-							/>
+							<Icon icon="solar:trash-bin-trash-bold-duotone" class="" />
 						</button>
 					</a>
 				{/each}

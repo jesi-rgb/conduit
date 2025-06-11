@@ -13,6 +13,7 @@
 	import { CONDUIT_PROVIDER } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
+	import BranchingArrow from '$lib/components/ui/BranchingArrow.svelte';
 
 	const md = MarkdownItAsync();
 
@@ -111,18 +112,17 @@
 						{:else if message.role === 'assistant'}
 							<div class="chat chat-start">
 								<div class="flex flex-col p-3">
-									<p class="prose prose-code:px-0">
+									<div style="contain: content;" class="prose prose-code:px-0">
 										{#await md.renderAsync(message.content) then markdown}
 											{@html markdown}
 										{/await}
-									</p>
+									</div>
 
 									<div
-										class="mt-3 flex items-center
-										gap-3 place-self-start
-										font-mono text-xs
-										opacity-0 transition-opacity
-										duration-100 group-hover:opacity-100"
+										class="mt-3 flex h-max items-center gap-3 place-self-start font-mono
+										text-xs opacity-0
+										transition-opacity duration-100
+										group-hover:opacity-100"
 									>
 										<span class="opacity-50">
 											{new Date(message.created_at).toLocaleString('es-ES')}
@@ -133,9 +133,7 @@
 												copied = true;
 												setTimeout(() => (copied = false), 1000);
 											}}
-											class="btn btn-xs btn-ghost
-											btn-primary btn-circle relative
-											size-7
+											class="btn btn-xs btn-ghost btn-primary btn-circle relative size-7
 											opacity-100"
 										>
 											{#if copied}
@@ -173,7 +171,7 @@
 													href="/chat/{message.conversation_id}/{branch.id}"
 													class="place-self-end self-end text-right text-xs"
 												>
-													<div class="my-10 flex items-center gap-3">
+													<div class="my-auto flex h-full items-center gap-3">
 														<span> Branch </span>
 														<Icon
 															class="text-primary"

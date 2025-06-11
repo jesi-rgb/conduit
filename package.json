@@ -48,6 +48,8 @@
 	"dependencies": {
 		"@supabase/auth-helpers-sveltekit": "^0.13.0",
 		"@supabase/supabase-js": "^2.49.8",
+		"@types/d3": "^7.4.3",
+		"d3": "^7.9.0",
 		"drizzle-orm": "^0.40.0",
 		"paneforge": "^0.0.6",
 		"postgres": "^3.4.5",

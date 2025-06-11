@@ -23,15 +23,15 @@
 	<p>
 		I engineered branches just as you would expect: the conversation flows linearly until you want
 		to branch off from somewhere. Then, an alternative path follows from there. You could still come
-		back to the original "parent" conversation and keep going
+		back to the original "parent" conversation and keep going.
 	</p>
 	<p>
 		When sending the messages to the LLM for it to keep up with context, we follow this process:
 	</p>
 	<ul>
 		<li>
-			If we are in a branch, we send all the messages of the branch plus all the messages from the
-			original conversation up until the message we branched from
+			If we are in a branch, we send all the messages of the branch <b>plus</b> all the messages from
+			the original conversation up until the message we branched from
 		</li>
 		<li>
 			If we are in a parent conversation, we only send the messages of the parent conversation
@@ -41,6 +41,11 @@
 	<p>
 		This keeps the main conversation free of tangent digressions, and helps keep the context clean.
 	</p>
+	<p>
+		Right now, branching is limited to one level, since it made the process easier to think through,
+		and helps test if this is really a useful feature or a gimmick.
+	</p>
+	<p>As a bonus, this comes with some git style visualizations.</p>
 	<p>I hope you as much fun using it as I had building it.</p>
 	<blockquote>Yours truly, <a href="https://jesirgb.com">Jesús</a></blockquote>
 </main>

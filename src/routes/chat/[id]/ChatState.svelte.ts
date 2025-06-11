@@ -157,19 +157,21 @@ export class ChatStateClass implements ChatState {
 			role: 'user',
 			content: message,
 			created_at: new Date(),
-			conversation_id: branch
-		};
-		this.messages.push(newMsg);
+			conversation_id: this.conversation_id
+		}
+
+		this.messages.push(newMsg)
 
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/${branch}`, options: {
 				method: 'POST',
-				body: JSON.stringify(newMsg)
+				body: JSON.stringify({
+					message: newMsg
+				})
 			}
 		});
-		const lastMessage: Message = (await response.json()).message
 
-		this.streamResponseInBranch(lastMessage, branch)
+		this.streamResponseInBranch(newMsg, branch)
 
 		this.isLoading = false;
 		this.onFinishSend();
@@ -177,6 +179,19 @@ export class ChatStateClass implements ChatState {
 
 	streamResponseInBranch = async (lastMessage: Message, branch: string) => {
 		this.isStreaming = true
+
+		const response = await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}/${branch}/ai`, options: {
+				method: 'POST',
+				body:
+					JSON.stringify({
+						model: globalState.modelIdSelected,
+						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+						branchingPointDate: lastMessage.created_at,
+						bearerToken: localStorage.getItem('conduit-open-router')
+					})
+			}
+		});
 
 		// Create initial streaming message
 		this.#streamingMessage = {
@@ -188,15 +203,6 @@ export class ChatStateClass implements ChatState {
 		};
 
 		this.messages.push(this.#streamingMessage);
-
-
-		const response = await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}/${branch}/ai`, options: {
-				method: 'POST',
-				body:
-					JSON.stringify(lastMessage)
-			}
-		});
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 

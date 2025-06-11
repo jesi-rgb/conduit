@@ -5,14 +5,12 @@
 
 	let openRouterKey = $state('');
 	let openAIKey = $state('');
-	$inspect(openRouterKey);
 	onMount(() => {
 		const lsOrKey = localStorage.getItem('conduit-open-router');
 		if (lsOrKey) openRouterKey = lsOrKey;
 	});
 
 	$effect(() => {
-		console.log('changing');
 		if (openRouterKey) globalState.updateUserKeys('conduit-open-router', openRouterKey);
 		if (openAIKey) globalState.updateUserKeys('conduit-openai', openAIKey);
 	});

@@ -31,8 +31,6 @@
 
 	let copied = $state(false);
 
-	$inspect(globalState.currentBranches);
-
 	let mounted = $state(false);
 	onMount(async () => {
 		md.use(
@@ -231,8 +229,9 @@
 							<Tooltip.Portal>
 								<TooltipContent>
 									<div
-										class="bg-base-200 border-subtle
-										rounded-box max-w-sm border p-3"
+										class="bg-base-200 to-primary-content
+										border-subtle rounded-box max-w-sm border
+										 p-3 shadow-lg backdrop-blur-xl"
 									>
 										<p>Looks like you didn't setup an API key.</p>
 

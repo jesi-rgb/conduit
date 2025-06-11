@@ -3,21 +3,21 @@ import { generateStreamingAIResponse } from '$lib/server/ai';
 import { db } from '$lib/server/db';
 import { messages } from '$lib/server/db/schema';
 import { and, eq, lte, or } from 'drizzle-orm';
+import type { Message } from '$lib/types';
 
 export async function POST({ params, request }) {
-	const incomingMessage = await request.json();
+	const { model, endpoint, bearerToken, branchingPointDate } = await request.json()
 
 	try {
 		// here, we fetch all messages belonging to the original conversation
 		// only up until the message we are branching from (filtering by created_at)
 		// and then all the messages within the branch itself
-		// Get messages from original conversation up to branch point
 		const originalMessages = await db.select()
 			.from(messages)
 			.where(
 				and(
 					eq(messages.conversation_id, params.id),
-					lte(messages.created_at, new Date(incomingMessage.created_at))
+					lte(messages.created_at, new Date(branchingPointDate))
 				)
 			)
 			.orderBy(messages.created_at);
@@ -30,16 +30,18 @@ export async function POST({ params, request }) {
 
 		const previousMessages = [...originalMessages, ...branchMessages];
 
-		// Prepare messages for AI
-		const aiMessages = previousMessages.map(msg => ({
+
+		const aiMessages = previousMessages.map((msg: Message) => ({
 			role: msg.role,
 			content: msg.content
-		}));
+		}))
 
-		// Create a streaming response
-		const stream = await generateStreamingAIResponse(aiMessages);
+		const stream = await generateStreamingAIResponse(aiMessages, {
+			model: model,
+			bearerToken: bearerToken,
+			endpoint: endpoint
+		});
 
-		// Create a new Response with the streaming content
 		return new Response(
 			new ReadableStream({
 				async start(controller) {

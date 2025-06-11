@@ -77,13 +77,8 @@
 			{:else}
 				<!-- User is not logged in -->
 				<div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-					<button class="btn" onclick={handleAnonymousLogin}>Try as Guest</button>
 					<button class="btn" onclick={handleGoogleLogin}>Sign In</button>
 				</div>
-
-				<p class="mt-6 text-sm opacity-75">
-					No account needed - try it instantly as a guest or sign in to save your chats.
-				</p>
 			{/if}
 		</div>
 	</div>

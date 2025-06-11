@@ -5,7 +5,6 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
-	import Tree from './Tree.svelte';
 
 	onMount(async () => {
 		globalState.fetchBranches();

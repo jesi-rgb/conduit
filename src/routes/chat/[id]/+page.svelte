@@ -13,7 +13,6 @@
 	import { CONDUIT_PROVIDER } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
-	import BranchingArrow from '$lib/components/ui/BranchingArrow.svelte';
 
 	const md = MarkdownItAsync();
 

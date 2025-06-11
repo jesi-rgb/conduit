@@ -1,7 +1,25 @@
 import { goto } from '$app/navigation';
 import { fetchWithAuth } from '$lib/client/auth';
-import type { Message, ChatState, Branch } from '$lib/types';
+import type { Message, Branch } from '$lib/types';
 import { globalState } from '../../../stores/stores.svelte';
+
+export interface ChatState {
+	messages: Message[];
+	conversation_id: string;
+	title: string;
+	isLoading: boolean;
+	isStreaming: boolean;
+	sendMessage: (message: string) => void;
+	scrollContainer: () => void;
+	editTitle: () => void;
+	streamResponse: () => void;
+	streamResponseInBranch: (lastMessage: Message, branch: string) => void;
+	sendMessageInBranch: (message: string, branch: string) => void;
+	fetchMessages: () => void;
+	onFinishSend: () => void;
+	onFinishStream: () => void;
+	branchOut: () => void;
+}
 
 export class ChatStateClass implements ChatState {
 	#conversation_id = $state('');
@@ -98,8 +116,6 @@ export class ChatStateClass implements ChatState {
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
-		let streamBuffer = ''
-		let timeoutId: NodeJS.Timeout | null = null
 
 		while (true) {
 			const { done, value } = await reader?.read()!;
@@ -108,8 +124,6 @@ export class ChatStateClass implements ChatState {
 			const chunk = decoder.decode(value);
 			const lines = chunk.split('\n').filter((line) => line.trim() !== '');
 
-			if (timeoutId)
-				clearTimeout(timeoutId)
 
 			for (const line of lines) {
 				try {
@@ -117,14 +131,7 @@ export class ChatStateClass implements ChatState {
 
 					if (parsedChunk.type === 'chunk') {
 						// Update streaming message content
-						streamBuffer += parsedChunk.content
-
-						timeoutId = setTimeout(() => {
-							console.log('adding new chunk to ui')
-							this.#streamingMessage!.content += streamBuffer
-							streamBuffer = ''
-							return clearTimeout(timeoutId)
-						}, 600)
+						this.#streamingMessage!.content += parsedChunk.content;
 					}
 				} catch (parseError) {
 					console.error('Error parsing chunk:', parseError);
@@ -141,6 +148,8 @@ export class ChatStateClass implements ChatState {
 		if (this.messages.length == 2) {
 			this.editTitle()
 		}
+
+		this.onFinishStream()
 	};
 
 	editTitle = async () => {
@@ -243,9 +252,9 @@ export class ChatStateClass implements ChatState {
 		this.isStreaming = false
 	};
 
-
-
 	fetchMessages = async () => { };
+
+	onFinishStream = () => { };
 
 	branchOut = async () => {
 		this.isLoading = true;

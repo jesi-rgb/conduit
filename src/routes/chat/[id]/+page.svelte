@@ -20,6 +20,8 @@
 
 	let messageInUrl = $derived(page.url.searchParams.get('message'));
 
+	let inputMessage: HTMLInputElement | null = $state(null);
+
 	let chatState: ChatStateClass | null = $derived(data.chatState);
 
 	const scrollToBottom = (node: HTMLElement) => {
@@ -78,6 +80,10 @@
 		chatState.scrollContainer = () => {
 			scrollToBottom(chatContainer!);
 		};
+
+		if (!chatState.isStreaming && mounted) {
+			inputMessage?.focus();
+		}
 	});
 </script>
 
@@ -111,76 +117,80 @@
 						{:else if message.role === 'assistant'}
 							<div class="chat chat-start">
 								<div class="flex flex-col p-3">
-									<div style="contain: content;" class="prose prose-code:px-0">
-										{#await md.renderAsync(message.content) then markdown}
-											{@html markdown}
-										{/await}
-									</div>
+									{#if chatState.isStreaming && message.id === chatState.streamingMessage?.id}
+										<div><span class="loading-dots loading"></span></div>
+									{:else}
+										<div style="contain: content;" class="prose prose-code:px-0">
+											{#await md.renderAsync(message.content) then markdown}
+												{@html markdown}
+											{/await}
+										</div>
 
-									<div
-										class="mt-3 flex h-max items-center gap-3 place-self-start font-mono
+										<div
+											class="mt-3 flex h-max items-center gap-3 place-self-start font-mono
 										text-xs opacity-0
 										transition-opacity duration-100
 										group-hover:opacity-100"
-									>
-										<span class="opacity-50">
-											{new Date(message.created_at).toLocaleString('es-ES')}
-										</span>
-										<button
-											onclick={() => {
-												navigator.clipboard.writeText(message.content);
-												copied = true;
-												setTimeout(() => (copied = false), 1000);
-											}}
-											class="btn btn-xs btn-ghost btn-primary btn-circle relative size-7
-											opacity-100"
 										>
-											{#if copied}
-												<span in:fade={{ duration: 200 }} out:fade={{ duration: 400 }}>
-													<Icon
-														icon="solar:clipboard-check-bold-duotone"
-														class="absolute top-1/2
+											<span class="opacity-50">
+												{new Date(message.created_at).toLocaleString('es-ES')}
+											</span>
+											<button
+												onclick={() => {
+													navigator.clipboard.writeText(message.content);
+													copied = true;
+													setTimeout(() => (copied = false), 1000);
+												}}
+												class="btn btn-xs btn-ghost btn-primary btn-circle relative size-7
+											opacity-100"
+											>
+												{#if copied}
+													<span in:fade={{ duration: 200 }} out:fade={{ duration: 400 }}>
+														<Icon
+															icon="solar:clipboard-check-bold-duotone"
+															class="absolute top-1/2
 														left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg"
-													/>
-												</span>
-											{:else}
-												<span in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-													<Icon
-														icon="solar:notes-bold-duotone"
-														class="absolute left-1/2
+														/>
+													</span>
+												{:else}
+													<span in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
+														<Icon
+															icon="solar:notes-bold-duotone"
+															class="absolute left-1/2
 														-translate-x-1/2 -translate-y-1/2 text-lg"
-													/>
-												</span>
-											{/if}
-										</button>
-										<button
-											class="btn btn-xs btn-ghost
+														/>
+													</span>
+												{/if}
+											</button>
+											<button
+												class="btn btn-xs btn-ghost
 											btn-primary btn-circle relative
 											size-7
 											opacity-100"
-											onclick={() => chatState.branchOut()}
-										>
-											<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
-										</button>
+												onclick={() => chatState.branchOut()}
+											>
+												<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
+											</button>
 
-										{#each globalState.currentBranches as branch}
-											{#if branch.branch_from_message_id === message.id}
-												<a
-													data-sveltekit-preload-data="tap"
-													href="/chat/{message.conversation_id}/{branch.id}"
-													class="place-self-end self-end text-right text-xs"
-												>
-													<div class="my-auto flex h-full items-center gap-3">
-														<span> Branch </span>
-														<Icon
-															class="text-primary"
-															icon="solar:chat-square-arrow-bold-duotone"
-														/>
-													</div>
-												</a>
-											{/if}
-										{/each}
-									</div>
+											{#each globalState.currentBranches as branch}
+												{#if branch.branch_from_message_id === message.id}
+													<a
+														data-sveltekit-preload-data="tap"
+														href="/chat/{message.conversation_id}/{branch.id}"
+														class="place-self-end self-end text-right text-xs"
+													>
+														<div class="my-auto flex h-full items-center gap-3">
+															<span> Branch </span>
+															<Icon
+																class="text-primary"
+																icon="solar:chat-square-arrow-bold-duotone"
+															/>
+														</div>
+													</a>
+												{/if}
+											{/each}
+										</div>
+									{/if}
 								</div>
 							</div>
 						{/if}
@@ -206,9 +216,10 @@
 							<Tooltip.Trigger class="flex w-full gap-1">
 								<input
 									type="text"
+									bind:this={inputMessage}
 									bind:value={message}
 									placeholder="Type your message..."
-									class="input input-border w-full"
+									class="input input-border focus:border-primary w-full focus:outline-none"
 									disabled={chatState.isLoading ||
 										chatState.isStreaming ||
 										!localStorage.getItem(CONDUIT_PROVIDER)}

@@ -25,22 +25,6 @@ export type Message = {
 	created_at: Date;
 }
 
-export interface ChatState {
-	messages: Message[];
-	conversation_id: string;
-	title: string;
-	isLoading: boolean;
-	isStreaming: boolean;
-	sendMessage: (message: string) => void;
-	scrollContainer: () => void;
-	editTitle: () => void;
-	streamResponse: () => void;
-	streamResponseInBranch: (lastMessage: Message, branch: string) => void;
-	sendMessageInBranch: (message: string, branch: string) => void;
-	fetchMessages: () => void;
-	onFinishSend: () => void;
-	branchOut: () => void;
-}
 
 export type Branch = {
 	id?: string;

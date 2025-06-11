@@ -34,7 +34,7 @@
 				<div class="text-muted truncate text-xs">{msg.content}</div>
 			</button>
 
-			{#each globalState.currentBranches as branch, i (branch.id)}
+			{#each globalState.currentBranches as branch, b (branch.id)}
 				{#if branch.branch_from_message_id === msg.id}
 					<a
 						data-sveltekit-preload-data="tap"
@@ -47,7 +47,7 @@
 				{/if}
 			{/each}
 			{#if i < globalState.currentMessages.length - 1}
-				<div class="border-base-content/10 ml-2.5 h-6 w-0 border"></div>
+				<div class="border-base-content/10 ml-[11px] h-4 w-0 border"></div>
 			{/if}
 		{/each}
 	</section>

@@ -43,7 +43,7 @@
 		}
 
 		try {
-			const { error: authError } = await supabase.auth.signInWithOAuth({
+			const { data, error: authError } = await supabase.auth.signInWithOAuth({
 				provider: 'google'
 			});
 

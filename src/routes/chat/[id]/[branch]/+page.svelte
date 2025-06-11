@@ -61,8 +61,18 @@
 		globalState.fetchBranches();
 	});
 
+	let inputMessage: HTMLInputElement | null = $state(null);
+
+	let mounted = $state(false);
+	onMount(() => {
+		mounted = true;
+	});
 	$effect(() => {
 		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
+
+		if (!chatState.isStreaming && mounted) {
+			inputMessage?.focus();
+		}
 	});
 </script>
 
@@ -174,10 +184,11 @@
 				<ModelSelector />
 				<input
 					type="text"
+					bind:this={inputMessage}
 					bind:value={message}
 					placeholder="Type your message..."
 					disabled={chatState.isLoading || chatState.isStreaming}
-					class="input input-border w-full"
+					class="input input-border focus:border-primary w-full focus:outline-none"
 				/>
 				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
 					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />

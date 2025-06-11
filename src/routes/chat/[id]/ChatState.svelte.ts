@@ -51,7 +51,8 @@ export class ChatStateClass implements ChatState {
 			created_at: new Date(),
 			conversation_id: this.conversation_id
 		}
-		this.#messages.push(newMsg);
+		this.messages.push(newMsg);
+		console.log(newMsg)
 
 		// post msg to database
 		await fetchWithAuth({
@@ -61,8 +62,6 @@ export class ChatStateClass implements ChatState {
 			}
 		})
 
-		this.scrollContainer()
-
 		this.streamResponse()
 
 		this.isLoading = false;
@@ -71,7 +70,17 @@ export class ChatStateClass implements ChatState {
 	streamResponse = async () => {
 		this.isStreaming = true
 
-		console.log('streaming with', globalState.modelIdSelected)
+		// Create initial streaming message
+		this.#streamingMessage = {
+			id: crypto.randomUUID(),
+			role: 'assistant',
+			content: '',
+			created_at: new Date(),
+			conversation_id: this.conversation_id
+		};
+
+		this.messages.push(this.#streamingMessage);
+
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/ai`,
 			options: {
@@ -85,16 +94,7 @@ export class ChatStateClass implements ChatState {
 					})
 			}
 		});
-		// Create initial streaming message
-		this.#streamingMessage = {
-			id: crypto.randomUUID(),
-			role: 'assistant',
-			content: '',
-			created_at: new Date(),
-			conversation_id: this.conversation_id
-		};
 
-		this.messages.push(this.#streamingMessage);
 
 
 		const reader = response.body?.getReader();
@@ -203,6 +203,7 @@ export class ChatStateClass implements ChatState {
 		};
 
 		this.messages.push(this.#streamingMessage);
+
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -242,6 +243,8 @@ export class ChatStateClass implements ChatState {
 		this.fetchMessages()
 
 		const message = this.messages[this.messages.length - 1];
+		console.log('branching from ', message.id)
+
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,
 			branch_from_message_id: message.id!.trim(),

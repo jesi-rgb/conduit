@@ -9,6 +9,7 @@
 	import { blur, fade, fly } from 'svelte/transition';
 	import { ChatStateClass } from '../ChatState.svelte.js';
 	import { globalState } from '../../../../stores/stores.svelte.js';
+	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 
 	const md = MarkdownItAsync();
 
@@ -170,13 +171,15 @@
 					}
 				}}
 			>
+				<ModelSelector />
 				<input
 					type="text"
 					bind:value={message}
 					placeholder="Type your message..."
+					disabled={chatState.isLoading || chatState.isStreaming}
 					class="input input-border w-full"
 				/>
-				<button class="btn" type="submit">
+				<button class="btn" type="submit" disabled={chatState.isLoading || chatState.isStreaming}>
 					{chatState.isLoading ? 'Loading...' : 'Send'}
 				</button>
 			</form>

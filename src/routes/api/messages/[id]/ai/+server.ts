@@ -13,6 +13,8 @@ export async function POST({ params, request }) {
 			content: msg.content
 		}));
 
+		const idStreamingResponse = incomingMessages[incomingMessages.length - 1].id
+
 		// Create a streaming response
 		const stream = await generateStreamingAIResponse(aiMessages, {
 			model: model,
@@ -34,6 +36,7 @@ export async function POST({ params, request }) {
 							if (done) {
 								console.log(done)
 								const assistantMessageResult = await db.insert(messages).values({
+									id: idStreamingResponse,
 									conversation_id: params.id,
 									content: assistantResponse,
 									role: 'assistant',

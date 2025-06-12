@@ -12,7 +12,7 @@
 	} = $props();
 </script>
 
-<Tooltip.Content bind:ref {...restProps} forceMount={true}>
+<Tooltip.Content sideOffset={10} bind:ref {...restProps} forceMount={true}>
 	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
 			<div {...wrapperProps}>

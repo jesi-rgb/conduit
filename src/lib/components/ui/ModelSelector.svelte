@@ -87,7 +87,7 @@
 		<div class="relative">
 			<Combobox.Input
 				oninput={(e) => (searchValue = e.currentTarget.value)}
-				class="border-subtle rounded-box h-full w-60 border px-3 text-xs"
+				class="border-subtle rounded-box h-full shrink border px-3 text-xs"
 				placeholder={selectedModel.label}
 				aria-label="Select a model"
 				defaultValue={selectedModel.label}

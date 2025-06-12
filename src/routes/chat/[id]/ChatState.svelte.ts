@@ -6,9 +6,11 @@ import { globalState } from '../../../stores/stores.svelte';
 export interface ChatState {
 	messages: Message[];
 	conversation_id: string;
+	mainConversation: Message[];
 	title: string;
 	isLoading: boolean;
 	isStreaming: boolean;
+	saveMainConvo: () => void;
 	sendMessage: (message: string) => void;
 	scrollContainer: () => void;
 	editTitle: () => void;
@@ -24,14 +26,23 @@ export interface ChatState {
 export class ChatStateClass implements ChatState {
 	#conversation_id = $state('');
 	#messages = $state<Message[]>([]);
+	#mainConversation: Message[] = $state([]);
 
 	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	onFinishSend = () => { };
 	scrollContainer = () => { };
+	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
+
+	get mainConversation() {
+		return this.#mainConversation;
+	}
+	set mainConversation(messages: Message[]) {
+		this.#mainConversation = messages;
+	}
 
 	// Add getter for UI to access
 	get streamingMessage() {

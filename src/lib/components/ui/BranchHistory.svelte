@@ -9,7 +9,6 @@
 	onMount(async () => {
 		globalState.fetchBranches();
 	});
-	$inspect(globalState.currentBranches);
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {

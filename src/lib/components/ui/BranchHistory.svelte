@@ -22,7 +22,7 @@
 <Pane defaultSize={15} class="w-full">
 	<section
 		class="border-base-content/10 bg-base-200 mx-auto flex h-full
-		w-full flex-col overflow-y-scroll border-l p-3 shadow-lg"
+		w-full flex-col overflow-x-clip overflow-y-scroll border-l p-3 shadow-lg"
 	>
 		{#each globalState.currentMessages as msg, i (msg.id)}
 			{@const lastMessage = i === globalState.currentMessages.length - 1}

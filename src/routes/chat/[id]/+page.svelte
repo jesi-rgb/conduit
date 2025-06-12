@@ -167,7 +167,7 @@
 											btn-primary btn-circle relative
 											size-7
 											opacity-100"
-												onclick={() => chatState.branchOut()}
+												onclick={() => chatState.branchOut(message)}
 											>
 												<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
 											</button>

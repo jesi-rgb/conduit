@@ -256,12 +256,11 @@ export class ChatStateClass implements ChatState {
 
 	onFinishStream = () => { };
 
-	branchOut = async () => {
+	branchOut = async (message: Message) => {
 		this.isLoading = true;
 
 		this.fetchMessages()
 
-		const message = this.messages[this.messages.length - 1];
 		console.log('branching from ', message.id)
 
 		const newBranch: Branch = {

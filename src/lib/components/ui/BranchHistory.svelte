@@ -9,6 +9,7 @@
 	onMount(async () => {
 		globalState.fetchBranches();
 	});
+	$inspect(globalState.currentBranches);
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {
@@ -31,7 +32,7 @@
 				}}
 			>
 				<Icon class="text-primary shrink-0 text-2xl" icon="solar:star-shine-bold-duotone" />
-				<div class="text-muted truncate text-xs">{msg.content}</div>
+				<div class="text-muted truncate text-xs">{msg.id!.slice(0, 7)}</div>
 			</button>
 
 			{#each globalState.currentBranches as branch, b (branch.id)}

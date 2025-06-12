@@ -78,7 +78,9 @@
 
 {#if chatState?.messages}
 	<section id="convo-view" class="flex h-full w-full flex-col">
-		<div class="border-base-300 h-10 border-b p-2 pl-6 font-bold">{chatState.title}</div>
+		{#if !isBranch}
+			<div class="border-base-300 h-10 border-b p-2 pl-6 font-bold">{chatState.title}</div>
+		{/if}
 		<div class="mx-auto flex w-full grow flex-col justify-between p-3 pt-1">
 			<div
 				bind:this={chatContainer}

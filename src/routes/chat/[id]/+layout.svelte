@@ -22,23 +22,12 @@
 </script>
 
 {#if chatState && mainConversationData}
-	<main class="h-[100vh]">
-		<PaneGroup direction="horizontal" class="h-full">
-			<Sidebar />
-			<PaneResizer class="hover:bg-primary z-10 -mx-1.5 w-3 transition-colors"></PaneResizer>
-			<Pane>
-				<div class="h-full">
-					<ConversationView {chatState} mainConversation={mainConversationData} {conversationId} />
-				</div>
-
-				{#if isBranch}
-					<Drawer {conversationId}>
-						{@render children()}
-					</Drawer>
-				{/if}
-			</Pane>
-			<PaneResizer class="hover:bg-primary z-10 -mx-1.5 w-3 transition-colors"></PaneResizer>
-			<BranchHistory />
-		</PaneGroup>
-	</main>
+	<div class="h-full">
+		<ConversationView {chatState} mainConversation={mainConversationData} {conversationId} />
+		{#if isBranch}
+			<Drawer {conversationId}>
+				{@render children()}
+			</Drawer>
+		{/if}
+	</div>
 {/if}

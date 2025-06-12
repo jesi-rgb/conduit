@@ -53,6 +53,6 @@
 		and helps test if this is really a useful feature or a gimmick.
 	</p>
 	<p>As a bonus, this comes with some git style visualizations.</p>
-	<p>I hope you as much fun using it as I had building it.</p>
+	<p>I hope you have as much fun using it as I had building it.</p>
 	<blockquote>Yours truly, <a href="https://jesirgb.com">Jesús</a></blockquote>
 </main>

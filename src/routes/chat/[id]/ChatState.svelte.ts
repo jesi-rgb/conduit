@@ -39,6 +39,13 @@ export class ChatStateClass implements ChatState {
 
 	#streamingMessage = $state<Message | null>(null);
 
+
+	constructor(conv_id?: string) {
+		if (conv_id) {
+			this.conversation_id = conv_id
+		}
+	}
+
 	get mainConversation() {
 		return this.#mainConversation;
 	}
@@ -61,9 +68,6 @@ export class ChatStateClass implements ChatState {
 		this.#streamingMessage = message;
 	}
 
-	constructor(conv_id: string) {
-		this.conversation_id = conv_id
-	}
 	get messages() {
 		return this.#messages
 	}

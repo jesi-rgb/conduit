@@ -6,7 +6,7 @@
 	const { children } = $props();
 </script>
 
-<main class="h-full">
+<main class="h-[100vh]">
 	<PaneGroup direction="horizontal" class="h-full">
 		<Sidebar />
 		<PaneResizer class="hover:bg-primary z-10 -mx-1.5 w-3 transition-colors"></PaneResizer>

@@ -25,9 +25,8 @@
 		)}
 		{...restProps}
 	>
-		<div
-			class="bg-muted mx-auto mt-4 hidden h-2 shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block"
-		></div>
-		{@render children?.()}
+		<div data-vaul-no-drag class="pointer-events-auto">
+			{@render children?.()}
+		</div>
 	</DrawerPrimitive.Content>
 </DrawerPrimitive.Portal>

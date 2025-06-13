@@ -202,7 +202,7 @@ export class ChatStateClass implements ChatState {
 			conversation_id: this.conversation_id
 		}
 
-		this.messages.push(newMsg)
+		this.currentBranch.push(newMsg)
 
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/${branch}`, options: {
@@ -245,7 +245,7 @@ export class ChatStateClass implements ChatState {
 			conversation_id: this.conversation_id
 		};
 
-		this.messages.push(this.#streamingMessage);
+		this.currentBranch.push(this.#streamingMessage);
 
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();

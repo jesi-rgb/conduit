@@ -22,7 +22,9 @@
 
 {#if chatState && (mainConversationData || branchData)}
 	<ConversationView {chatState} {conversationId} />
-	<Drawer open={isBranch} {conversationId}>
-		{@render children()}
-	</Drawer>
+	{#if isBranch}
+		<Drawer open={isBranch} {conversationId}>
+			{@render children()}
+		</Drawer>
+	{/if}
 {/if}

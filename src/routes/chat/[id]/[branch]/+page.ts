@@ -4,14 +4,13 @@ import { ChatStateClass } from "../ChatState.svelte";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ params, fetch, parent }) => {
-	console.log('loading branch data in page ts')
 
-	const { chatState } = await parent();
+	const { chatState } = await parent()
 
 	chatState.fetchMessages = async () => {
 		const response = await fetchWithAuth({ url: `/api/messages/${params.id}/${params.branch}`, svelteFetch: fetch });
 		const branchMsgs = (await response.json()).branch;
-		chatState.mainBranch = branchMsgs
+		chatState.currentBranch = branchMsgs
 	}
 
 	chatState.fetchMessages()

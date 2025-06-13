@@ -9,8 +9,6 @@
 	let chatState = $derived(data.chatState);
 	const conversationId = $derived(page.params.id);
 	const branchId = $derived(page.params.branch);
-
-	$inspect('branch page.svelte', chatState.mainBranch);
 </script>
 
 <ConversationView {chatState} {conversationId} {branchId} />

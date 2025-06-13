@@ -13,8 +13,10 @@
 <Drawer.Root onClose={closeBranch} direction="right" bind:open>
 	<Drawer.Portal>
 		<Drawer.Content
-			class="from-base-100 to-base-200 w-!/3 fixed top-0 right-0 bottom-0
-			z-30 flex h-full flex-col bg-gradient-to-l p-2"
+			class="from-base-100 to-base-200 pointer-events-auto fixed top-0 right-0 bottom-0 z-30
+			flex h-full w-1/3 flex-col bg-gradient-to-l p-2
+            data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 
+			"
 		>
 			<div class="flex h-full flex-col">
 				<div
@@ -25,7 +27,11 @@
 						<Icon icon="solar:arrow-left-bold-duotone" />
 					</button>
 				</div>
-				<div class="flex-1 overflow-auto">
+				<div
+					class="selection:bg-primary selection:text-primary-content pointer-events-auto flex-1
+					overflow-auto select-text"
+					data-vaul-no-drag
+				>
 					{@render children()}
 				</div>
 			</div>

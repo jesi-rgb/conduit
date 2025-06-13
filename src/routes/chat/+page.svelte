@@ -1,58 +1,77 @@
 <script>
+	import { onMount } from 'svelte';
 	import { globalState } from '../../stores/stores.svelte';
 
-	globalState.currentBranches = [];
-	globalState.currentMessages = [];
+	let mounted = false;
+	onMount(() => {
+		mounted = true;
+
+		globalState.currentBranches = [];
+		globalState.currentMessages = [];
+	});
 </script>
 
-<main class="prose mx-auto my-10 h-[90vh] w-fit overflow-y-scroll">
-	<h2>Welcome to Conduit!</h2>
-	<p>
-		First of all, make sure to head to <a href="/settings">Settings</a> to setup your OpenRouter key
-		to start chatting!
-	</p>
-	<p>Have fun!</p>
+{#if mounted}
+	<form
+		class="flex justify-between gap-1 pt-1"
+		onsubmit={(e) => {
+			e.preventDefault();
+			if (message) {
+				if (isBranch) {
+					chatState.sendMessageInBranch(message, branchId);
+				} else {
+					chatState.sendMessage(message);
+				}
+				message = '';
+			}
+		}}
+	>
+		<ModelSelector />
 
-	<h2>A primer on Conduit</h2>
-	<p>This chat app is my sumbission to Cloneathon.</p>
-	<p>
-		It has all the features you would expect: auth and DB setup, markdown rendering, a beautiful
-		theme and some animations here and there.
-	</p>
-	<p>What sets Conduit apart is its <b>branching functionality</b>.</p>
-	<p>
-		Conversations are rarely linear. If I am trying to learn how WebGL works, and the LLM mentions <i
-			>uniforms</i
-		>, I will want to dive into that concept. But this is <i>tangent</i> to the concept of WebGL.
-		Conduit helps you manage all this context with <b class="text-primary">branches</b>.
-	</p>
+		<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
+			<Tooltip.Root delayDuration={0}>
+				<Tooltip.Trigger class="flex w-full gap-1">
+					<input
+						type="text"
+						bind:this={inputMessage}
+						bind:value={message}
+						placeholder="Type your message..."
+						class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
+						disabled={chatState.isLoading ||
+							chatState.isStreaming ||
+							!localStorage.getItem(CONDUIT_PROVIDER)}
+					/>
+					<button
+						class="btn"
+						type="submit"
+						disabled={chatState.isLoading ||
+							chatState.isStreaming ||
+							!localStorage.getItem(CONDUIT_PROVIDER)}
+					>
+						<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
+					</button>
+				</Tooltip.Trigger>
+				<Tooltip.Portal>
+					<TooltipContent>
+						<div
+							class="bg-base-200 to-primary-content
+										border-subtle rounded-box max-w-sm border
+										 p-3 shadow-lg backdrop-blur-xl"
+						>
+							<p>Looks like you didn't setup an API key.</p>
 
-	<p>
-		I engineered branches just as you would expect: the conversation flows linearly until you want
-		to branch off from somewhere. Then, an alternative path follows from there. You could still come
-		back to the original "parent" conversation and keep going.
-	</p>
-	<p>
-		When sending the messages to the LLM for it to keep up with context, we follow this process:
-	</p>
-	<ul>
-		<li>
-			If we are in a branch, we send all the messages of the branch <b>plus</b> all the messages from
-			the original conversation up until the message we branched from
-		</li>
-		<li>
-			If we are in a parent conversation, we only send the messages of the parent conversation
-		</li>
-	</ul>
-
-	<p>
-		This keeps the main conversation free of tangent digressions, and helps keep the context clean.
-	</p>
-	<p>
-		Right now, branching is limited to one level, since it made the process easier to think through,
-		and helps test if this is really a useful feature or a gimmick.
-	</p>
-	<p>As a bonus, this comes with some git style visualizations.</p>
-	<p>I hope you have as much fun using it as I had building it.</p>
-	<blockquote>Yours truly, <a href="https://jesirgb.com">Jesús</a></blockquote>
-</main>
+							<p>
+								Head to <a
+									class="text-primary font-bold
+												underline"
+									href="/settings">Settings</a
+								>
+								to start chatting!
+							</p>
+						</div>
+					</TooltipContent>
+				</Tooltip.Portal>
+			</Tooltip.Root>
+		</Tooltip.Provider>
+	</form>
+{/if}

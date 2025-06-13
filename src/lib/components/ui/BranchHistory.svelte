@@ -6,9 +6,9 @@
 	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
 
-	onMount(async () => {
-		globalState.fetchBranches();
-	});
+	// onMount(async () => {
+	// 	globalState.fetchBranches();
+	// });
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {
@@ -63,7 +63,7 @@
 								w-0 border"
 							></div>
 							<Icon class="text-subtle shrink-0 text-2xl" icon="solar:forward-2-bold" />
-							<Icon class="text-muted shrink-0 text-2xl" icon="solar:login-3-bold-duotone" />
+							<Icon class="text-muted shrink-0 text-2xl" icon="solar:routing-3-bold-duotone" />
 							<p class="text-muted text-xs">Branch {b + 1}</p>
 						</a>
 					{/if}

@@ -7,9 +7,4 @@
 	const branchId = $derived(page.params.branch);
 </script>
 
-<ConversationView
-	chatState={data.chatState}
-	mainConversation={data.chatState.messages}
-	{conversationId}
-	{branchId}
-/>
+<ConversationView chatState={data.chatState} {conversationId} {branchId} />

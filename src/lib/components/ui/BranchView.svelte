@@ -63,6 +63,7 @@
 		};
 		globalState.fetchBranches();
 
+		document.getElementById(messageInUrl!)?.scrollIntoView({ behavior: 'smooth' });
 		mounted = true;
 	});
 
@@ -73,11 +74,9 @@
 			inputMessage?.focus();
 		}
 	});
-
-	let messagesToDisplay = $derived(isBranch ? chatState.mainBranch : chatState.messages);
 </script>
 
-{#if messagesToDisplay}
+{#if chatState?.messages}
 	<section id="convo-view" class="flex h-full w-full flex-col">
 		{#if !isBranch}
 			<div class="border-base-300 h-10 border-b p-2 pl-6 font-bold">{chatState.title}</div>
@@ -88,7 +87,7 @@
 				class="h-20 grow overflow-y-scroll
 				pt-2"
 			>
-				{#each messagesToDisplay as message}
+				{#each chatState.messages as message}
 					<div id={message.id} class="group">
 						{#if message.role === 'user'}
 							<div class="chat chat-end">
@@ -154,17 +153,15 @@
 													</span>
 												{/if}
 											</button>
-											{#if !isBranch}
-												<button
-													class="btn btn-xs btn-ghost
+											<button
+												class="btn btn-xs btn-ghost
 											btn-primary btn-circle
 											size-7
 											opacity-100"
-													onclick={() => chatState.branchOut(message)}
-												>
-													<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
-												</button>
-											{/if}
+												onclick={() => chatState.branchOut(message)}
+											>
+												<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
+											</button>
 
 											{#each globalState.currentBranches as branch, b (branch.id)}
 												{#if branch.branch_from_message_id === message.id}

@@ -136,6 +136,8 @@ export class ChatStateClass implements ChatState {
 			}
 		});
 
+
+
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -167,6 +169,8 @@ export class ChatStateClass implements ChatState {
 		}
 
 		this.isStreaming = false
+
+		globalState.currentMessages.push(this.#streamingMessage)
 
 		if (this.messages.length == 2) {
 			this.editTitle()

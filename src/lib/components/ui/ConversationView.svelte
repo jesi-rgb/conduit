@@ -14,6 +14,7 @@
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
+	import TooltipExplain from './TooltipExplain.svelte';
 
 	// Accept data as prop instead of from page data
 	interface Props {
@@ -158,44 +159,37 @@
 												{/if}
 											</button>
 											{#if !isBranch}
-												<button
-													class="btn btn-xs btn-ghost
+												<TooltipExplain>
+													<button
+														class="btn btn-xs btn-ghost
 											btn-primary btn-circle
 											size-7
 											opacity-100"
-													onclick={() => chatState.branchOut(message)}
-												>
-													<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
-												</button>
+														onclick={() => chatState.branchOut(message)}
+													>
+														<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />
+													</button>
+
+													{#snippet content()}
+														<div>Branch out</div>
+													{/snippet}
+												</TooltipExplain>
 											{/if}
 
 											{#each globalState.currentBranches as branch, b (branch.id)}
 												{#if branch.branch_from_message_id === message.id}
-													<Tooltip.Provider>
-														<Tooltip.Root delayDuration={0}>
-															<Tooltip.Trigger>
-																<a
-																	href="/chat/{message.conversation_id}/{branch.id}"
-																	class="btn btn-xs btn-ghost btn-primary btn-circle size-7"
-																>
-																	<Icon class="text-lg" icon="solar:login-3-line-duotone" />
-																</a>
-															</Tooltip.Trigger>
-															<Tooltip.Portal>
-																<TooltipContent>
-																	<div
-																		class="bg-base-200 to-primary-content border-subtle rounded-box max-w-sm
-																		border
-																		p-3
-																		text-xs
-																		shadow-lg"
-																	>
-																		Branch {b + 1}
-																	</div>
-																</TooltipContent>
-															</Tooltip.Portal>
-														</Tooltip.Root>
-													</Tooltip.Provider>
+													<TooltipExplain>
+														<a
+															href="/chat/{message.conversation_id}/{branch.id}"
+															class="btn btn-xs btn-ghost btn-primary btn-circle size-7"
+														>
+															<Icon class="text-lg" icon="solar:login-3-line-duotone" />
+														</a>
+
+														{#snippet content()}
+															Branch {b + 1}
+														{/snippet}
+													</TooltipExplain>
 												{/if}
 											{/each}
 										</div>

@@ -1,8 +1,15 @@
-<script>
+<script lang="ts">
+	import type { Snippet } from 'svelte';
 	import TooltipContent from './TooltipContent.svelte';
 	import { Tooltip } from 'bits-ui';
 
-	const { children, content, disabled, ...restProps } = $props();
+	interface Props {
+		children: Snippet;
+		content: Snippet;
+		disabled?: boolean;
+		restProps?: Record<string, any>;
+	}
+	const { children, content, disabled, ...restProps }: Props = $props();
 </script>
 
 <Tooltip.Provider>

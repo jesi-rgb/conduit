@@ -16,7 +16,11 @@
 	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
 			<div {...wrapperProps}>
-				<div {...props} transition:fly={{ y: 10, duration: 200 }}>
+				<div
+					class="bg-base-200 to-primary-content border-subtle rounded-box max-w-sm border p-3 text-xs shadow-lg"
+					{...props}
+					transition:fly={{ y: 10, duration: 200 }}
+				>
 					{@render children?.()}
 				</div>
 			</div>

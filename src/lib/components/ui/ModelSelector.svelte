@@ -6,6 +6,7 @@
 	import { fly } from 'svelte/transition';
 	import { globalState } from '../../../stores/stores.svelte';
 	import { onMount } from 'svelte';
+	import TooltipExplain from './TooltipExplain.svelte';
 
 	let searchValue = $state('');
 
@@ -93,7 +94,12 @@
 				defaultValue={selectedModel.label}
 			/>
 			<Combobox.Trigger class="btn btn-xs absolute top-1/2 right-2 -translate-y-1/2">
-				<Icon icon="solar:maximize-bold-duotone" />
+				<TooltipExplain>
+					<Icon icon="solar:maximize-bold-duotone" />
+					{#snippet content()}
+						Select a different model
+					{/snippet}
+				</TooltipExplain>
 			</Combobox.Trigger>
 		</div>
 		<Combobox.Portal>

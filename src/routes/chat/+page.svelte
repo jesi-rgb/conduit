@@ -7,8 +7,6 @@
 	import { ChatStateClass } from './[id]/ChatState.svelte';
 	import { goto } from '$app/navigation';
 	import { fetchWithAuth } from '$lib/client/auth';
-
-	import type { Conversation } from '$lib/types';
 	import TooltipExplain from '$lib/components/ui/TooltipExplain.svelte';
 	import { activeChatState } from '../../stores/chatStore.svelte';
 
@@ -50,9 +48,10 @@
 		const newChatState = new ChatStateClass(convData.id);
 
 		// 3. ❗️ CRITICAL: Put the new instance into the store
-		activeChatState.set(newChatState);
 
 		newChatState!.sendMessage(message);
+
+		activeChatState.set(newChatState);
 		goto(`/chat/${convData.id}`, { replaceState: false });
 	}
 </script>
@@ -70,13 +69,13 @@
 				e.preventDefault();
 			}}
 		>
-			<TooltipExplain
-				class="w-full"
-				disabled={localStorage.getItem(CONDUIT_PROVIDER) !== undefined}
-			>
+			<TooltipExplain disabled={localStorage.getItem(CONDUIT_PROVIDER) !== undefined}>
 				<textarea
 					onkeydown={(e) => {
-						if (e.key === 'Enter') newConversation();
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							newConversation();
+						}
 					}}
 					bind:this={inputMessage}
 					bind:value={message}

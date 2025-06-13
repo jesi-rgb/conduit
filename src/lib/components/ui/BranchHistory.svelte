@@ -12,6 +12,8 @@
 			return `/chat/${page.params.id}?message=${msgId}`;
 		}
 	};
+
+	// $inspect(globalState.currentMessages);
 </script>
 
 <Pane defaultSize={15} class="w-full">

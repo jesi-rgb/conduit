@@ -36,6 +36,7 @@ export class GlobalState implements GlobalStateType {
 	}
 
 	fetchBranches = async () => { }
+	fetchCurrentMessages = async () => { }
 
 	set user(user: User) {
 		this.#user_data = user

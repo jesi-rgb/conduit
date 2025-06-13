@@ -9,7 +9,8 @@
 	const chatState = $derived(data.chatState);
 
 	const conversationId = $derived(page.params.id);
-	const isBranch = $derived(!!page.params.branch);
+	let isBranch = $derived(!!page.params.branch);
+	$inspect(isBranch);
 
 	let mainConversationData = $derived(chatState.mainConversation);
 
@@ -22,9 +23,7 @@
 	<div class="h-full">
 		<ConversationView {chatState} {conversationId} />
 		{#if isBranch}
-			<Drawer {conversationId}>
-				{@render children()}
-			</Drawer>
+			mierdon
 		{/if}
 	</div>
 {/if}

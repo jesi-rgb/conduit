@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 
-	let { children, conversationId } = $props();
+	let { children, conversationId, open = $bindable(false) } = $props();
 
 	let isBranch = $derived(page.params.branch !== undefined);
 
@@ -13,22 +13,15 @@
 	}
 </script>
 
-<Drawer.Root onClose={closeBranch} direction="right" bind:open={isBranch}>
-	<Drawer.Portal>
-		<Drawer.Content class="from-base-100 to-base-200 bg-gradient-to-l">
-			<div class="flex h-full flex-col">
-				<div
-					class="border-subtle flex items-center
-					justify-between border-b p-2"
-				>
-					<button onclick={closeBranch} class="btn btn-ghost btn-xs btn-circle">
-						<Icon icon="solar:arrow-left-bold-duotone" />
-					</button>
-				</div>
-				<div class="flex-1 overflow-auto">
-					{@render children()}
-				</div>
-			</div>
-		</Drawer.Content>
-	</Drawer.Portal>
+<Drawer.Root>
+	<Drawer.Trigger>Open</Drawer.Trigger>
+	<Drawer.Content>
+		<Drawer.Header>
+			<Drawer.Title>Are you sure absolutely sure?</Drawer.Title>
+			<Drawer.Description>This action cannot be undone.</Drawer.Description>
+		</Drawer.Header>
+		<Drawer.Footer>
+			<Drawer.Close>Cancel</Drawer.Close>
+		</Drawer.Footer>
+	</Drawer.Content>
 </Drawer.Root>

@@ -21,12 +21,11 @@
 	"devDependencies": {
 		"@iconify-json/solar": "^1.2.2",
 		"@iconify/svelte": "^5.0.0",
-		"@lucide/svelte": "^0.514.0",
 		"@shikijs/markdown-it": "^3.6.0",
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
-		"@tailwindcss/typography": "^0.5.15",
+		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/markdown-it": "^14.1.2",
 		"@types/node": "^20",
@@ -53,12 +52,11 @@
 	"dependencies": {
 		"@supabase/auth-helpers-sveltekit": "^0.13.0",
 		"@supabase/supabase-js": "^2.49.8",
-		"@types/d3": "^7.4.3",
-		"d3": "^7.9.0",
 		"drizzle-orm": "^0.40.0",
 		"paneforge": "^0.0.6",
 		"postgres": "^3.4.5",
 		"supabase": "^2.23.4",
-		"uuid": "^11.1.0"
+		"uuid": "^11.1.0",
+		"vaul-svelte": "^0.3.2"
 	}
 }

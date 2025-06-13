@@ -15,6 +15,16 @@ export const load: PageLoad = ({ params, fetch }) => {
 		globalState.currentMessages = chatState.messages
 	}
 
+
+	globalState.fetchBranches = async () => {
+		const response = await fetchWithAuth({ url: `/api/branches/${chatState.conversation_id}`, svelteFetch: fetch })
+		const branches = (await response.json()).branches;
+		globalState.currentBranches = branches
+	}
+
+
+	globalState.fetchBranches()
+
 	chatState.fetchMessages()
 
 	return { chatState };

@@ -54,23 +54,23 @@
 					{#if branch.branch_from_message_id === msg.id}
 						<a
 							data-sveltekit-preload-data="tap"
-							class="relative ml-2 flex w-full cursor-pointer
-						items-center gap-2 py-1"
+							class="relative -my-0.5 ml-2 flex w-full
+						cursor-pointer items-center gap-2 py-1"
 							href="/chat/{page.params.id}/{branch.id}"
 						>
 							<div
-								class="border-subtle absolute left-[3px] h-full
-								w-0 border"
+								class="border-subtle absolute left-[3px]
+								h-full w-0 rounded-full border"
 							></div>
 							<Icon class="text-subtle shrink-0 text-2xl" icon="solar:forward-2-bold" />
-							<Icon class="text-muted shrink-0 text-2xl" icon="solar:routing-3-bold-duotone" />
+							<Icon class="text-muted shrink-0 text-xl" icon="solar:star-ring-bold-duotone" />
 							<p class="text-muted text-xs">Branch {b + 1}</p>
 						</a>
 					{/if}
 				{/if}
 			{/each}
 			{#if !lastMessage}
-				<div class="border-subtle ml-[11px] h-2 w-0 border"></div>
+				<div class="border-subtle -my-0.5 ml-[11px] h-5 w-0 rounded-full border"></div>
 			{/if}
 		{/each}
 	</section>

@@ -94,7 +94,6 @@ export class ChatStateClass implements ChatState {
 			conversation_id: this.conversation_id
 		}
 		this.messages.push(newMsg);
-		console.log(newMsg)
 
 		// post msg to database
 		await fetchWithAuth({

@@ -8,14 +8,14 @@
 	import { page } from '$app/state';
 	import { fetchWithAuth } from '$lib/client/auth.js';
 	import Icon from '@iconify/svelte';
-	import { blur, fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 	import { CONDUIT_PROVIDER, type Conversation } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 
 	// Accept data as prop instead of from page data
-	let { chatState, conversationId, branchId = '' } = $props();
+	let { chatState, conversationId, branchId = undefined } = $props();
 
 	let isBranch = $derived(!!branchId);
 
@@ -23,10 +23,6 @@
 
 	let messageInUrl = $derived(page.url.searchParams.get('message'));
 	let inputMessage: HTMLInputElement | null = $state(null);
-
-	const scrollToBottom = (node: HTMLElement) => {
-		node.scroll({ top: node.scrollHeight, behavior: 'smooth' });
-	};
 
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
@@ -74,7 +70,7 @@
 		}
 	});
 
-	let messagesToDisplay = $derived(isBranch ? chatState.mainBranch : chatState.messages);
+	let messagesToDisplay = $derived(branchId ? chatState.mainBranch : chatState.messages);
 </script>
 
 {#if messagesToDisplay}
@@ -112,7 +108,7 @@
 									{#if chatState.isStreaming && chatState.streamingMessage?.id === message.id && chatState.streamingMessage?.content === ''}
 										<div><span class="loading-dots loading"></span></div>
 									{:else}
-										<div style="contain: content;" class="prose prose-code:px-0">
+										<div class="prose prose-code:px-0">
 											{#await md.renderAsync(message.content) then markdown}
 												{@html markdown}
 											{/await}
@@ -172,7 +168,6 @@
 														<Tooltip.Root delayDuration={0}>
 															<Tooltip.Trigger>
 																<a
-																	data-sveltekit-preload-data="tap"
 																	href="/chat/{message.conversation_id}/{branch.id}"
 																	class="btn btn-xs btn-ghost btn-primary btn-circle size-7"
 																>

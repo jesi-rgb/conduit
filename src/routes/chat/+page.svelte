@@ -7,6 +7,10 @@
 	import { Tooltip } from 'bits-ui';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 	import { ChatStateClass } from './[id]/ChatState.svelte';
+	import { goto } from '$app/navigation';
+	import { fetchWithAuth } from '$lib/client/auth';
+
+	import type { Conversation } from '$lib/types';
 
 	let mounted = $state(false);
 	let message = $state('');
@@ -19,18 +23,42 @@
 		globalState.currentBranches = [];
 		globalState.currentMessages = [];
 	});
+
+	let noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
+
+	async function newConversation(): Promise<Conversation> {
+		const data = await fetchWithAuth({
+			url: `/api/conversations/`,
+			options: {
+				method: 'POST',
+				body: JSON.stringify({ title: 'New Chat' })
+			}
+		});
+		const convData = (await data.json()).conversation;
+
+		chatState.conversation_id = convData.id;
+
+		chatState.sendMessage(message);
+
+		globalState.fetchConversations();
+
+		return convData;
+	}
 </script>
 
-<div class="mx-auto my-auto flex h-full max-w-3xl flex-col justify-center">
+<div class="mx-auto my-auto flex h-full max-w-[70%] flex-col justify-center">
 	{#if mounted}
 		<div class="">
 			<ModelSelector />
 		</div>
 		<form
 			class="flex justify-between gap-1 pt-1"
-			onsubmit={(e) => {
+			onsubmit={async (e) => {
 				e.preventDefault();
 				// here we both create a convo and send messages
+				const newConvo: Conversation = await newConversation();
+
+				goto(`/chat/${newConvo.id}`);
 			}}
 		>
 			<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
@@ -42,8 +70,9 @@
 							bind:value={message}
 							placeholder="Type your message..."
 							class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
+							disabled={noKey}
 						/>
-						<button class="btn" type="submit">
+						<button class="btn" type="submit" disabled={noKey}>
 							<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 						</button>
 					</Tooltip.Trigger>

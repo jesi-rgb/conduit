@@ -14,7 +14,7 @@
 	const convId = $derived(page.params.id);
 
 	let conversations: Conversation[] = $derived(
-		globalState.conversations.filter((conv) => !conv.parent_conversation_id)
+		globalState.conversations.filter((conv: Conversation) => !conv.parent_conversation_id)
 	);
 
 	const user = $derived(globalState.user);
@@ -90,16 +90,16 @@
 				<span>Conduit</span>
 				<Icon icon="solar:star-angle-bold-duotone" class="text-4xl" />
 			</a>
-			<button
-				onclick={newConversation}
+			<a
+				href="/chat"
 				class="btn btn-primary btn-outline group from-primary/5
 				to-primary/30 hover:to-primary-content/30 w-full
-				bg-gradient-to-b from-20% to-150% text-lg hover:bg-gradient-to-t
+				bg-gradient-to-b from-20% to-150% hover:bg-gradient-to-t
 				hover:to-90% dark:to-280%"
 				>New Conversation <Icon
 					icon="solar:chat-line-bold-duotone"
 					class="text-primary group-hover:text-primary-content"
-				/></button
+				/></a
 			>
 			<div class="flex flex-col gap-2">
 				{#each conversations as conv (conv.id)}

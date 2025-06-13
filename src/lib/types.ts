@@ -15,6 +15,8 @@ export type Conversation = {
 	user_id: string;
 	created_at: Date;
 	updated_at: Date;
+	parent_conversation_id?: string;
+	branch_from_message_id?: string;
 }
 
 export type Message = {

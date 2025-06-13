@@ -13,9 +13,16 @@
 	import { CONDUIT_PROVIDER, type Conversation } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
+	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
 
 	// Accept data as prop instead of from page data
-	let { chatState, conversationId, branchId = undefined } = $props();
+	interface Props {
+		chatState: ChatStateClass;
+		conversationId: string;
+		branchId?: string | undefined;
+	}
+
+	let { chatState, conversationId, branchId = undefined }: Props = $props();
 
 	let isBranch = $derived(!!branchId);
 
@@ -70,7 +77,7 @@
 		}
 	});
 
-	let messagesToDisplay = $derived(branchId ? chatState.mainBranch : chatState.messages);
+	let messagesToDisplay = $derived(branchId ? chatState.currentBranch : chatState.messages);
 </script>
 
 {#if messagesToDisplay}

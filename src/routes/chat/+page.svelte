@@ -11,20 +11,31 @@
 	import { fetchWithAuth } from '$lib/client/auth';
 
 	import type { Conversation } from '$lib/types';
+	import TooltipExplain from '$lib/components/ui/TooltipExplain.svelte';
 
 	let mounted = $state(false);
 	let message = $state('');
-	let inputMessage: HTMLInputElement = $state();
+	let inputMessage: HTMLTextAreaElement | null = $state(null);
 	let chatState = new ChatStateClass();
+	let noKey = $state(true);
+
+	let focusedTA = $state(false);
+	$inspect(focusedTA);
 
 	onMount(() => {
 		mounted = true;
 
 		globalState.currentBranches = [];
 		globalState.currentMessages = [];
+
+		noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
+
+		inputMessage?.focus();
 	});
 
-	let noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
+	$effect(() => {
+		inputMessage?.focus();
+	});
 
 	async function newConversation(): Promise<Conversation> {
 		const data = await fetchWithAuth({
@@ -40,64 +51,97 @@
 
 		chatState.sendMessage(message);
 
-		globalState.fetchConversations();
-
 		return convData;
 	}
 </script>
 
-<div class="mx-auto my-auto flex h-full max-w-[70%] flex-col justify-center">
+<div
+	class:focusedTA
+	class="from-base-100 to-base-200 hover:ring-subtle shadow-base-200
+	focus:ring-primary sticky top-[200vh] mx-auto flex w-[90%] max-w-[70%] flex-col justify-center rounded-2xl rounded-br-none
+	rounded-bl-none bg-gradient-to-b p-2 shadow-xl hover:ring"
+>
 	{#if mounted}
-		<div class="">
-			<ModelSelector />
-		</div>
 		<form
-			class="flex justify-between gap-1 pt-1"
+			class=" w-full gap-1 rounded-xl p-1"
 			onsubmit={async (e) => {
 				e.preventDefault();
 				// here we both create a convo and send messages
 				const newConvo: Conversation = await newConversation();
 
-				goto(`/chat/${newConvo.id}`);
+				goto(`/chat/${newConvo.id}`, { replaceState: true });
 			}}
 		>
-			<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
-				<Tooltip.Root delayDuration={0}>
-					<Tooltip.Trigger class="flex w-full gap-1">
-						<input
-							type="text"
-							bind:this={inputMessage}
-							bind:value={message}
-							placeholder="Type your message..."
-							class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
-							disabled={noKey}
-						/>
-						<button class="btn" type="submit" disabled={noKey}>
-							<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
-						</button>
-					</Tooltip.Trigger>
-					<Tooltip.Portal>
-						<TooltipContent>
-							<div
-								class="bg-base-200 to-primary-content
+			<TooltipExplain
+				class="w-full"
+				disabled={localStorage.getItem(CONDUIT_PROVIDER) !== undefined}
+			>
+				<div class="flex w-full">
+					<textarea
+						onsubmit={(e) => {
+							e.preventDefault();
+						}}
+						bind:this={inputMessage}
+						bind:value={message}
+						bind:focused={focusedTA}
+						placeholder="Type your message..."
+						class="textarea textarea-ghost focus:border-primary
+						focus:ring-none h-30 w-full
+						min-w-60 rounded-br-none rounded-bl-none border-b-0
+						align-baseline focus:bg-transparent focus:outline-none"
+						disabled={noKey}
+					>
+						<div class="z-20">yeah</div>
+					</textarea>
+				</div>
+
+				{#snippet content()}
+					<div
+						class="bg-base-200 to-primary-content
 								border-subtle rounded-box max-w-sm border
 								p-3 shadow-lg backdrop-blur-xl"
-							>
-								<p>Looks like you didn't setup an API key.</p>
+					>
+						<p>Looks like you didn't setup an API key.</p>
 
-								<p>
-									Head to <a
-										class="text-primary font-bold
+						<p>
+							Head to <a
+								class="text-primary font-bold
 										underline"
-										href="/settings">Settings</a
-									>
-									to start chatting!
-								</p>
-							</div>
-						</TooltipContent>
-					</Tooltip.Portal>
-				</Tooltip.Root>
-			</Tooltip.Provider>
+								href="/settings">Settings</a
+							>
+							to start chatting!
+						</p>
+					</div>
+				{/snippet}
+			</TooltipExplain>
+
+			<div class="flex justify-between">
+				<ModelSelector />
+				<button class="btn" type="submit" disabled={noKey}>
+					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
+				</button>
+			</div>
 		</form>
 	{/if}
 </div>
+
+<style>
+	::placeholder {
+		vertical-align: baseline;
+	}
+
+	textarea {
+		resize: none;
+		border: none;
+	}
+	textarea:focus {
+		outline: none;
+		box-shadow: none; /* For some browsers like Firefox */
+	}
+	.focusedTA {
+		box-shadow:
+			inset 0 1px 0 0 var(--color-primary),
+			inset 1px 0 0 0 var(--color-primary),
+			inset -1px 0 0 0 var(--color-primary);
+	}
+</style>

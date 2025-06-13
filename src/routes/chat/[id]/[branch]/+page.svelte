@@ -3,8 +3,14 @@
 	import { page } from '$app/state';
 
 	let { data } = $props();
+
+	$inspect(data);
+
+	let chatState = $derived(data.chatState);
 	const conversationId = $derived(page.params.id);
 	const branchId = $derived(page.params.branch);
+
+	$inspect('branch page.svelte', chatState.mainBranch);
 </script>
 
-<ConversationView chatState={data.chatState} {conversationId} {branchId} />
+<ConversationView {chatState} {conversationId} {branchId} />

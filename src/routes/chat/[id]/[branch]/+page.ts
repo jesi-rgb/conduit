@@ -3,9 +3,10 @@ import { globalState } from "../../../../stores/stores.svelte";
 import { ChatStateClass } from "../ChatState.svelte";
 import type { PageLoad } from "./$types";
 
-export const load: PageLoad = ({ params, fetch }) => {
+export const load: PageLoad = async ({ params, fetch, parent }) => {
+	console.log('loading branch data in page ts')
 
-	const chatState = new ChatStateClass(params.id);
+	const { chatState } = await parent();
 
 	chatState.fetchMessages = async () => {
 		const response = await fetchWithAuth({ url: `/api/messages/${params.id}/${params.branch}`, svelteFetch: fetch });

@@ -162,3 +162,10 @@
 		</Combobox.Portal>
 	</Combobox.Root>
 {/if}
+
+<style>
+	:global(input) {
+		/* border: none; */
+		outline: none;
+	}
+</style>

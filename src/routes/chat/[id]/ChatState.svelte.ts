@@ -7,7 +7,7 @@ export interface ChatState {
 	messages: Message[];
 	conversation_id: string;
 	mainConversation: Message[];
-	mainBranch: Message[];
+	currentBranch: Message[];
 	title: string;
 	isLoading: boolean;
 	isStreaming: boolean;
@@ -28,7 +28,7 @@ export class ChatStateClass implements ChatState {
 	#conversation_id = $state('');
 	#messages = $state<Message[]>([]);
 	#mainConversation: Message[] = $state([]);
-	#mainBranch: Message[] = $state([]);
+	#currentBranch: Message[] = $state([]);
 
 	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
 	isLoading = $state(false);
@@ -53,11 +53,11 @@ export class ChatStateClass implements ChatState {
 		this.#mainConversation = messages;
 	}
 
-	get mainBranch() {
-		return this.#mainBranch;
+	get currentBranch() {
+		return this.#currentBranch;
 	}
-	set mainBranch(messages: Message[]) {
-		this.#mainBranch = messages;
+	set currentBranch(messages: Message[]) {
+		this.#currentBranch = messages;
 	}
 
 	// Add getter for UI to access
@@ -216,6 +216,7 @@ export class ChatStateClass implements ChatState {
 		this.streamResponseInBranch(newMsg, branch)
 
 		this.isLoading = false;
+
 		this.onFinishSend();
 	}
 

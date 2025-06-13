@@ -6,24 +6,23 @@
 	import { onMount } from 'svelte';
 
 	const { data, children } = $props();
+
 	const chatState = $derived(data.chatState);
 
 	const conversationId = $derived(page.params.id);
 	let isBranch = $derived(!!page.params.branch);
-	$inspect(isBranch);
 
 	let mainConversationData = $derived(chatState.mainConversation);
+	let branchData = $derived(chatState.currentBranch);
 
 	onMount(() => {
 		chatState.saveMainConvo();
 	});
 </script>
 
-{#if chatState && mainConversationData}
-	<div class="h-full">
-		<ConversationView {chatState} {conversationId} />
-		{#if isBranch}
-			mierdon
-		{/if}
-	</div>
+{#if chatState && (mainConversationData || branchData)}
+	<ConversationView {chatState} {conversationId} />
+	<Drawer open={isBranch} {conversationId}>
+		{@render children()}
+	</Drawer>
 {/if}

@@ -2,14 +2,11 @@
 <script>
 	import { page } from '$app/state';
 	import ConversationView from '$lib/components/ui/ConversationView.svelte';
-	import { onMount } from 'svelte';
 
 	let { data } = $props();
-	const conversationId = $derived(page.params.id);
+	let chatState = $derived(data.chatState);
 
-	onMount(() => {
-		data.chatState.fetchMessages();
-	});
+	const conversationId = $derived(page.params.id);
 </script>
 
-<ConversationView chatState={data.chatState} {conversationId} />
+<ConversationView {chatState} {conversationId} />

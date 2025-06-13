@@ -7,6 +7,8 @@ export const load: PageLoad = async ({ params, fetch, parent }) => {
 
 	const { chatState } = await parent()
 
+	chatState.currentBranch = []
+
 	chatState.fetchMessages = async () => {
 		const response = await fetchWithAuth({ url: `/api/messages/${params.id}/${params.branch}`, svelteFetch: fetch });
 		const branchMsgs = (await response.json()).branch;

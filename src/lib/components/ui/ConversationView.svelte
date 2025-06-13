@@ -76,7 +76,6 @@
 			inputMessage?.focus();
 		}
 	});
-	$inspect(branchId);
 
 	let messagesToDisplay = $derived(branchId ? chatState.currentBranch : chatState.messages);
 </script>
@@ -215,10 +214,8 @@
 						e.preventDefault();
 						if (message) {
 							if (isBranch && branchId) {
-								console.log('sending msg in branch');
 								chatState.sendMessageInBranch(message, branchId);
 							} else {
-								console.log('sending msg in main');
 								chatState.sendMessage(message);
 							}
 							message = '';

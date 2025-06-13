@@ -3,8 +3,6 @@
 	import { globalState } from '../../stores/stores.svelte';
 	import { CONDUIT_PROVIDER } from '$lib/types';
 	import Icon from '@iconify/svelte';
-	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
-	import { Tooltip } from 'bits-ui';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 	import { ChatStateClass } from './[id]/ChatState.svelte';
 	import { goto } from '$app/navigation';
@@ -12,15 +10,14 @@
 
 	import type { Conversation } from '$lib/types';
 	import TooltipExplain from '$lib/components/ui/TooltipExplain.svelte';
+	import { activeChatState } from '../../stores/chatStore.svelte';
 
 	let mounted = $state(false);
 	let message = $state('');
 	let inputMessage: HTMLTextAreaElement | null = $state(null);
-	let chatState = new ChatStateClass();
 	let noKey = $state(true);
 
 	let focusedTA = $state(false);
-	$inspect(focusedTA);
 
 	onMount(() => {
 		mounted = true;
@@ -31,13 +28,15 @@
 		noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
 
 		inputMessage?.focus();
+
+		activeChatState.set(null); // ➜ Clear any previous state when visiting the home page
 	});
 
 	$effect(() => {
 		inputMessage?.focus();
 	});
 
-	async function newConversation(): Promise<Conversation> {
+	async function newConversation() {
 		const data = await fetchWithAuth({
 			url: `/api/conversations/`,
 			options: {
@@ -47,11 +46,14 @@
 		});
 		const convData = (await data.json()).conversation;
 
-		chatState.conversation_id = convData.id;
+		// 2. Create the ChatState instance
+		const newChatState = new ChatStateClass(convData.id);
 
-		chatState.sendMessage(message);
+		// 3. ❗️ CRITICAL: Put the new instance into the store
+		activeChatState.set(newChatState);
 
-		return convData;
+		newChatState!.sendMessage(message);
+		goto(`/chat/${convData.id}`, { replaceState: false });
 	}
 </script>
 
@@ -66,34 +68,28 @@
 			class=" w-full gap-1 rounded-xl p-1"
 			onsubmit={async (e) => {
 				e.preventDefault();
-				// here we both create a convo and send messages
-				const newConvo: Conversation = await newConversation();
-
-				goto(`/chat/${newConvo.id}`, { replaceState: true });
 			}}
 		>
 			<TooltipExplain
 				class="w-full"
 				disabled={localStorage.getItem(CONDUIT_PROVIDER) !== undefined}
 			>
-				<div class="flex w-full">
-					<textarea
-						onsubmit={(e) => {
-							e.preventDefault();
-						}}
-						bind:this={inputMessage}
-						bind:value={message}
-						bind:focused={focusedTA}
-						placeholder="Type your message..."
-						class="textarea textarea-ghost focus:border-primary
-						focus:ring-none h-30 w-full
-						min-w-60 rounded-br-none rounded-bl-none border-b-0
-						align-baseline focus:bg-transparent focus:outline-none"
-						disabled={noKey}
-					>
-						<div class="z-20">yeah</div>
-					</textarea>
-				</div>
+				<textarea
+					onkeydown={(e) => {
+						if (e.key === 'Enter') newConversation();
+					}}
+					bind:this={inputMessage}
+					bind:value={message}
+					bind:focused={focusedTA}
+					placeholder="Type your message..."
+					class="textarea textarea-ghost focus:border-primary
+					focus:ring-none h-30 w-full
+					min-w-60 rounded-br-none rounded-bl-none border-b-0
+					align-baseline focus:bg-transparent focus:outline-none"
+					disabled={noKey}
+				>
+					<div class="z-20">yeah</div>
+				</textarea>
 
 				{#snippet content()}
 					<div

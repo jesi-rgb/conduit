@@ -3,12 +3,7 @@
 	import { globalState } from '../../../stores/stores.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
-
-	// onMount(async () => {
-	// 	globalState.fetchBranches();
-	// });
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {

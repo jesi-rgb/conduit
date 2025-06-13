@@ -4,8 +4,6 @@
 
 	let { data } = $props();
 
-	$inspect(data);
-
 	let chatState = $derived(data.chatState);
 	const conversationId = $derived(page.params.id);
 	const branchId = $derived(page.params.branch);

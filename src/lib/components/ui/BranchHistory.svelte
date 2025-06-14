@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
+	import { fly } from 'svelte/transition';
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {
@@ -23,8 +24,13 @@
 	>
 		{#each globalState.currentMessages as msg, i (msg.id)}
 			{@const lastMessage = i === globalState.currentMessages.length - 1}
+			{@const hasBranch = globalState.currentBranches.find(
+				(b) => msg.id === b.branch_from_message_id
+			)}
 			<button
 				class="flex w-full cursor-pointer items-center gap-2 py-2"
+				in:fly={{ x: -10, delay: i * 0.2 }}
+				out:fly={{ duration: 0 }}
 				onclick={() => {
 					goto(gotoUrl(msg.id!));
 				}}
@@ -43,31 +49,38 @@
 			</button>
 
 			{#each globalState.currentBranches as branch, b (branch.id)}
-				{@const thereAreBranches = globalState.currentBranches.find(
-					(branch) => branch.branch_from_message_id === msg.id
-				)}
-
-				{#if thereAreBranches}
-					{#if branch.branch_from_message_id === msg.id}
-						<a
-							data-sveltekit-preload-data="tap"
-							class="relative -my-0.5 ml-2 flex w-full
-						cursor-pointer items-center gap-2 py-1"
-							href="/chat/{page.params.id}/{branch.id}"
-						>
+				{@const lastBranch = b === globalState.currentBranches.length - 1}
+				{#if branch.branch_from_message_id === msg.id}
+					<a
+						in:fly={{ x: -10, duration: 300, delay: b * 0.5 }}
+						out:fly={{ duration: 0 }}
+						data-sveltekit-preload-data="tap"
+						class="group relative -my-0.5 ml-2 flex
+						w-full cursor-pointer items-center gap-2 py-1"
+						href="/chat/{page.params.id}/{branch.id}"
+					>
+						{#if !lastMessage && !lastBranch}
 							<div
 								class="border-subtle absolute left-[3px]
-								h-full w-0 rounded-full border"
+								h-full w-0 self-center rounded-full border"
 							></div>
-							<Icon class="text-subtle shrink-0 text-2xl" icon="solar:forward-2-bold" />
-							<Icon class="text-muted shrink-0 text-xl" icon="solar:star-ring-bold-duotone" />
-							<p class="text-muted text-xs">Branch {b + 1}</p>
-						</a>
-					{/if}
+						{/if}
+						<Icon class="text-subtle shrink-0 text-2xl" icon="solar:forward-2-bold" />
+						<Icon
+							class="text-muted group-hover:text-accent
+							shrink-0 text-xl transition-all duration-300 group-hover:rotate-6"
+							icon="solar:star-ring-bold-duotone"
+						/>
+						<p class="text-muted text-xs">Branch {b + 1}</p>
+					</a>
 				{/if}
 			{/each}
-			{#if !lastMessage}
-				<div class="border-subtle -my-0.5 ml-[11px] h-5 w-0 rounded-full border"></div>
+			{#if !lastMessage && !hasBranch}
+				<div
+					in:fly={{ x: -10, delay: i * 0.2 }}
+					out:fly={{ duration: 0 }}
+					class="border-subtle -my-0.5 ml-[11px] h-5 w-0 rounded-full border"
+				></div>
 			{/if}
 		{/each}
 	</section>

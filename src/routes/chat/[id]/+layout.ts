@@ -12,7 +12,6 @@ export const load: PageLoad = ({ params, fetch }) => {
 
 	let chatState: ChatStateClass;
 
-	// These can be defined outside the if/else block
 	globalState.fetchBranches = async () => {
 		const response = await fetchWithAuth({
 			url: `/api/branches/${params.id}`,
@@ -31,22 +30,18 @@ export const load: PageLoad = ({ params, fetch }) => {
 		globalState.currentMessages = msg;
 	}
 
-	// ❗️ If a state exists in the store and its ID matches the URL, use it.
-	// This is the state that survived the navigation from `/chat`.
 	if (existingState && existingState.conversation_id === params.id) {
 		chatState = existingState;
 		globalState.fetchCurrentMessages()
 	} else {
-		// Otherwise, this is a direct load/refresh. Create a new state.
 		chatState = new ChatStateClass(params.id);
-		activeChatState.set(chatState); // ➜ Put the new instance in the store
+		activeChatState.set(chatState);
 
-		// Fetch existing messages for this conversation
 		chatState.saveMainConvo = async () => {
 			const response = await fetchWithAuth({ url: `/api/messages/${params.id}`, svelteFetch: fetch });
 			const convo = await response.json();
 			chatState.mainConversation = convo.messages;
-			chatState.messages = convo.messages; // Also populate the main messages array
+			chatState.messages = convo.messages;
 		};
 		chatState.saveMainConvo();
 		globalState.fetchCurrentMessages()

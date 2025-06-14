@@ -44,10 +44,7 @@
 		});
 		const convData = (await data.json()).conversation;
 
-		// 2. Create the ChatState instance
 		const newChatState = new ChatStateClass(convData.id);
-
-		// 3. ❗️ CRITICAL: Put the new instance into the store
 
 		newChatState!.sendMessage(message);
 

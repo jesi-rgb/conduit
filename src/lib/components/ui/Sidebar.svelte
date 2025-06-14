@@ -77,23 +77,24 @@
 
 <Pane minSize={10} defaultSize={20}>
 	<section
-		class="border-base-content/10 from-base-100 to-base-200 flex h-full flex-col justify-between
-		gap-10 border-r bg-gradient-to-r
+		class="bg-base-200/50 border-base-content/10 flex h-full flex-col
+		justify-between gap-10 border-r bg-gradient-to-r
 		p-2 py-4 shadow-lg"
 	>
-		<div class="flex flex-col gap-5">
+		<div class="relative flex min-h-0 w-full shrink flex-col gap-5">
 			<a
 				href="/chat"
 				class="text-primary dark:text-primary-content headline mx-auto flex w-min items-center gap-3
-				text-3xl font-bold"
+				text-xl font-bold"
 			>
 				<span>Conduit</span>
-				<Icon icon="solar:star-angle-bold-duotone" class="text-4xl" />
+				<Icon icon="solar:star-angle-bold-duotone" class="text-2xl" />
 			</a>
 			<a
 				href="/chat"
 				class="btn btn-primary btn-outline group from-primary/5
-				to-primary/30 hover:to-primary-content/30 w-full
+				to-primary/30
+				hover:to-primary-content/30 w-full rounded-full
 				bg-gradient-to-b from-20% to-150% hover:bg-gradient-to-t
 				hover:to-90% dark:to-280%"
 				>New Conversation <Icon
@@ -101,7 +102,7 @@
 					class="text-primary group-hover:text-primary-content"
 				/></a
 			>
-			<div class="flex flex-col gap-2">
+			<div class="flex w-full flex-grow flex-col gap-2 overflow-y-scroll py-2">
 				{#each conversations as conv (conv.id)}
 					<a
 						id={conv.id}
@@ -109,8 +110,8 @@
 						data-sveltekit-preload-data="tap"
 						href="/chat/{conv.id}"
 						class:border-primary={conv.id === convId}
-						class="btn btn-ghost border-base-content/10
-						bg-base-100/50 group justify-between rounded-full border pr-1"
+						class="btn btn-ghost border-base-content/10 bg-base-100/50
+						group w-full justify-between rounded-full border"
 					>
 						<span class="truncate">
 							{conv.title}
@@ -132,7 +133,7 @@
 			</div>
 		</div>
 
-		<div class="flex items-center justify-between px-3 text-xs">
+		<div class="flex shrink-0 items-center justify-between px-3 text-xs">
 			<div>
 				{#if user?.is_anonymous}
 					<button class="btn btn-xs" onclick={handleGoogleLogin}>Anonymous</button>

@@ -20,7 +20,7 @@
 		class="border-base-content/10 bg-base-200 mx-auto flex h-full
 		w-full flex-col overflow-x-clip overflow-y-scroll border-l p-3 shadow-lg"
 	>
-		{#each globalState.currentMessages as msg, i (msg.id)}
+		{#each globalState.currentMessages as msg, i}
 			{@const lastMessage = i === globalState.currentMessages.length - 1}
 			{@const msgBranches = globalState.currentBranches.filter(
 				(b) => msg.id === b.branch_from_message_id
@@ -46,7 +46,7 @@
 				</div>
 			</button>
 
-			{#each msgBranches as branch, b (branch.id)}
+			{#each msgBranches as branch, b}
 				{@const lastBranch = b === msgBranches.length - 1}
 				{#if branch.branch_from_message_id === msg.id}
 					<a

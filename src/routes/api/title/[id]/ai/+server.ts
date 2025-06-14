@@ -15,13 +15,12 @@ export const POST = async ({ request, params, fetch }) => {
 		}
 	})
 
-	const titleData = await generateTitle(prunedMessages, {
+	const title = await generateTitle(prunedMessages, {
 		model: model,
 		endpoint: endpoint,
 		bearerToken: bearerToken
 
 	})
-	const title = JSON.parse(titleData)['choices'][0]['message']['content']
 
 	await fetch(`/api/title/${id}`, {
 		method: 'POST',

@@ -1,17 +1,6 @@
-import { env } from '$env/dynamic/private';
-
 import type { Message } from '$lib/types';
+import { json } from '@sveltejs/kit';
 
-const prompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
-Base it on the user's initial question and the assistant's response.
-
-Requirements:
-- Maximum 8 words
-- Focus on the core topic/subject
-- Avoid generic phrases like "Help with" or "Question about"
-- Use specific keywords when possible
-- Make it descriptive enough to identify the conversation later
-`
 
 type AIOptions = {
 	model: string;
@@ -24,6 +13,22 @@ export async function generateTitle(messages: Message[], { model, endpoint, bear
 		throw Error('API Key is not set')
 	}
 
+	const titlePrompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
+Base it on the user's initial question and the assistant's response.
+
+Requirements:
+- Maximum 8 words, but use as few as possible
+- Focus on the core topic/subject
+- Avoid generic phrases like "Help with" or "Question about"
+- Use specific keywords when possible
+- Make it descriptive enough to identify the conversation later.
+
+These are the messages in question:
+
+${JSON.stringify(messages)}
+`
+	console.log(titlePrompt)
+
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -32,16 +37,15 @@ export async function generateTitle(messages: Message[], { model, endpoint, bear
 		},
 		body: JSON.stringify({
 			model: model,
-			messages: [
-				{ role: 'system', content: prompt },
-				...messages
-			],
+			prompt: titlePrompt,
 			temperature: 0.1,
-			max_tokens: 10,
 		})
 	});
 
-	return response.text()
+	const json = await response.json()
+	const title = json.choices[0].text
+
+	return title;
 }
 
 export async function generateStreamingAIResponse(messages: Message[], { model, endpoint, bearerToken }: AIOptions): Promise<ReadableStream<string>> {

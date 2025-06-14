@@ -132,7 +132,7 @@
 											<!-- Models in this provider group -->
 											{#each group.models as model (model.id)}
 												<Combobox.Item
-													class="text-muted data-highlighted:bg-base-300/30
+													class="data-highlighted:bg-base-300/30
 								ring-subtle my-1 flex h-10
 								w-full
 								items-center rounded-xl px-3 py-2 text-sm capitalize outline-hidden
@@ -145,10 +145,7 @@
 															<span class="truncate">
 																{model.name}
 															</span>
-															<span
-																class="text-muted/60 w-11/12
-												truncate text-xs"
-															>
+															<span class="text-muted w-11/12 truncate text-xs">
 																{model.description}
 															</span>
 														</div>

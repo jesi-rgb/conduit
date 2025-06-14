@@ -8,7 +8,6 @@
 	import { page } from '$app/state';
 	import { fetchWithAuth } from '$lib/client/auth.js';
 	import Icon from '@iconify/svelte';
-	import { fade } from 'svelte/transition';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 	import { CONDUIT_PROVIDER, type Conversation } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
@@ -17,7 +16,6 @@
 	import TooltipExplain from './TooltipExplain.svelte';
 	import CopyMessage from './CopyMessage.svelte';
 
-	// Accept data as prop instead of from page data
 	interface Props {
 		chatState: ChatStateClass;
 		conversationId: string;
@@ -29,6 +27,7 @@
 	let isBranch = $derived(!!branchId);
 
 	const md = MarkdownItAsync();
+	const mdStreaming = MarkdownItAsync();
 
 	let messageInUrl = $derived(page.url.searchParams.get('message'));
 	let inputMessage: HTMLInputElement | null = $state(null);
@@ -117,7 +116,7 @@
 										<div><span class="loading-dots loading"></span></div>
 									{:else}
 										<div class="prose prose-code:px-0">
-											{#await md.renderAsync(message.content) then markdown}
+											{#await (chatState.isStreaming && chatState.streamingMessage?.id === message.id ? mdStreaming : md).renderAsync(message.content) then markdown}
 												{@html markdown}
 											{/await}
 										</div>

@@ -8,6 +8,9 @@
 	import { redirect } from '@sveltejs/kit';
 	import ConversationView from '$lib/components/ui/ConversationView.svelte';
 
+	import { RenderScan } from 'svelte-render-scan';
+	import { dev } from '$app/environment';
+
 	let { children } = $props();
 
 	async function checkUser() {
@@ -56,6 +59,10 @@
 		checkUser();
 	});
 </script>
+
+{#if dev}
+	<RenderScan duration={500} />
+{/if}
 
 <main class="selection:bg-primary selection:text-primary-content h-[100vh]">
 	{@render children()}

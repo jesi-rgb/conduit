@@ -142,7 +142,6 @@ export class ChatStateClass implements ChatState {
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
-
 		while (true) {
 			const { done, value } = await reader?.read()!;
 			if (done) break;
@@ -156,7 +155,6 @@ export class ChatStateClass implements ChatState {
 					const parsedChunk = JSON.parse(line);
 
 					if (parsedChunk.type === 'chunk') {
-						// Update streaming message content
 						this.#streamingMessage!.content += parsedChunk.content;
 					}
 				} catch (parseError) {
@@ -185,8 +183,8 @@ export class ChatStateClass implements ChatState {
 			url: `/api/title/${this.conversation_id}/ai`, options: {
 				method: 'POST', body: JSON.stringify({
 					messages: this.messages,
-					model: 'openai/gpt-4.1-nano',
-					endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+					model: 'openai/gpt-4.1-mini',
+					endpoint: 'https://openrouter.ai/api/v1/completions',
 					bearerToken: localStorage.getItem('conduit-open-router')
 				})
 			}

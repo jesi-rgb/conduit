@@ -13,8 +13,10 @@
 <Drawer.Root onClose={closeBranch} direction="right" bind:open>
 	<Drawer.Portal>
 		<Drawer.Content
-			class="from-base-100 to-base-200 pointer-events-auto fixed top-0 right-0 bottom-0 z-30
-			flex h-full w-1/3 flex-col bg-gradient-to-l
+			class="from-base-100 to-base-200 shadow-base-content/20
+			border-subtle pointer-events-auto fixed top-0 right-0 bottom-0 z-30
+			flex h-full w-1/3 flex-col border-l bg-gradient-to-l
+			shadow-lg
             data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 
 			"
 		>

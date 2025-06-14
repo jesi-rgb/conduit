@@ -15,6 +15,7 @@
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
 	import TooltipExplain from './TooltipExplain.svelte';
+	import CopyMessage from './CopyMessage.svelte';
 
 	// Accept data as prop instead of from page data
 	interface Props {
@@ -34,7 +35,6 @@
 
 	let message = $state('');
 	let chatContainer: HTMLDivElement | null = $state(null);
-	let copied = $state(false);
 	let mounted = $state(false);
 
 	onMount(async () => {
@@ -131,40 +131,11 @@
 											<span class="opacity-50">
 												{new Date(message.created_at).toLocaleString('es-ES')}
 											</span>
-											<button
-												onclick={() => {
-													navigator.clipboard.writeText(message.content);
-													copied = true;
-													setTimeout(() => (copied = false), 1000);
-												}}
-												class="btn btn-xs btn-ghost btn-primary btn-circle relative size-7
-											opacity-100"
-											>
-												{#if copied}
-													<span in:fade={{ duration: 200 }} out:fade={{ duration: 400 }}>
-														<Icon
-															icon="solar:clipboard-check-bold-duotone"
-															class="absolute top-1/2
-														left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg"
-														/>
-													</span>
-												{:else}
-													<span in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-														<Icon
-															icon="solar:notes-bold-duotone"
-															class="absolute left-1/2
-														-translate-x-1/2 -translate-y-1/2 text-lg"
-														/>
-													</span>
-												{/if}
-											</button>
+											<CopyMessage {message} />
 											{#if !isBranch}
 												<TooltipExplain>
 													<button
-														class="btn btn-xs btn-ghost
-											btn-primary btn-circle
-											size-7
-											opacity-100"
+														class="btn btn-xs btn-ghost btn-primary btn-circle size-7 opacity-100"
 														onclick={() => chatState.branchOut(message)}
 													>
 														<Icon class="text-lg" icon="solar:chat-square-arrow-bold-duotone" />

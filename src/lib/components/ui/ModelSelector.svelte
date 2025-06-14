@@ -10,6 +10,7 @@
 	import { cubicInOut, cubicOut } from 'svelte/easing';
 
 	let searchValue = $state('');
+	let inputElement: HTMLInputElement | null = $state(null);
 
 	let providerIcons = {
 		Anthropic: 'simple-icons:anthropic',
@@ -84,11 +85,13 @@
 		}}
 		onOpenChange={(o) => {
 			if (!o) searchValue = '';
+			inputElement?.select();
 		}}
 	>
 		<div class="relative w-fit">
 			<Combobox.Input
 				oninput={(e) => (searchValue = e.currentTarget.value)}
+				bind:ref={inputElement}
 				class="border-subtle rounded-box h-full min-h-[40px] border px-3 text-xs"
 				placeholder={selectedModel.label}
 				aria-label="Select a model"

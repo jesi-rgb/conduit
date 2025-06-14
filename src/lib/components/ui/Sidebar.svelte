@@ -110,8 +110,9 @@
 						data-sveltekit-preload-data="tap"
 						href="/chat/{conv.id}"
 						class:border-primary={conv.id === convId}
-						class="btn btn-ghost border-base-content/10 bg-base-100/50
-						group w-full justify-between rounded-full border"
+						class="btn btn-ghost btn-sm border-base-content/10 bg-base-100/50
+						group convo w-full justify-between rounded-full border
+						pr-1 font-[500]"
 					>
 						<span class="truncate">
 							{conv.title}
@@ -119,7 +120,7 @@
 
 						<button
 							class="hover:btn-error btn
-							btn-sm btn-ghost rounded-full opacity-0
+							btn-xs btn-ghost rounded-full opacity-0
 							transition-colors group-hover:opacity-100"
 							onclick={(e) => {
 								e.preventDefault();
@@ -169,5 +170,8 @@
 		font-variation-settings:
 			'wght' 900,
 			'opsz' 70;
+	}
+	.convo {
+		font-variation-settings: 'opsz' 12;
 	}
 </style>

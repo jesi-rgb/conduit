@@ -1,0 +1,55 @@
+import { browser } from "$app/environment";
+import { goto } from "$app/navigation";
+import { page } from "$app/state";
+import { supabase } from "$lib/client/supabase";
+import { redirect } from "@sveltejs/kit";
+import { globalState } from "../stores/stores.svelte";
+
+
+async function checkUser() {
+	// Check if we have a session in localStorage first to avoid unnecessary API calls
+	let localSession;
+	if (browser) {
+		localSession = localStorage.getItem('supabase.auth.token');
+	}
+
+	if (localSession) {
+		try {
+			// Try to parse the stored session
+			const sessionData = JSON.parse(localSession);
+			const expiresAt = sessionData?.expiresAt;
+
+			// Check if the session is still valid
+			if (expiresAt && new Date(expiresAt * 1000) > new Date()) {
+				// Get user from Supabase without making an API call if possible
+				const { data } = await supabase.auth.getUser();
+				if (data.user) {
+					globalState.user = data.user;
+					if (page.route.id === '/') {
+						goto('/chat');
+					}
+					return; // Exit early if we have a valid user
+				}
+			}
+		} catch (error) {
+			console.error('Error parsing stored session:', error);
+			// If there's an error, we'll fall back to the normal auth flow
+		}
+	}
+
+	// Fall back to normal auth flow if no valid session was found
+	const { data } = await supabase.auth.getUser();
+
+	if (data.user) {
+		globalState.user = data.user;
+		if (page.route.id === '/') {
+			redirect(300, '/chat');
+		}
+	} else {
+		console.log('user not logged in, redirecting');
+		redirect(300, '/');
+	}
+}
+export const load = ({ params, fetch }) => {
+	checkUser()
+}

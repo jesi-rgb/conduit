@@ -5,6 +5,8 @@
 	import '../app.css';
 	import { globalState } from '../stores/stores.svelte';
 	import { page } from '$app/state';
+	import { redirect } from '@sveltejs/kit';
+	import ConversationView from '$lib/components/ui/ConversationView.svelte';
 
 	let { children } = $props();
 
@@ -38,11 +40,15 @@
 
 		// Fall back to normal auth flow if no valid session was found
 		const { data } = await supabase.auth.getUser();
+
 		if (data.user) {
 			globalState.user = data.user;
 			if (page.route.id === '/') {
 				goto('/chat');
 			}
+		} else {
+			console.log('user not logged in, redirecting');
+			goto('/');
 		}
 	}
 

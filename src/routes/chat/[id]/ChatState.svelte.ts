@@ -104,6 +104,7 @@ export class ChatStateClass implements ChatState {
 		})
 
 		this.streamResponse()
+		globalState.currentMessages.push(newMsg)
 
 		this.isLoading = false;
 	};

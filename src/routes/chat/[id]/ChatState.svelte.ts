@@ -11,11 +11,13 @@ export interface ChatState {
 	title: string;
 	isLoading: boolean;
 	isStreaming: boolean;
+	controller: AbortController;
 	saveMainConvo: () => void;
 	sendMessage: (message: string) => void;
 	scrollContainer: () => void;
 	editTitle: () => void;
 	streamResponse: () => void;
+	cancelStream: () => void;
 	streamResponseInBranch: (lastMessage: Message, branch: string) => void;
 	sendMessageInBranch: (message: string, branch: string) => void;
 	fetchMessages: () => void;
@@ -29,6 +31,7 @@ export class ChatStateClass implements ChatState {
 	#messages = $state<Message[]>([]);
 	#mainConversation: Message[] = $state([]);
 	#currentBranch: Message[] = $state([]);
+	#controller: AbortController = new AbortController();
 
 	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
 	isLoading = $state(false);
@@ -94,6 +97,7 @@ export class ChatStateClass implements ChatState {
 			conversation_id: this.conversation_id
 		}
 		this.messages.push(newMsg);
+		globalState.currentMessages.push(newMsg)
 
 		// post msg to database
 		await fetchWithAuth({
@@ -104,10 +108,27 @@ export class ChatStateClass implements ChatState {
 		})
 
 		this.streamResponse()
-		globalState.currentMessages.push(newMsg)
 
 		this.isLoading = false;
 	};
+
+
+	cancelStream = async () => {
+		this.#controller.abort()
+
+		await fetchWithAuth({
+			url: `/api/messages/${this.conversation_id}`, options: {
+				method: 'POST',
+				body: JSON.stringify(this.#streamingMessage)
+			}
+		})
+		this.isStreaming = false
+
+		if (this.messages.length == 2) {
+			this.editTitle()
+		}
+		globalState.fetchConversations()
+	}
 
 	streamResponse = async () => {
 		this.isStreaming = true
@@ -133,7 +154,7 @@ export class ChatStateClass implements ChatState {
 						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
 						messages: this.messages,
 						bearerToken: localStorage.getItem('conduit-open-router')
-					})
+					}), signal: this.#controller.signal
 			}
 		});
 
@@ -153,6 +174,7 @@ export class ChatStateClass implements ChatState {
 			for (const line of lines) {
 				try {
 					const parsedChunk = JSON.parse(line);
+					console.log(parsedChunk)
 
 					if (parsedChunk.type === 'chunk') {
 						this.#streamingMessage!.content += parsedChunk.content;

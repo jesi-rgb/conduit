@@ -201,15 +201,21 @@
 										chatState.isStreaming ||
 										!localStorage.getItem(CONDUIT_PROVIDER)}
 								/>
-								<button
-									class="btn"
-									type="submit"
-									disabled={chatState.isLoading ||
-										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_PROVIDER)}
-								>
-									<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
-								</button>
+								{#if chatState.isStreaming}
+									<button class="btn btn-error" onclick={() => chatState.cancelStream()}>
+										<Icon icon="solar:stop-bold" class="text-xl" />
+									</button>
+								{:else}
+									<button
+										class="btn"
+										type="submit"
+										disabled={chatState.isLoading ||
+											chatState.isStreaming ||
+											!localStorage.getItem(CONDUIT_PROVIDER)}
+									>
+										<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
+									</button>
+								{/if}
 							</Tooltip.Trigger>
 							<Tooltip.Portal>
 								<TooltipContent>

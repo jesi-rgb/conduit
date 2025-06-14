@@ -20,9 +20,6 @@
 	onMount(() => {
 		mounted = true;
 
-		globalState.currentBranches = [];
-		globalState.currentMessages = [];
-
 		noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
 
 		inputMessage?.focus();
@@ -32,6 +29,10 @@
 
 	$effect(() => {
 		inputMessage?.focus();
+	});
+	$effect.pre(() => {
+		globalState.currentBranches = [];
+		globalState.currentMessages = [];
 	});
 
 	async function newConversation() {
@@ -66,7 +67,7 @@
 				e.preventDefault();
 			}}
 		>
-			<TooltipExplain disabled={localStorage.getItem(CONDUIT_PROVIDER) !== undefined}>
+			<TooltipExplain class="w-full" disabled={!noKey}>
 				<textarea
 					onkeydown={(e) => {
 						if (e.key === 'Enter') {
@@ -78,27 +79,23 @@
 					bind:value={message}
 					bind:focused={focusedTA}
 					placeholder="Type your message..."
-					class="textarea textarea-ghost focus:border-primary
-					focus:ring-none h-30 w-full
-					min-w-60 rounded-br-none rounded-bl-none border-b-0
-					align-baseline focus:bg-transparent focus:outline-none"
+					class="textarea textarea-ghost focus:border-primary focus:ring-none
+					h-30 w-full min-w-60
+					rounded-br-none rounded-bl-none border-b-0
+					align-baseline focus:bg-transparent focus:outline-none disabled:bg-transparent"
 					disabled={noKey}
 				>
 					<div class="z-20">yeah</div>
 				</textarea>
 
 				{#snippet content()}
-					<div
-						class="bg-base-200 to-primary-content
-								border-subtle rounded-box max-w-sm border
-								p-3 shadow-lg backdrop-blur-xl"
-					>
+					<div class="text-base">
 						<p>Looks like you didn't setup an API key.</p>
 
 						<p>
 							Head to <a
 								class="text-primary font-bold
-										underline"
+								underline"
 								href="/settings">Settings</a
 							>
 							to start chatting!

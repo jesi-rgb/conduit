@@ -92,7 +92,7 @@
 			<Combobox.Input
 				oninput={(e) => (searchValue = e.currentTarget.value)}
 				bind:ref={inputElement}
-				class="border-subtle rounded-box h-full min-h-[40px] border px-3 text-xs"
+				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs"
 				placeholder={selectedModel.label}
 				aria-label="Select a model"
 				defaultValue={selectedModel.label}
@@ -135,9 +135,7 @@
 											<!-- Models in this provider group -->
 											{#each group.models as model (model.id)}
 												<Combobox.Item
-													class="data-highlighted:bg-base-300/30
-								ring-subtle my-1 flex h-10
-								w-full
+													class="data-highlighted:bg-base-300/30 ring-subtle my-1 flex h-10 w-full
 								items-center rounded-xl px-3 py-2 text-sm capitalize outline-hidden
 								select-none data-highlighted:shadow-sm data-highlighted:ring dark:data-highlighted:shadow-xl"
 													value={model.id}

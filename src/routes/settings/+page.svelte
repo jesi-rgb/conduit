@@ -2,6 +2,7 @@
 	import InputKey from '$lib/components/ui/InputKey.svelte';
 	import { onMount } from 'svelte';
 	import { globalState } from '../../stores/stores.svelte';
+	import TooltipExplain from '$lib/components/ui/TooltipExplain.svelte';
 
 	let openRouterKey = $state('');
 	let openAIKey = $state('');
@@ -32,6 +33,16 @@
 			label="Open Router Key"
 			icon="solar:branching-paths-up-bold"
 		/>
-		<InputKey bind:keyInput={openAIKey} label="Open AI Key" icon="ri:openai-line" />
+		<TooltipExplain>
+			<InputKey
+				disabled={true}
+				bind:keyInput={openAIKey}
+				label="Open AI Key"
+				icon="ri:openai-line"
+			/>
+			{#snippet content()}
+				OpenAI will be supported soon. Sorry for now!
+			{/snippet}
+		</TooltipExplain>
 	</section>
 </main>

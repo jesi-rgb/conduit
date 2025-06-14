@@ -7,6 +7,7 @@
 	import { globalState } from '../../../stores/stores.svelte';
 	import { onMount } from 'svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
+	import { cubicInOut, cubicOut } from 'svelte/easing';
 
 	let searchValue = $state('');
 
@@ -104,66 +105,96 @@
 		</div>
 		<Combobox.Portal>
 			<Combobox.Content
-				class="border-subtle bg-base-200 shadow-popover data-[state=open]:animate-in
-			z-50 h-96 rounded-xl border px-1 py-1
+				forceMount
+				align="start"
+				class="border-subtle from-base-100 to-base-200 shadow-popover data-[state=open]:animate-in z-50
+			h-96 w-100 rounded-xl border bg-gradient-to-b px-1 py-1
 			outline-hidden select-none data-[side=bottom]:translate-y-1
 			data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
 				sideOffset={10}
 			>
-				<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1"
-				></Combobox.ScrollUpButton>
-				<Combobox.Viewport class="p-1">
-					{#each filteredGroupedModels as group}
-						<Combobox.Group>
-							<!-- Provider group header -->
-							<Combobox.GroupHeading
-								class="text-muted-foreground mb-1 flex items-center
+				{#snippet child({ wrapperProps, props, open })}
+					{#if open}
+						<div {...wrapperProps}>
+							<div {...props} transition:fly={{ y: 20, duration: 200, easing: cubicOut }}>
+								<Combobox.Viewport class="p-1">
+									{#each filteredGroupedModels as group}
+										<Combobox.Group>
+											<!-- Provider group header -->
+											<Combobox.GroupHeading
+												class="text-muted-foreground mb-1 flex items-center
 							gap-2 px-2 py-1 text-sm font-semibold uppercase"
-							>
-								<Icon class="" icon={providerIcons[group.provider]} />
-								{group.provider}
-							</Combobox.GroupHeading>
+											>
+												<Icon class="" icon={providerIcons[group.provider]} />
+												{group.provider}
+											</Combobox.GroupHeading>
 
-							<!-- Models in this provider group -->
-							{#each group.models as model (model.id)}
-								<Combobox.Item
-									class="text-muted data-highlighted:bg-base-300/30
-								ring-subtle flex h-10 w-full
-								items-center
-								rounded-xl px-2 py-1 text-sm capitalize outline-hidden
+											<!-- Models in this provider group -->
+											{#each group.models as model (model.id)}
+												<Combobox.Item
+													class="text-muted data-highlighted:bg-base-300/30
+								ring-subtle my-1 flex h-10
+								w-full
+								items-center rounded-xl px-3 py-2 text-sm capitalize outline-hidden
 								select-none data-highlighted:shadow-sm data-highlighted:ring dark:data-highlighted:shadow-xl"
-									value={model.id}
-									label={model.name}
-								>
-									{#snippet children({ selected })}
-										<span class="truncate">
-											{model.name}
-										</span>
-										{#if selected}
-											<div class="ml-auto">
-												<Icon
-													class="text-primary text-2xl"
-													icon="solar:check-circle-bold-duotone"
-												/>
-											</div>
-										{/if}
-									{/snippet}
-								</Combobox.Item>
-							{/each}
+													value={model.id}
+													label={model.name}
+												>
+													{#snippet children({ selected })}
+														<div class="flex w-full flex-col">
+															<span class="truncate">
+																{model.name}
+															</span>
+															<span
+																class="text-muted/60 w-11/12
+												truncate text-xs"
+															>
+																{model.description}
+															</span>
+														</div>
+														{#if selected}
+															<div class="ml-auto">
+																<Icon
+																	class="text-primary text-2xl"
+																	icon="solar:check-circle-bold-duotone"
+																/>
+															</div>
+														{/if}
+													{/snippet}
+												</Combobox.Item>
+											{/each}
 
-							<!-- Add a separator between provider groups -->
-							{#if group !== filteredGroupedModels[filteredGroupedModels.length - 1]}
-								<div class="divider my-1"></div>
-							{/if}
-						</Combobox.Group>
-					{:else}
-						<span class="block px-5 py-2 text-sm text-muted-foreground">
-							No results found, try again.
-						</span>
-					{/each}
-				</Combobox.Viewport>
-				<Combobox.ScrollDownButton class="flex w-full items-center justify-center py-1"
-				></Combobox.ScrollDownButton>
+											<!-- Add a separator between provider groups -->
+											{#if group !== filteredGroupedModels[filteredGroupedModels.length - 1]}
+												<div class="divider my-1"></div>
+											{/if}
+										</Combobox.Group>
+									{:else}
+										<div
+											class="h-full border border-subtle shadow-sm
+							shadow-base-300 border-dashed rounded-lg flex flex-col items-center"
+										>
+											<h3
+												class="px-5 py-2 text-muted-foreground
+								text-center my-10 w-full text-lg"
+											>
+												No results found, try again.
+											</h3>
+
+											<div class="text-center text-muted text-balance">
+												Tip: when searching, you can also write provider names (like <code
+													>goog</code
+												>
+												or
+												<code>openai</code>) to filter all the models for that provider
+											</div>
+										</div>
+									{/each}
+								</Combobox.Viewport>
+							</div>
+						</div>
+					{/if}
+				{/snippet}
 			</Combobox.Content>
 		</Combobox.Portal>
 	</Combobox.Root>

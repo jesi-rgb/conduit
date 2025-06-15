@@ -5,6 +5,7 @@
 	$effect.pre(() => {
 		globalState.currentBranches = [];
 		globalState.currentMessages = [];
+		globalState.currentSelectedText = null;
 	});
 </script>
 

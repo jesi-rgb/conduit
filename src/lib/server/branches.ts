@@ -29,11 +29,11 @@ interface BranchData {
 	parentId: string;
 	title: string;
 	userId: string;
-	selected_text: string;
-	selection_node_type: string;
-	selection_node_index: number;
-	selection_start_offset: number;
-	selection_end_offset: number;
+	selected_text?: string;
+	selection_node_type?: string;
+	selection_node_index?: number;
+	selection_start_offset?: number;
+	selection_end_offset?: number;
 }
 
 export async function createBranch({

@@ -24,7 +24,7 @@ export interface ChatState {
 	onFinishSend: () => void;
 	onFinishStream: () => void;
 	branchOut: () => void;
-	branchFromSelection: (message: Message, selected_text: string, start_index: number, end_index: number) => void;
+	branchFromSelection: (message: Message, selected_text: string, start_index: number, end_index: number) => Promise<void>;
 }
 
 export class ChatStateClass implements ChatState {
@@ -315,8 +315,8 @@ export class ChatStateClass implements ChatState {
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,
 			branch_from_message_id: message.id!.trim(),
-			title: `${this.conversation_id}-${message.id}`,
-			user_id: globalState.user!.id
+			title: 'New Branch',
+			user_id: globalState.user!.id,
 		}
 
 		const branchData = await fetchWithAuth({
@@ -350,7 +350,7 @@ export class ChatStateClass implements ChatState {
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,
 			branch_from_message_id: message.id!.trim(),
-			title: `${this.conversation_id}-${message.id}`,
+			title: globalState.currentSelectedText,
 			user_id: globalState.user!.id,
 			selected_text: selectionData.text,
 			selection_end_offset: selectionData.endOffset,

@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import { fly, slide } from 'svelte/transition';
+	import { validate } from 'uuid';
 
 	const gotoUrl = (msgId: string) => {
 		if (page.params.branch) {
@@ -13,6 +14,10 @@
 			return `/chat/${page.params.id}?message=${msgId}`;
 		}
 	};
+
+	console.log(
+		validate('cd8f7602-6435-45ee-883f-90716c947c13-25efcf34-0456-46b0-b06d-e036dc63fa41')
+	);
 </script>
 
 <Pane defaultSize={20} class="w-full">
@@ -49,6 +54,7 @@
 			{/key}
 			{#each msgBranches as branch, b}
 				{@const lastBranch = b === msgBranches.length - 1}
+				{@const branchTitleIsUUID = validate(branch.title)}
 				{#if branch.branch_from_message_id === msg.id}
 					{#key globalState.currentBranches}
 						<a
@@ -76,7 +82,12 @@
 							shrink-0 text-xl transition-all duration-300 group-hover:rotate-6"
 								icon="solar:star-ring-bold-duotone"
 							/>
-							<p class="text-muted truncate text-xs italic">{branch.title}</p>
+							<p
+								class="text-muted truncate text-xs
+								italic"
+							>
+								{branchTitleIsUUID ? `Branch ${b + 1}` : branch.title}
+							</p>
 						</a>
 					{/key}
 				{/if}

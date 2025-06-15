@@ -38,11 +38,11 @@ export type Branch = {
 	parent_conversation_id: string;
 	branch_from_message_id: string;
 
-	selected_text: string;
-	selection_node_type: string;
-	selection_node_index: number;
-	selection_start_offset: number;
-	selection_end_offset: number;
+	selected_text?: string | undefined;
+	selection_node_type?: string | undefined;
+	selection_node_index?: number | undefined;
+	selection_start_offset?: number | undefined;
+	selection_end_offset?: number | undefined;
 
 	created_at?: Date;
 	updated_at?: Date;

@@ -49,7 +49,7 @@ export class GlobalState implements GlobalStateType {
 		else return null
 	}
 
-	set currentSelectedText(text: string) {
+	set currentSelectedText(text: string | null) {
 		this.#currentSelectedText = text
 	}
 	get currentSelectedText(): string {

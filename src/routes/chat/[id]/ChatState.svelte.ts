@@ -24,7 +24,13 @@ export interface ChatState {
 	onFinishSend: () => void;
 	onFinishStream: () => void;
 	branchOut: () => void;
-	branchFromSelection: (message: Message, selected_text: string, start_index: number, end_index: number) => Promise<void>;
+	branchFromSelection: (message: Message, selectionData: {
+		text: string,
+		nodeType: string,
+		nodeIndex: number,
+		startOffset: number,
+		endOffset: number
+	}) => Promise<void>;
 }
 
 export class ChatStateClass implements ChatState {
@@ -374,6 +380,4 @@ export class ChatStateClass implements ChatState {
 
 		this.isLoading = false
 	}
-
-
 }

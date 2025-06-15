@@ -8,7 +8,6 @@ import { ChatStateClass } from "./ChatState.svelte";
 export const load: PageLoad = ({ params, fetch }) => {
 
 	const existingState = get(activeChatState);
-	console.log(existingState)
 
 	let chatState: ChatStateClass;
 

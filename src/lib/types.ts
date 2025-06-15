@@ -26,6 +26,7 @@ export type Message = {
 	role: 'user' | 'assistant' | 'system';
 	content: string;
 	created_at: Date;
+	generated_by?: string;
 }
 
 
@@ -33,11 +34,28 @@ export type Branch = {
 	id?: string;
 	title: string;
 	user_id: string;
+
 	parent_conversation_id: string;
 	branch_from_message_id: string;
+
+	selected_text: string;
+	selection_node_type: string;
+	selection_node_index: number;
+	selection_start_offset: number;
+	selection_end_offset: number;
+
 	created_at?: Date;
 	updated_at?: Date;
 };
+
+export interface Highlight {
+	branch_id: string;
+	conversation_id: string;
+	selection_node_type: string;
+	selection_node_index: number;
+	selection_start_offset: number;
+	selection_end_offset: number;
+}
 
 export interface GlobalState {
 	user: User;

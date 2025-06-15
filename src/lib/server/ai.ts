@@ -27,7 +27,6 @@ These are the messages in question:
 
 ${JSON.stringify(messages)}
 `
-	console.log(titlePrompt)
 
 	const response = await fetch(endpoint, {
 		method: 'POST',

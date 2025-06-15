@@ -1,0 +1,1 @@
+ALTER TABLE "messages" ALTER COLUMN "generated_by" DROP NOT NULL;

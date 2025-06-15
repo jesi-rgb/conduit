@@ -70,6 +70,10 @@
 			<TooltipExplain class="w-full" disabled={!noKey}>
 				<textarea
 					onkeydown={(e) => {
+						if (e.shiftKey && e.key === 'Enter') {
+							e.preventDefault();
+							return;
+						}
 						if (e.key === 'Enter') {
 							e.preventDefault();
 							newConversation();

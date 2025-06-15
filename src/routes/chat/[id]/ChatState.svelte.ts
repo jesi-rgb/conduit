@@ -24,6 +24,7 @@ export interface ChatState {
 	onFinishSend: () => void;
 	onFinishStream: () => void;
 	branchOut: () => void;
+	branchFromSelection: (message: Message, selected_text: string, start_index: number, end_index: number) => void;
 }
 
 export class ChatStateClass implements ChatState {
@@ -174,7 +175,6 @@ export class ChatStateClass implements ChatState {
 			for (const line of lines) {
 				try {
 					const parsedChunk = JSON.parse(line);
-					console.log(parsedChunk)
 
 					if (parsedChunk.type === 'chunk') {
 						this.#streamingMessage!.content += parsedChunk.content;
@@ -229,7 +229,7 @@ export class ChatStateClass implements ChatState {
 
 		this.currentBranch.push(newMsg)
 
-		const response = await fetchWithAuth({
+		await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/${branch}`, options: {
 				method: 'POST',
 				body: JSON.stringify({
@@ -334,4 +334,46 @@ export class ChatStateClass implements ChatState {
 
 		this.isLoading = false;
 	}
+
+	branchFromSelection = async (message: Message,
+		selectionData: {
+			text: string,
+			nodeType: string,
+			nodeIndex: number,
+			startOffset: number,
+			endOffset: number
+		}) => {
+		this.isLoading = true
+
+		this.fetchMessages()
+
+		const newBranch: Branch = {
+			parent_conversation_id: this.conversation_id,
+			branch_from_message_id: message.id!.trim(),
+			title: `${this.conversation_id}-${message.id}`,
+			user_id: globalState.user!.id,
+			selected_text: selectionData.text,
+			selection_end_offset: selectionData.endOffset,
+			selection_start_offset: selectionData.startOffset,
+			selection_node_index: selectionData.nodeIndex,
+			selection_node_type: selectionData.nodeType
+		}
+
+		const branchData = await fetchWithAuth({
+			url: `/api/branches/${this.conversation_id}`, options: {
+				method: 'POST',
+				body: JSON.stringify(newBranch)
+			}
+		})
+		const branchJson = await branchData.json()
+		const branchId = branchJson.branch.id
+
+		globalState.fetchBranches()
+
+		goto(`/chat/${this.conversation_id}/${branchId}`)
+
+		this.isLoading = false
+	}
+
+
 }

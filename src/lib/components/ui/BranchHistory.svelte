@@ -76,7 +76,7 @@
 							shrink-0 text-xl transition-all duration-300 group-hover:rotate-6"
 								icon="solar:star-ring-bold-duotone"
 							/>
-							<p class="text-muted text-xs">Branch {b + 1}</p>
+							<p class="text-muted truncate text-xs italic">{branch.title}</p>
 						</a>
 					{/key}
 				{/if}

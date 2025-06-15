@@ -93,7 +93,7 @@
 
 					<TooltipExplain
 						class="flex w-full gap-1"
-						disabled={!localStorage.getItem(CONDUIT_PROVIDER)}
+						disabled={!!localStorage.getItem(CONDUIT_PROVIDER)}
 					>
 						<input
 							type="text"

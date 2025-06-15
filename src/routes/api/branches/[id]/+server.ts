@@ -15,7 +15,7 @@ export async function POST({ params, request }: { request: Request }) {
 	const branch = await createBranch({
 		messageId: branchData.branch_from_message_id,
 		parentId: branchData.parent_conversation_id,
-		title: branchData.title,
+		title: branchData.selected_text,
 		userId: branchData.user_id,
 		selected_text: branchData.selected_text,
 		selection_end_offset: branchData.selection_end_offset,

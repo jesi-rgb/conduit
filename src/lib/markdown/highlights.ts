@@ -27,7 +27,7 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 			const conversationId = token.attrGet('data-conversation-id');
 			const branchId = token.attrGet('data-branch-id');
 			const href = `/chat/${conversationId}/${branchId}`;
-			return `<a href="${href}" class="highlight-link" data-sveltekit-preload-data="hover">`;
+			return `<a href="${href}" class="highlight-link" data-sveltekit-preload-data="tap">`;
 		};
 		md.renderer.rules.link_highlight_close = () => '</a>';
 

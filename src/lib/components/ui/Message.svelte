@@ -43,9 +43,14 @@
 		}
 	});
 
+	$effect(() => {
+		if (!selectionData.text) return;
+		globalState.currentSelectedText = selectionData.text;
+	});
+
 	async function handleSelection() {
 		selection = window.getSelection();
-		if (!selection || selection.isCollapsed || !messageContainer) {
+		if (!selection || selection.isCollapsed || !messageContainer || isBranch) {
 			isBranchPopupOpen = false;
 			return;
 		}
@@ -189,7 +194,11 @@
 		{#snippet child({ wrapperProps, props, open })}
 			{#if open}
 				<div {...wrapperProps}>
-					<div {...props} transition:fly={{ y: -5, duration: 100, easing: cubicInOut }}>
+					<div
+						{...props}
+						class="z-50"
+						transition:fly={{ y: -5, duration: 100, easing: cubicInOut }}
+					>
 						<button
 							class="btn btn-sm btn-primary hover:text-primary-content backdrop-blur-2xl"
 							onclick={branchFromSelection}
@@ -217,8 +226,9 @@
 	{#if message.role === 'user'}
 		<div class="chat chat-end">
 			<p
-				class="bg-primary/15 border-primary/30 max-w-3/4 self-end
-									rounded-2xl rounded-br-xs border px-4 py-2"
+				class="bg-primary/15 border-primary/30 prose max-w-3/4
+									self-end rounded-2xl rounded-br-xs border px-4
+				py-2"
 			>
 				{message.content}
 			</p>
@@ -270,24 +280,6 @@
 								{/snippet}
 							</TooltipExplain>
 						{/if}
-
-						{#each globalState.currentBranches as branch, b (branch.id)}
-							{#if branch.branch_from_message_id === message.id}
-								<TooltipExplain>
-									<a
-										href="/chat/{message.conversation_id}/{branch.id}"
-										class="btn btn-xs btn-ghost btn-primary btn-circle size-7"
-										data-sveltekit-preload-data="tap"
-									>
-										<Icon class="text-lg" icon="solar:star-ring-bold-duotone" />
-									</a>
-
-									{#snippet content()}
-										Branch {b + 1}
-									{/snippet}
-								</TooltipExplain>
-							{/if}
-						{/each}
 					</div>
 				{/if}
 			</div>
@@ -297,6 +289,15 @@
 
 <style>
 	:global(mark) {
+		border: 1px solid var(--color-primary);
+		padding: 1px 2px;
+		background-color: transparent;
+		color: var(--color-primary);
+		transition: all 0.1s ease-in-out;
+	}
+
+	:global(mark):hover {
+		border: 1px solid var(--color-primary);
 		background-color: var(--color-primary);
 		color: var(--color-primary-content);
 	}

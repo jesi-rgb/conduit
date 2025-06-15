@@ -12,6 +12,7 @@ interface GlobalStateType {
 	currentConversation: Conversation | null;
 	currentMessages: Message[];
 	currentBranches: Branch[];
+	currentSelectedText: string;
 	userKeys: Record<Provider, string>;
 	updateUserKeys: (provider: Provider, key: string) => void
 }
@@ -19,6 +20,7 @@ interface GlobalStateType {
 export class GlobalState implements GlobalStateType {
 	#user_data: User | null = $state(null);
 	#modelIdSelected: string | null = $state(null);
+	#currentSelectedText: string | null = $state(null);
 	#conversations_data: Conversation[] = $state([]);
 	#currentConversation_data: Conversation | null = $state(null);
 	#currentMessages_data: Message[] = $state([]);
@@ -45,6 +47,15 @@ export class GlobalState implements GlobalStateType {
 		if (this.#user_data)
 			return this.#user_data
 		else return null
+	}
+
+	set currentSelectedText(text: string) {
+		this.#currentSelectedText = text
+	}
+	get currentSelectedText(): string {
+		if (this.#currentSelectedText)
+			return this.#currentSelectedText
+		else return ''
 	}
 
 	set conversations(conversations: Conversation[]) {

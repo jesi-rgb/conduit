@@ -10,6 +10,7 @@
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
 	import Message from './Message.svelte';
+	import TooltipExplain from './TooltipExplain.svelte';
 
 	interface Props {
 		chatState: ChatStateClass;
@@ -24,7 +25,15 @@
 	let messageInUrl = $derived(page.url.searchParams.get('message'));
 	let inputMessage: HTMLInputElement | null = $state(null);
 
-	let message = $state('');
+	let message = $derived.by(() => {
+		if (isBranch && globalState.currentSelectedText != null) {
+			return `> ${globalState.currentSelectedText}
+
+`;
+		} else {
+			return '';
+		}
+	});
 	let chatContainer: HTMLDivElement | null = $state(null);
 	let mounted = $state(false);
 
@@ -82,57 +91,48 @@
 				>
 					<ModelSelector />
 
-					<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
-						<Tooltip.Root delayDuration={0}>
-							<Tooltip.Trigger class="flex w-full gap-1">
-								<input
-									type="text"
-									bind:this={inputMessage}
-									bind:value={message}
-									placeholder="Type your message..."
-									class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
-									disabled={chatState.isLoading ||
-										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_PROVIDER)}
-								/>
-								{#if chatState.isStreaming}
-									<button class="btn btn-error" onclick={() => chatState.cancelStream()}>
-										<Icon icon="solar:stop-bold" class="text-xl" />
-									</button>
-								{:else}
-									<button
-										class="btn"
-										type="submit"
-										disabled={chatState.isLoading ||
-											chatState.isStreaming ||
-											!localStorage.getItem(CONDUIT_PROVIDER)}
-									>
-										<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
-									</button>
-								{/if}
-							</Tooltip.Trigger>
-							<Tooltip.Portal>
-								<TooltipContent>
-									<div
-										class="bg-base-200 to-primary-content
-										border-subtle rounded-box max-w-sm border
-										 p-3 shadow-lg backdrop-blur-xl"
-									>
-										<p>Looks like you didn't setup an API key.</p>
+					<TooltipExplain
+						class="flex w-full gap-1"
+						disabled={!localStorage.getItem(CONDUIT_PROVIDER)}
+					>
+						<input
+							type="text"
+							bind:this={inputMessage}
+							bind:value={message}
+							placeholder="Type your message..."
+							class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
+							disabled={chatState.isLoading ||
+								chatState.isStreaming ||
+								!localStorage.getItem(CONDUIT_PROVIDER)}
+						/>
+						{#if chatState.isStreaming}
+							<button class="btn btn-error" onclick={() => chatState.cancelStream()}>
+								<Icon icon="solar:stop-bold" class="text-xl" />
+							</button>
+						{:else}
+							<button
+								class="btn"
+								type="submit"
+								disabled={chatState.isLoading ||
+									chatState.isStreaming ||
+									!localStorage.getItem(CONDUIT_PROVIDER)}
+							>
+								<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
+							</button>
+						{/if}
+						{#snippet content()}
+							<p>Looks like you didn't setup an API key.</p>
 
-										<p>
-											Head to <a
-												class="text-primary font-bold
-												underline"
-												href="/settings">Settings</a
-											>
-											to start chatting!
-										</p>
-									</div>
-								</TooltipContent>
-							</Tooltip.Portal>
-						</Tooltip.Root>
-					</Tooltip.Provider>
+							<p>
+								Head to <a
+									class="text-primary font-bold
+								underline"
+									href="/settings">Settings</a
+								>
+								to start chatting!
+							</p>
+						{/snippet}
+					</TooltipExplain>
 				</form>
 			{/if}
 		</div>

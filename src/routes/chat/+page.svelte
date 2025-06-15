@@ -9,6 +9,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Conduit</title>
+</svelte:head>
+
 <div class="sticky top-[100vh] h-fit">
 	<TextBox />
 </div>

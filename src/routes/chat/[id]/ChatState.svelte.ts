@@ -297,6 +297,7 @@ export class ChatStateClass implements ChatState {
 				try {
 					const parsedChunk = JSON.parse(line);
 
+					console.log(parsedChunk)
 					if (parsedChunk.type === 'chunk') {
 						if (parsedChunk.content) {
 							this.#streamingMessage!.content += parsedChunk.content;

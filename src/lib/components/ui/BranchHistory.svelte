@@ -40,7 +40,7 @@
 				>
 					<Icon
 						class={`shrink-0 text-2xl ${
-							msg.role === 'user' ? 'text-primary' : 'text-secondary-content text-xl'
+							msg.role === 'user' ? 'text-primary' : 'text-secondary text-xl'
 						}`}
 						icon={msg.role === 'user' ? 'solar:star-shine-bold-duotone' : 'solar:ufo-line-duotone'}
 					/>

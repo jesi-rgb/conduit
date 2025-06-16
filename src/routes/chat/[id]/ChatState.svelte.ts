@@ -156,6 +156,7 @@ export class ChatStateClass implements ChatState {
 			content: '',
 			reasoning: '',
 			created_at: new Date(),
+			generated_by: globalState.modelIdSelected,
 			conversation_id: this.conversation_id
 		};
 
@@ -176,7 +177,7 @@ export class ChatStateClass implements ChatState {
 				}
 			});
 
-			this.#processStream(response)
+			await this.#processStream(response)
 
 			this.isStreaming = false
 
@@ -276,7 +277,7 @@ export class ChatStateClass implements ChatState {
 
 		this.currentBranch.push(this.#streamingMessage);
 
-		this.#processStream(response)
+		await this.#processStream(response)
 
 		this.isStreaming = false
 	};

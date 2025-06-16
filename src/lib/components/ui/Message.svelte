@@ -10,10 +10,11 @@
 	import { codeToHtml } from 'shiki';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte';
 	import type { Branch, Message, Highlight } from '$lib/types';
-	import { Popover } from 'bits-ui';
-	import { fly } from 'svelte/transition';
+	import { Collapsible, Popover } from 'bits-ui';
+	import { fade, fly, slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { createHighlighterPlugin } from '$lib/markdown/highlights'; // Adjust path
+	import { popularModels } from '$lib/models';
 
 	const { message, chatState }: { message: Message; chatState: ChatStateClass } = $props();
 	const isBranch = $derived(!!page.params.branch);
@@ -245,15 +246,36 @@
 					<div><span class="loading-dots loading"></span></div>
 				{:else}
 					{#if message.reasoning}
-						<details
-							class="prose prose-sm border-subtle mb-5 rounded-xl
-							border p-2"
-						>
-							<summary>Thoughts</summary>
-							{#await mdInstance.renderAsync(message.reasoning) then markdown}
-								{@html markdown}
-							{/await}
-						</details>
+						<Collapsible.Root class="mb-3 space-y-3">
+							<Collapsible.Trigger
+								class="btn btn-outline btn-xs btn-primary flex cursor-pointer
+								items-center gap-4
+								"
+							>
+								<h4 class="">Thoughts</h4>
+								<Icon icon="solar:list-arrow-down-minimalistic-line-duotone" />
+							</Collapsible.Trigger>
+
+							<Collapsible.Content
+								forceMount
+								class="border-subtle prose
+								prose-sm mb-5 rounded-xl border px-3 py-2"
+							>
+								{#snippet child({ props, open })}
+									{#if open}
+										<div
+											{...props}
+											in:fly={{ y: -10, duration: 200 }}
+											out:slide={{ duration: 150 }}
+										>
+											{#await mdInstance.renderAsync(message.reasoning) then markdown}
+												{@html markdown}
+											{/await}
+										</div>
+									{/if}
+								{/snippet}
+							</Collapsible.Content>
+						</Collapsible.Root>
 					{/if}
 
 					<div
@@ -274,6 +296,8 @@
 					>
 						<span class="opacity-50">
 							{new Date(message.created_at).toLocaleString('es-ES')}
+							· {popularModels.find((model) => model.id === message.generated_by)?.name ||
+								message.generated_by}
 						</span>
 						<CopyMessage {message} />
 						{#if !isBranch}

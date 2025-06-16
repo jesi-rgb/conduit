@@ -17,7 +17,7 @@ type AIRequestMessage = {
  * It receives the fully accumulated content and the model name.
  * It should handle saving the message to the database and return the saved message.
  */
-type OnCompleteCallback = (content: string, model: string) => Promise<Message>;
+type OnCompleteCallback = (content: string, reasoning: string, model: string) => Promise<Message>;
 
 /**
  * Creates a streaming AI response handler.
@@ -38,6 +38,7 @@ export function createAIStreamHandler(
 				const stream = await generateStreamingAIResponse(aiMessages, aiOptions);
 				const reader = stream.getReader();
 				let accumulatedContent = '';
+				let accumulatedReasoning = '';
 				let finalModel = '';
 
 				try {
@@ -45,7 +46,7 @@ export function createAIStreamHandler(
 						const { done, value } = await reader.read();
 
 						if (done) {
-							const finalMessage = await onComplete(accumulatedContent, finalModel);
+							const finalMessage = await onComplete(accumulatedContent, accumulatedReasoning, finalModel);
 							controller.enqueue(
 								JSON.stringify({
 									type: 'assistantMessage',
@@ -62,6 +63,10 @@ export function createAIStreamHandler(
 
 						if (chunkContent) {
 							accumulatedContent += chunkContent;
+						}
+
+						if (chunkReasoning) {
+							accumulatedReasoning += chunkReasoning;
 						}
 
 						if (value.model && !finalModel) {

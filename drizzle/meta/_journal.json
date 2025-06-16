@@ -50,6 +50,13 @@
       "when": 1749996108139,
       "tag": "0006_gigantic_warhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1750077129700,
+      "tag": "0007_tough_crystal",
+      "breakpoints": true
     }
   ]
 }

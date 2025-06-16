@@ -244,6 +244,18 @@
 				{#if chatState.isStreaming && chatState.streamingMessage?.id === message.id && chatState.streamingMessage?.content === ''}
 					<div><span class="loading-dots loading"></span></div>
 				{:else}
+					{#if message.reasoning}
+						<details
+							class="prose prose-sm border-subtle mb-5 rounded-xl
+							border p-2"
+						>
+							<summary>Thoughts</summary>
+							{#await mdInstance.renderAsync(message.reasoning) then markdown}
+								{@html markdown}
+							{/await}
+						</details>
+					{/if}
+
 					<div
 						role="presentation"
 						class="prose prose-code:px-0

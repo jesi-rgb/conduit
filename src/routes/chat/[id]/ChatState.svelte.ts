@@ -48,8 +48,7 @@ export class ChatStateClass implements ChatState {
 	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
-	#streamingReasoning = $state<Message | null>(null);
-
+	#streamingReasoning = $state<string>('');
 
 	constructor(conv_id?: string) {
 		if (conv_id) {
@@ -77,6 +76,13 @@ export class ChatStateClass implements ChatState {
 	}
 	set streamingMessage(message: Message | null) {
 		this.#streamingMessage = message;
+	}
+
+	get streamingReasoning() {
+		return this.#streamingReasoning;
+	}
+	set streamingReasoning(content: string) {
+		this.#streamingReasoning = content;
 	}
 
 	get messages() {
@@ -148,12 +154,12 @@ export class ChatStateClass implements ChatState {
 			id: crypto.randomUUID(),
 			role: 'assistant',
 			content: '',
+			reasoning: '',
 			created_at: new Date(),
 			conversation_id: this.conversation_id
 		};
 
 		this.messages.push(this.#streamingMessage);
-
 
 		try {
 			const response = await fetchWithAuth({
@@ -169,8 +175,6 @@ export class ChatStateClass implements ChatState {
 						}), signal: this.#controller.signal
 				}
 			});
-
-
 
 			this.#processStream(response)
 
@@ -265,6 +269,7 @@ export class ChatStateClass implements ChatState {
 			id: crypto.randomUUID(),
 			role: 'assistant',
 			content: '',
+			reasoning: '',
 			created_at: new Date(),
 			conversation_id: this.conversation_id
 		};
@@ -295,8 +300,7 @@ export class ChatStateClass implements ChatState {
 						if (parsedChunk.content) {
 							this.#streamingMessage!.content += parsedChunk.content;
 						} else if (parsedChunk.reasoning) {
-							this.#streamingReasoning = parsedChunk.reasoning
-							console.log(this.#streamingReasoning)
+							this.#streamingMessage!.reasoning += parsedChunk.reasoning
 						}
 					}
 				} catch (parseError) {

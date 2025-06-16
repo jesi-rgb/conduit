@@ -34,6 +34,7 @@ export const messages = pgTable('messages', {
 	conversation_id: uuid('conversation_id').notNull().references(() => conversations.id, { onDelete: 'cascade' }),
 	role: messageRoleEnum('role').notNull(),
 	content: text('content').notNull(),
+	reasoning: text('reasoning'),
 	generated_by: text('generated_by'),
 	created_at: timestamp('created_at').defaultNow().notNull()
 }).enableRLS();

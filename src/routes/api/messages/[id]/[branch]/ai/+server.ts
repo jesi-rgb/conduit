@@ -23,16 +23,18 @@ export async function POST({ params, request }) {
 		const previousMessages = [...originalMessages, ...branchMessages];
 		const aiMessages = previousMessages.map((msg: Message) => ({
 			role: msg.role,
-			content: msg.content
+			content: msg.content,
+			reasoning: msg.reasoning
 		}));
 
 		// Define the logic to run when the stream completes
-		const onComplete = async (content: string, modelName: string) => {
+		const onComplete = async (content: string, reasoning: string, modelName: string) => {
 			const [assistantMessage] = await db
 				.insert(messages)
 				.values({
 					conversation_id: params.branch,
 					content: content,
+					reasoning: reasoning,
 					role: 'assistant',
 					generated_by: modelName
 				})

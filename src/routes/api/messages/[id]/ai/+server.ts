@@ -16,13 +16,14 @@ export async function POST({ params, request }) {
 		const idStreamingResponse = incomingMessages[incomingMessages.length - 1].id;
 
 		// Define the logic to run when the stream completes
-		const onComplete = async (content: string, modelName: string) => {
+		const onComplete = async (content: string, reasoning: string, modelName: string) => {
 			const [assistantMessage] = await db
 				.insert(messages)
 				.values({
 					id: idStreamingResponse,
 					conversation_id: params.id,
 					content: content,
+					reasoning: reasoning,
 					role: 'assistant',
 					generated_by: modelName
 				})

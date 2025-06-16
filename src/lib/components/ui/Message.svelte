@@ -14,7 +14,6 @@
 	import { fly } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { createHighlighterPlugin } from '$lib/markdown/highlights'; // Adjust path
-	import ConversationView from './ConversationView.svelte';
 
 	const { message, chatState }: { message: Message; chatState: ChatStateClass } = $props();
 	const isBranch = $derived(!!page.params.branch);
@@ -41,11 +40,6 @@
 		getBoundingClientRect: () => {
 			return selectionRect || new DOMRect(0, 0, 0, 0);
 		}
-	});
-
-	$effect(() => {
-		if (!selectionData.text) return;
-		globalState.currentSelectedText = selectionData.text;
 	});
 
 	async function handleSelection() {
@@ -111,14 +105,13 @@
 				(branch: Branch): Highlight => ({
 					branch_id: branch.id!, // Pass the branch ID for linking
 					conversation_id: page.params.id,
-					selection_node_type: branch.selection_node_type,
-					selection_node_index: branch.selection_node_index,
-					selection_start_offset: branch.selection_start_offset,
-					selection_end_offset: branch.selection_end_offset
+					selection_node_type: branch.selection_node_type!,
+					selection_node_index: branch.selection_node_index!,
+					selection_start_offset: branch.selection_start_offset!,
+					selection_end_offset: branch.selection_end_offset!
 				})
 			);
 	});
-	$inspect(highlights);
 
 	const mdInstance = $derived.by(() => {
 		const md = MarkdownItAsync();
@@ -146,6 +139,11 @@
 		md.use(createHighlighterPlugin(highlights));
 
 		return md;
+	});
+
+	$effect(() => {
+		if (!selectionData.text) return;
+		globalState.currentSelectedText = selectionData.text;
 	});
 
 	onMount(() => {

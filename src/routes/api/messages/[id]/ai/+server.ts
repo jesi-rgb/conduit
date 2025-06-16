@@ -1,85 +1,37 @@
 import { json } from '@sveltejs/kit';
-import { generateStreamingAIResponse } from '$lib/server/ai';
 import { db } from '$lib/server/db';
-import type { Message } from '$lib/types';
 import { messages } from '$lib/server/db/schema';
+import { createAIStreamHandler } from '$lib/server/stream-handler';
+import type { Message } from '$lib/types';
 
 export async function POST({ params, request }) {
-	const { model, messages: incomingMessages, endpoint, bearerToken } = await request.json()
-
 	try {
+		const { model, messages: incomingMessages, endpoint, bearerToken } = await request.json();
+
 		const aiMessages = incomingMessages.map((msg: Message) => ({
 			role: msg.role,
 			content: msg.content
 		}));
 
-		const idStreamingResponse = incomingMessages[incomingMessages.length - 1].id
+		const idStreamingResponse = incomingMessages[incomingMessages.length - 1].id;
 
-		// Create a streaming response
-		const stream = await generateStreamingAIResponse(aiMessages, {
-			model: model,
-			bearerToken: bearerToken,
-			endpoint: endpoint
-		});
+		// Define the logic to run when the stream completes
+		const onComplete = async (content: string, modelName: string) => {
+			const [assistantMessage] = await db
+				.insert(messages)
+				.values({
+					id: idStreamingResponse,
+					conversation_id: params.id,
+					content: content,
+					role: 'assistant',
+					generated_by: modelName
+				})
+				.returning();
+			return assistantMessage;
+		};
 
-		// Create a new Response with the streaming content
-		return new Response(
-			new ReadableStream({
-				async start(controller) {
-					const reader = stream.getReader();
-					let assistantResponse = '';
-
-					try {
-						while (true) {
-							const { done, value } = await reader.read();
-
-							if (done) {
-								console.log(done)
-								const assistantMessageResult = await db.insert(messages).values({
-									id: idStreamingResponse,
-									conversation_id: params.id,
-									content: assistantResponse,
-									role: 'assistant',
-								}).returning();
-
-								const assistantMessage = assistantMessageResult[0];
-
-								controller.enqueue(
-									JSON.stringify({
-										type: 'assistantMessage',
-										message: assistantMessage
-									}) + '\n'
-								);
-
-								controller.close();
-								break;
-							}
-
-							// Accumulate the response
-							assistantResponse += value;
-
-							// Send each chunk
-							controller.enqueue(
-								JSON.stringify({
-									type: 'chunk',
-									content: value
-								}) + '\n'
-							);
-						}
-					} catch (error) {
-						console.error('Streaming error:', error);
-						controller.error(error);
-					}
-				}
-			}),
-			{
-				headers: {
-					'Content-Type': 'text/event-stream',
-					'Cache-Control': 'no-cache',
-					'Connection': 'keep-open'
-				}
-			}
-		);
+		// Use the shared handler to create the response
+		return createAIStreamHandler(aiMessages, { model, endpoint, bearerToken }, onComplete);
 
 	} catch (error) {
 		console.error('Chat API error:', error);

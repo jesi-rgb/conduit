@@ -1,5 +1,4 @@
 import type { Message } from '$lib/types';
-import { json } from '@sveltejs/kit';
 
 
 type AIOptions = {
@@ -70,7 +69,7 @@ export async function generateStreamingAIResponse(messages: Message[], { model, 
 
 	// Check if the response is ok
 	if (!response.ok) {
-		throw new Error(`OpenAI API error: ${response.statusText}`);
+		throw new Error(`API error: ${response.statusText}`);
 	}
 
 	// Create a ReadableStream that parses the SSE response
@@ -113,12 +112,7 @@ export async function generateStreamingAIResponse(messages: Message[], { model, 
 
 								const parsedChunk = JSON.parse(trimmedLine);
 
-								// Extract the delta content from the response
-								const content = parsedChunk.choices[0]?.delta?.content;
-
-								if (content) {
-									controller.enqueue(content);
-								}
+								controller.enqueue(parsedChunk);
 							} catch (parseError) {
 								console.error('Error parsing line:', parseError);
 							}

@@ -11,6 +11,7 @@
 	import { page } from '$app/state';
 	import { fly, slide } from 'svelte/transition';
 	import TooltipExplain from './TooltipExplain.svelte';
+	import { MediaQuery } from 'svelte/reactivity';
 
 	const convId = $derived(page.params.id);
 
@@ -19,9 +20,17 @@
 	);
 
 	const user = $derived(globalState.user);
+	let isDarkMode = $state(false);
+	$inspect(isDarkMode, 'darkmode');
+	let mediaQuery;
 
 	onMount(async () => {
 		globalState.fetchConversations();
+	});
+
+	$effect.pre(() => {
+		mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+		isDarkMode = mediaQuery.matches;
 	});
 
 	async function logout() {
@@ -136,19 +145,38 @@
 		</div>
 
 		<div class="flex shrink-0 items-center justify-between px-3 text-xs">
-			<div>
-				{#if user?.is_anonymous}
-					<button class="btn btn-xs" onclick={handleGoogleLogin}>Anonymous</button>
-				{:else}
-					<div>{user?.user_metadata.full_name}</div>
-				{/if}
-			</div>
+			<div>{user?.user_metadata.full_name}</div>
 
 			<div>
 				<TooltipExplain>
+					<label
+						class="swap swap-rotate btn btn-xs border-subtle text-base-content/20
+						hover:text-primary
+						text-lg"
+					>
+						<!-- this hidden checkbox controls the state -->
+						<input
+							type="checkbox"
+							class="theme-controller"
+							value={isDarkMode ? 'reallol' : 'barelycookie'}
+						/>
+
+						<!-- sun icon -->
+						<Icon icon="solar:sun-2-bold-duotone" class="swap-off" />
+
+						<!-- moon icon -->
+						<Icon icon="solar:star-fall-bold-duotone" class="swap-on" />
+					</label>
+
+					{#snippet content()}
+						Toggle Theme
+					{/snippet}
+				</TooltipExplain>
+
+				<TooltipExplain>
 					<a
 						href="/settings"
-						class="btn btn-xs text-base-content/20 hover:text-info text-base transition-colors"
+						class="btn btn-xs text-base-content/20 border-subtle hover:text-info text-base transition-colors"
 					>
 						<Icon icon="solar:settings-bold-duotone" />
 					</a>
@@ -158,12 +186,19 @@
 					{/snippet}
 				</TooltipExplain>
 
-				<button
-					onclick={logout}
-					class="btn btn-xs text-base-content/20 hover:text-error text-base transition-colors"
-				>
-					<Icon icon="solar:logout-2-bold-duotone" />
-				</button>
+				<TooltipExplain>
+					<div>
+						<button
+							onclick={logout}
+							class="btn btn-xs text-base-content/20 hover:text-error border-subtle text-base transition-colors"
+						>
+							<Icon icon="solar:logout-2-bold-duotone" />
+						</button>
+					</div>
+					{#snippet content()}
+						Logout
+					{/snippet}
+				</TooltipExplain>
 			</div>
 		</div>
 	</section>

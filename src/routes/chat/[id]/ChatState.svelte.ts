@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import { fetchWithAuth } from '$lib/client/auth';
-import type { Message, Branch } from '$lib/types';
+import { type Message, type Branch, CONDUIT_OPEN_ROUTER_KEY } from '$lib/types';
 import { globalState } from '../../../stores/stores.svelte';
 
 export interface ChatState {
@@ -48,6 +48,7 @@ export class ChatStateClass implements ChatState {
 	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
+	#streamingReasoning = $state<Message | null>(null);
 
 
 	constructor(conv_id?: string) {
@@ -117,6 +118,8 @@ export class ChatStateClass implements ChatState {
 		this.streamResponse()
 
 		this.isLoading = false;
+
+		this.scrollContainer()
 	};
 
 
@@ -151,59 +154,49 @@ export class ChatStateClass implements ChatState {
 
 		this.messages.push(this.#streamingMessage);
 
-		const response = await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}/ai`,
-			options: {
-				method: 'POST',
-				body:
-					JSON.stringify({
-						model: globalState.modelIdSelected,
-						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-						messages: this.messages,
-						bearerToken: localStorage.getItem('conduit-open-router')
-					}), signal: this.#controller.signal
-			}
-		});
 
-
-
-		const reader = response.body?.getReader();
-		const decoder = new TextDecoder();
-
-		while (true) {
-			const { done, value } = await reader?.read()!;
-			if (done) break;
-
-			const chunk = decoder.decode(value);
-			const lines = chunk.split('\n').filter((line) => line.trim() !== '');
-
-
-			for (const line of lines) {
-				try {
-					const parsedChunk = JSON.parse(line);
-
-					if (parsedChunk.type === 'chunk') {
-						this.#streamingMessage!.content += parsedChunk.content;
-					}
-				} catch (parseError) {
-					console.error('Error parsing chunk:', parseError);
+		try {
+			const response = await fetchWithAuth({
+				url: `/api/messages/${this.conversation_id}/ai`,
+				options: {
+					method: 'POST',
+					body:
+						JSON.stringify({
+							model: globalState.modelIdSelected,
+							endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+							messages: this.messages,
+							bearerToken: localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)
+						}), signal: this.#controller.signal
 				}
+			});
+
+
+
+			this.#processStream(response)
+
+			this.isStreaming = false
+
+			globalState.currentMessages.push(this.#streamingMessage)
+
+			if (this.messages.length == 2) {
+				this.editTitle()
 			}
 
-			// this is tricky... scrolling as message streams in
-			// is a bit dizzying at times, maybe should leave disabled
-			// this.scrollContainer()
+			this.onFinishStream()
+
+		} catch (error: any) {
+			console.log(error)
+			this.messages.push({
+				id: crypto.randomUUID(),
+				role: 'assistant',
+				content: error.message,
+				created_at: new Date(),
+				conversation_id: this.conversation_id
+			})
+			this.isLoading = false
+			this.isStreaming = false
+			return
 		}
-
-		this.isStreaming = false
-
-		globalState.currentMessages.push(this.#streamingMessage)
-
-		if (this.messages.length == 2) {
-			this.editTitle()
-		}
-
-		this.onFinishStream()
 	};
 
 	editTitle = async () => {
@@ -278,6 +271,12 @@ export class ChatStateClass implements ChatState {
 
 		this.currentBranch.push(this.#streamingMessage);
 
+		this.#processStream(response)
+
+		this.isStreaming = false
+	};
+
+	#processStream = async (response: Response) => {
 		const reader = response.body?.getReader();
 		const decoder = new TextDecoder();
 
@@ -293,19 +292,19 @@ export class ChatStateClass implements ChatState {
 					const parsedChunk = JSON.parse(line);
 
 					if (parsedChunk.type === 'chunk') {
-						// Update streaming message content
-						this.#streamingMessage!.content += parsedChunk.content;
-					} else if (parsedChunk.type === 'assistantMessage') {
-						// Replace streaming message with final DB message
+						if (parsedChunk.content) {
+							this.#streamingMessage!.content += parsedChunk.content;
+						} else if (parsedChunk.reasoning) {
+							this.#streamingReasoning = parsedChunk.reasoning
+							console.log(this.#streamingReasoning)
+						}
 					}
 				} catch (parseError) {
 					console.error('Error parsing chunk:', parseError);
 				}
 			}
 		}
-
-		this.isStreaming = false
-	};
+	}
 
 	fetchMessages = async () => { };
 

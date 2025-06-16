@@ -45,6 +45,11 @@
 		globalState.fetchBranches();
 
 		mounted = true;
+
+		chatState.scrollContainer = () => {
+			console.log('yea');
+			chatContainer.scrollTop = chatContainer.scrollHeight;
+		};
 	});
 
 	$effect(() => {

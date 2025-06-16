@@ -25,6 +25,7 @@ export type Message = {
 	conversation_id: string;
 	role: 'user' | 'assistant' | 'system';
 	content: string;
+	reasoning?: string;
 	created_at: Date;
 	generated_by?: string;
 }

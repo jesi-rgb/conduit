@@ -10,6 +10,7 @@
 	import type { Conversation } from '$lib/types';
 	import { page } from '$app/state';
 	import { fly, slide } from 'svelte/transition';
+	import TooltipExplain from './TooltipExplain.svelte';
 
 	const convId = $derived(page.params.id);
 
@@ -84,7 +85,7 @@
 		<div class="relative flex min-h-0 w-full shrink flex-col gap-5">
 			<a
 				href="/chat"
-				class="text-primary dark:text-primary-content headline mx-auto flex w-min items-center gap-3
+				class="text-primary headline mx-auto flex w-min items-center gap-3
 				text-xl font-bold"
 			>
 				<span>Conduit</span>
@@ -144,12 +145,18 @@
 			</div>
 
 			<div>
-				<a
-					href="/settings"
-					class="btn btn-xs text-base-content/20 hover:text-info text-base transition-colors"
-				>
-					<Icon icon="solar:settings-bold-duotone" />
-				</a>
+				<TooltipExplain>
+					<a
+						href="/settings"
+						class="btn btn-xs text-base-content/20 hover:text-info text-base transition-colors"
+					>
+						<Icon icon="solar:settings-bold-duotone" />
+					</a>
+
+					{#snippet content()}
+						Settings
+					{/snippet}
+				</TooltipExplain>
 
 				<button
 					onclick={logout}

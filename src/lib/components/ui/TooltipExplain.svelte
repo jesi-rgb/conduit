@@ -8,12 +8,13 @@
 		content: Snippet;
 		disabled?: boolean;
 		restProps?: Record<string, any>;
+		open?: boolean;
 	}
-	const { children, content, disabled, ...restProps }: Props = $props();
+	const { children, content, disabled, open = false, ...restProps }: Props = $props();
 </script>
 
 <Tooltip.Provider>
-	<Tooltip.Root {disabled} delayDuration={0}>
+	<Tooltip.Root {disabled} delayDuration={0} {open}>
 		<Tooltip.Trigger {...restProps}>
 			{@render children()}
 		</Tooltip.Trigger>

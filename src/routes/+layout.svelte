@@ -61,7 +61,7 @@
 </script>
 
 {#if dev}
-	<RenderScan hideIcon={true} duration={500} />
+	<RenderScan initialEnabled={false} hideIcon={true} duration={500} />
 {/if}
 
 <main class="selection:bg-primary selection:text-primary-content h-[100vh]">

@@ -10,7 +10,7 @@
 	import Icon from '@iconify/svelte';
 	import { blur, fade, fly } from 'svelte/transition';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
-	import { CONDUIT_PROVIDER, type Conversation } from '$lib/types.js';
+	import { CONDUIT_OPEN_ROUTER_KEY, type Conversation } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 
@@ -219,7 +219,7 @@
 				>
 					<ModelSelector />
 
-					<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_PROVIDER) != undefined}>
+					<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY) != undefined}>
 						<Tooltip.Root delayDuration={0}>
 							<Tooltip.Trigger class="flex w-full gap-1">
 								<input
@@ -230,14 +230,14 @@
 									class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
 									disabled={chatState.isLoading ||
 										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_PROVIDER)}
+										!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
 								/>
 								<button
 									class="btn"
 									type="submit"
 									disabled={chatState.isLoading ||
 										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_PROVIDER)}
+										!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
 								>
 									<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 								</button>

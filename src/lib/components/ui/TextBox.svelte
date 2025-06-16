@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
 	import { activeChatState } from '../../../stores/chatStore.svelte';
-	import { CONDUIT_PROVIDER } from '$lib/types';
+	import { CONDUIT_OPEN_ROUTER_KEY } from '$lib/types';
 	import { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte';
 	import { fetchWithAuth } from '$lib/client/auth';
 	import { goto } from '$app/navigation';
@@ -17,7 +17,7 @@
 	let inputMessage: HTMLTextAreaElement | null = $state(null);
 	onMount(() => {
 		mounted = true;
-		noKey = localStorage.getItem(CONDUIT_PROVIDER) == undefined;
+		noKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY) == undefined;
 
 		activeChatState.set(null);
 	});

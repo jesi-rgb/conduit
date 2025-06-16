@@ -5,7 +5,7 @@
 	import { fetchWithAuth } from '$lib/client/auth.js';
 	import Icon from '@iconify/svelte';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
-	import { CONDUIT_PROVIDER } from '$lib/types.js';
+	import { CONDUIT_OPEN_ROUTER_KEY } from '$lib/types.js';
 	import { Tooltip } from 'bits-ui';
 	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
@@ -93,7 +93,7 @@
 
 					<TooltipExplain
 						class="flex w-full gap-1"
-						disabled={!!localStorage.getItem(CONDUIT_PROVIDER)}
+						disabled={!!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
 					>
 						<input
 							type="text"
@@ -103,7 +103,7 @@
 							class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
 							disabled={chatState.isLoading ||
 								chatState.isStreaming ||
-								!localStorage.getItem(CONDUIT_PROVIDER)}
+								!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
 						/>
 						{#if chatState.isStreaming}
 							<button class="btn btn-error" onclick={() => chatState.cancelStream()}>
@@ -115,7 +115,7 @@
 								type="submit"
 								disabled={chatState.isLoading ||
 									chatState.isStreaming ||
-									!localStorage.getItem(CONDUIT_PROVIDER)}
+									!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
 							>
 								<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 							</button>

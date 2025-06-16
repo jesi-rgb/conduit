@@ -1,6 +1,6 @@
 export const CONDUIT_SELECTED_MODEL = 'conduit-selected-model'
-export const CONDUIT_PROVIDER = 'conduit-open-router'
 export const CONDUIT_OPEN_ROUTER_KEY = 'conduit-open-router'
+export const CONDUIT_OPEN_AI_KEY = 'conduit-open-ai'
 
 export type User = {
 	id: string;

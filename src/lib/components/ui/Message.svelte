@@ -291,13 +291,21 @@
 	:global(mark) {
 		border: 1px solid var(--color-primary);
 		padding: 1px 2px;
-		background-color: transparent;
+		background-color: color-mix(in oklch, var(--color-primary), transparent 95%);
+
+		border-left-width: 0px;
+		border-right-width: 0px;
+
 		color: var(--color-primary);
 		transition: all 0.1s ease-in-out;
 	}
 
 	:global(mark):hover {
 		border: 1px solid var(--color-primary);
+
+		border-left-width: 0px;
+		border-right-width: 0px;
+
 		background-color: var(--color-primary);
 		color: var(--color-primary-content);
 	}

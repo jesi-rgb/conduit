@@ -26,7 +26,6 @@
 		w-full flex-col overflow-x-clip overflow-y-scroll border-l p-3 shadow-lg"
 	>
 		{#each globalState.currentMessages as msg, i}
-			{@const lastMessage = i === globalState.currentMessages.length - 1}
 			{@const msgBranches = globalState.currentBranches.filter(
 				(b) => msg.id === b.branch_from_message_id
 			)}
@@ -40,8 +39,10 @@
 					}}
 				>
 					<Icon
-						class={`shrink-0 text-2xl ${msg.role === 'user' ? 'text-primary' : 'text-secondary'}`}
-						icon="solar:star-shine-bold-duotone"
+						class={`shrink-0 text-2xl ${
+							msg.role === 'user' ? 'text-primary' : 'text-secondary-content text-xl'
+						}`}
+						icon={msg.role === 'user' ? 'solar:star-shine-bold-duotone' : 'solar:ufo-line-duotone'}
 					/>
 					<div
 						class={`truncate text-xs ${

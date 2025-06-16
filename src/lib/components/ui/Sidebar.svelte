@@ -12,6 +12,7 @@
 	import { fly, slide } from 'svelte/transition';
 	import TooltipExplain from './TooltipExplain.svelte';
 	import { MediaQuery } from 'svelte/reactivity';
+	import ThemeToggle from './ThemeToggle.svelte';
 
 	const convId = $derived(page.params.id);
 
@@ -20,17 +21,9 @@
 	);
 
 	const user = $derived(globalState.user);
-	let isDarkMode = $state(false);
-	$inspect(isDarkMode, 'darkmode');
-	let mediaQuery;
 
 	onMount(async () => {
 		globalState.fetchConversations();
-	});
-
-	$effect.pre(() => {
-		mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		isDarkMode = mediaQuery.matches;
 	});
 
 	async function logout() {
@@ -148,31 +141,7 @@
 			<div>{user?.user_metadata.full_name}</div>
 
 			<div>
-				<TooltipExplain>
-					<label
-						class="swap swap-rotate btn btn-xs border-subtle text-base-content/20
-						hover:text-primary
-						text-lg"
-					>
-						<!-- this hidden checkbox controls the state -->
-						<input
-							type="checkbox"
-							class="theme-controller"
-							value={isDarkMode ? 'reallol' : 'barelycookie'}
-						/>
-
-						<!-- sun icon -->
-						<Icon icon="solar:sun-2-bold-duotone" class="swap-off" />
-
-						<!-- moon icon -->
-						<Icon icon="solar:star-fall-bold-duotone" class="swap-on" />
-					</label>
-
-					{#snippet content()}
-						Toggle Theme
-					{/snippet}
-				</TooltipExplain>
-
+				<ThemeToggle />
 				<TooltipExplain>
 					<a
 						href="/settings"

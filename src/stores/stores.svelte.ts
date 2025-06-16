@@ -7,6 +7,7 @@ type Provider = 'conduit-open-router' | 'conduit-openai' | 'conduit-deepseek';
 
 interface GlobalStateType {
 	user: User | null;
+	theme: string;
 	modelIdSelected: string;
 	conversations: Conversation[];
 	currentConversation: Conversation | null;
@@ -30,6 +31,7 @@ export class GlobalState implements GlobalStateType {
 		'conduit-openai': '',
 		'conduit-deepseek': ''
 	});
+	#theme: 'reallol' | 'barelycookie' = $state('reallol');
 
 
 	fetchConversations = async () => {
@@ -47,6 +49,15 @@ export class GlobalState implements GlobalStateType {
 		if (this.#user_data)
 			return this.#user_data
 		else return null
+	}
+
+	get theme(): string {
+		if (this.#theme)
+			return this.#theme
+		else return 'reallol'
+	}
+	set theme(theme: string) {
+		this.#theme = theme as ('reallol' | 'barelycookie')
 	}
 
 	set currentSelectedText(text: string | null) {

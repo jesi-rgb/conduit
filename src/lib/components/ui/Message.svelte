@@ -220,6 +220,9 @@
 	onmousedown={() => {
 		isBranchPopupOpen = false;
 	}}
+	onmouseleave={() => {
+		isBranchPopupOpen = false;
+	}}
 	role="presentation"
 >
 	{#if message.role === 'user'}

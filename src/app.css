@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @font-face {
   font-family: 'AT Name Sans Variable';
@@ -53,7 +52,6 @@
   --depth: 1;
   --noise: 0;
 }
-
 
 @plugin "daisyui/theme" {
   name: "barelycookie";

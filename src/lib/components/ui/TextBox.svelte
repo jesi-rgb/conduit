@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import ModelSelector from './ModelSelector.svelte';
 	import Icon from '@iconify/svelte';
+	import { globalState } from '../../../stores/stores.svelte';
 
 	let noKey = $state(true);
 	let focusedTA = $state(false);
@@ -20,6 +21,9 @@
 		noKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY) == undefined;
 
 		activeChatState.set(null);
+
+		globalState.inputTextBox = inputMessage;
+		inputMessage?.focus();
 	});
 
 	$effect(() => {

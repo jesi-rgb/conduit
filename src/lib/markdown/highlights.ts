@@ -15,14 +15,11 @@ const tokenTypeMap: Record<string, string> = {
 	paragraph_open: 'P',
 	list_item_open: 'LI',
 	heading_open: 'H'
-	// We handle PRE/fence separately now
 };
 
 export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.PluginSimple {
 	return function(md: MarkdownIt) {
-		// --- KEY CHANGE: Define separate renderers for each tag ---
 
-		// Renderer for the <a> tag
 		md.renderer.rules.link_highlight_open = (tokens, idx) => {
 			const token = tokens[idx];
 			const conversationId = token.attrGet('data-conversation-id');
@@ -32,7 +29,6 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 		};
 		md.renderer.rules.link_highlight_close = () => '</a>';
 
-		// Renderer for the <mark> tag
 		md.renderer.rules.mark_highlight_open = (tokens, idx) => {
 			const branchId = tokens[idx].attrGet('data-branch-id');
 			return `<mark class="text-selection-highlight" data-highlight-id="${branchId}">`;
@@ -44,12 +40,11 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 			if (highlights.length === 0) return;
 
 			const nodeCounters: Record<string, number> = {};
-			let isInsideList = false; // --- The context flag ---
+			let isInsideList = false;
 
 			for (let i = 0; i < state.tokens.length; i++) {
 				const token = state.tokens[i];
 
-				// --- Manage the context flag ---
 				if (token.type === 'bullet_list_open' || token.type === 'ordered_list_open') {
 					isInsideList = true;
 					continue;
@@ -59,8 +54,6 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 					continue;
 				}
 
-				// --- Apply context-aware counting ---
-				// Ignore paragraphs inside lists for top-level counting
 				if (token.type === 'paragraph_open' && isInsideList) {
 					continue;
 				}
@@ -81,19 +74,15 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 
 				if (relevantHighlights.length === 0) continue;
 
-				// Find the corresponding inline token, which could be inside a list item's paragraph
 				let inlineToken: Token | undefined;
 				if (token.type === 'list_item_open') {
-					// For lists, the content is in the P tag inside: LI_open -> P_open -> Inline
 					inlineToken = state.tokens[i + 2];
 				} else {
-					// For P, Hx, the content is next: P_open -> Inline
 					inlineToken = state.tokens[i + 1];
 				}
 
 				if (inlineToken?.type !== 'inline' || !inlineToken.children) continue;
 
-				// --- Robust offset tracking for formatted text (e.g., bold, italic) ---
 				let charOffset = 0;
 				const newChildren: Token[] = [];
 
@@ -103,7 +92,7 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 
 					if (child.type !== 'text' || child.content.length === 0) {
 						newChildren.push(child);
-						charOffset = tokenEnd; // Still advance offset for tokens like `strong_open`
+						charOffset = tokenEnd;
 						continue;
 					}
 
@@ -123,7 +112,6 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 							newChildren.push(t);
 						}
 
-						// Inject nested tokens
 						const linkOpen = new state.Token('link_highlight_open', 'a', 1);
 						linkOpen.attrSet('data-conversation-id', highlight.conversation_id);
 						linkOpen.attrSet('data-branch-id', highlight.branch_id);

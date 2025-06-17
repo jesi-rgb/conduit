@@ -13,6 +13,7 @@
 	import TooltipExplain from './TooltipExplain.svelte';
 	import { MediaQuery } from 'svelte/reactivity';
 	import ThemeToggle from './ThemeToggle.svelte';
+	import ConversationView from './ConversationView.svelte';
 
 	const convId = $derived(page.params.id);
 

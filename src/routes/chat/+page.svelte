@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { globalState } from '../../stores/stores.svelte';
 	import TextBox from '$lib/components/ui/TextBox.svelte';
+	import { page } from '$app/state';
 
 	$effect.pre(() => {
 		globalState.currentBranches = [];
 		globalState.currentMessages = [];
 		globalState.currentSelectedText = null;
+	});
+	$effect(() => {
+		globalState.inputTextBox?.focus();
 	});
 </script>
 

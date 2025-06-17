@@ -1,7 +1,6 @@
 import type { User } from '@supabase/supabase-js';
 import type { Branch, Conversation, Message } from '$lib/types';
 import { fetchWithAuth } from '$lib/client/auth';
-import type { ModelInfo } from '$lib/models';
 
 type Provider = 'conduit-open-router' | 'conduit-openai' | 'conduit-deepseek';
 
@@ -15,6 +14,7 @@ interface GlobalStateType {
 	currentBranches: Branch[];
 	currentSelectedText: string;
 	userKeys: Record<Provider, string>;
+	inputTextBox: HTMLTextAreaElement | null;
 	updateUserKeys: (provider: Provider, key: string) => void
 }
 
@@ -32,6 +32,7 @@ export class GlobalState implements GlobalStateType {
 		'conduit-deepseek': ''
 	});
 	#theme: 'reallol' | 'barelycookie' = $state('reallol');
+	#inputTextBox: HTMLTextAreaElement | null = $state(null);
 
 
 	fetchConversations = async () => {
@@ -58,6 +59,15 @@ export class GlobalState implements GlobalStateType {
 	}
 	set theme(theme: string) {
 		this.#theme = theme as ('reallol' | 'barelycookie')
+	}
+
+	get inputTextBox(): HTMLTextAreaElement | null {
+		if (this.#inputTextBox)
+			return this.#inputTextBox
+		else return null
+	}
+	set inputTextBox(inputTextBox: HTMLTextAreaElement | null) {
+		this.#inputTextBox = inputTextBox
 	}
 
 	set currentSelectedText(text: string | null) {

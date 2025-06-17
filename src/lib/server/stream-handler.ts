@@ -73,7 +73,6 @@ export function createAIStreamHandler(
 							finalModel = value.model;
 						}
 
-						// Send both content and reasoning to frontend, but keep them separate
 						controller.enqueue(
 							JSON.stringify({
 								type: 'chunk',

@@ -18,7 +18,8 @@
 	let inputMessage: HTMLTextAreaElement | null = $state(null);
 	onMount(() => {
 		mounted = true;
-		noKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY) == undefined;
+
+		noKey = !localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 
 		activeChatState.set(null);
 

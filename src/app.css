@@ -21,7 +21,10 @@
 
 @plugin "@tailwindcss/typography";
 
-:root:has(input.theme-controller[value=reallol]:checked) {
+@plugin "daisyui/theme" {
+  name: "reallol";
+  default: true;
+  prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(98% 0.002 47.839);
   --color-base-200: oklch(96% 0.006 47.839);

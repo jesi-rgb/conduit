@@ -138,12 +138,16 @@ export class ChatStateClass implements ChatState {
 				body: JSON.stringify(this.#streamingMessage)
 			}
 		})
-		this.isStreaming = false
 
 		if (this.messages.length == 2) {
 			this.editTitle()
 		}
+
 		globalState.fetchConversations()
+
+		this.isStreaming = false
+		this.isLoading = false
+		this.#controller = new AbortController()
 	}
 
 	streamResponse = async () => {

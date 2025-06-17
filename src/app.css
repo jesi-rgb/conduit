@@ -23,8 +23,6 @@
 
 @plugin "daisyui/theme" {
   name: "reallol";
-  default: true;
-  prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(98% 0.002 47.839);
   --color-base-200: oklch(96% 0.006 47.839);
@@ -58,8 +56,7 @@
 
 @plugin "daisyui/theme" {
   name: "barelycookie";
-  default: false;
-  prefersdark: true;
+  default: true;
   color-scheme: "dark";
   --color-base-100: oklch(21% 0.006 56.043);
   --color-base-200: oklch(26% 0.007 34.298);
@@ -116,3 +113,5 @@
     text-decoration: var(--shiki-dark-text-decoration) !important;
   }
 }
+
+@custom-variant dark (&:where([data-theme=barelycookie], [data-theme=barelycookie] *));

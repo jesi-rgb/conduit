@@ -25,7 +25,9 @@
 	};
 
 	onMount(() => {
-		applyTheme('barelycookie');
+		if (globalState.theme) {
+			applyTheme(globalState.theme);
+		}
 	});
 </script>
 
@@ -35,7 +37,7 @@
 		hover:text-primary
 		text-lg"
 	>
-		<input type="checkbox" value="reallol" class="theme-controller" onclick={toggleTheme} />
+		<input type="checkbox" value="reallol" class="" onclick={toggleTheme} />
 
 		<!-- sun icon -->
 		<Icon icon="solar:sun-2-bold-duotone" class="swap-off" />

@@ -76,8 +76,16 @@ export function createHighlighterPlugin(highlights: Highlight[]): MarkdownIt.Plu
 
 				let inlineToken: Token | undefined;
 				if (token.type === 'list_item_open') {
-					inlineToken = state.tokens[i + 2];
+					const nextToken = state.tokens[i + 1];
+					if (nextToken && nextToken.type === 'paragraph_open') {
+						// This is a "loose" list item: LI -> P -> Inline
+						inlineToken = state.tokens[i + 2];
+					} else if (nextToken && nextToken.type === 'inline') {
+						// This is a "tight" list item: LI -> Inline
+						inlineToken = nextToken;
+					}
 				} else {
+					// For P, Hx, the structure is always consistent: P_open -> Inline
 					inlineToken = state.tokens[i + 1];
 				}
 

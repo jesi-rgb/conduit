@@ -57,7 +57,7 @@
 				{@const lastBranch = b === msgBranches.length - 1}
 				{@const branchTitleIsUUID = validate(branch.title)}
 				{#if branch.branch_from_message_id === msg.id}
-					{#key globalState.currentBranches}
+					{#key globalState.currentMessages}
 						<a
 							in:fly={{ x: -10, delay: b * 30.5 }}
 							out:fly={{ duration: 0 }}

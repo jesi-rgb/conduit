@@ -226,8 +226,7 @@
 		<div class="chat chat-end">
 			<p
 				class="bg-primary/15 border-primary/30 prose max-w-3/4
-									self-end rounded-2xl rounded-br-xs border px-4
-				py-2"
+				self-end rounded-2xl rounded-br-xs border px-4 py-2"
 			>
 				{message.content}
 			</p>
@@ -258,7 +257,7 @@
 
 							<Collapsible.Content
 								forceMount
-								class="border-subtle prose
+								class="border-subtle prose 
 								prose-sm mb-5 rounded-xl border px-3 py-2"
 							>
 								{#snippet child({ props, open })}
@@ -278,11 +277,7 @@
 						</Collapsible.Root>
 					{/if}
 
-					<div
-						role="presentation"
-						class="prose prose-code:px-0
-						prose-a:no-underline"
-					>
+					<div role="presentation" class="prose prose-code:px-0">
 						{#await (chatState.isStreaming && chatState.streamingMessage?.id === message.id ? mdStreaming : mdInstance).renderAsync(message.content) then markdown}
 							{@html markdown}
 						{/await}
@@ -332,6 +327,16 @@
 
 		color: var(--color-primary);
 		transition: all 0.1s ease-in-out;
+	}
+
+	:global(a:has(mark)) {
+		text-decoration: none;
+	}
+
+	:global(#convo-view a:not(:has(mark)))::after {
+		text-decoration: none;
+
+		content: ' ↗';
 	}
 
 	:global(mark):hover {

@@ -59,7 +59,6 @@
 	});
 </script>
 
-
 <main class="selection:bg-primary selection:text-primary-content h-[100vh]">
 	{@render children()}
 </main>

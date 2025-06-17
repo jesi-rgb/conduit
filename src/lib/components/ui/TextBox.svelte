@@ -15,6 +15,8 @@
 	let mounted = $state(false);
 	let message = $state('');
 
+	const { selectedQuestion }: { selectedQuestion: string } = $props();
+
 	let inputMessage: HTMLTextAreaElement | null = $state(null);
 	onMount(() => {
 		mounted = true;
@@ -29,6 +31,7 @@
 
 	$effect(() => {
 		inputMessage?.focus();
+		selectedQuestion ? (message = selectedQuestion) : (message = '');
 	});
 
 	async function newConversation() {
@@ -53,7 +56,7 @@
 <div
 	class:focusedTA
 	class="from-base-100 to-base-200 hover:ring-subtle shadow-base-200
-	focus:ring-primary mx-auto flex min-h-40 w-[90%] max-w-[70%] flex-col justify-center rounded-2xl
+	focus:ring-primary mx-auto flex min-h-40 w-full flex-col justify-center rounded-2xl
 	rounded-br-none rounded-bl-none bg-gradient-to-b p-2 shadow-xl hover:ring"
 >
 	{#if mounted}
@@ -107,7 +110,7 @@
 
 			<div class="flex justify-between">
 				<ModelSelector />
-				<button class="btn" type="submit" disabled={noKey}>
+				<button class="btn" type="submit" onclick={newConversation} disabled={noKey}>
 					<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 				</button>
 			</div>

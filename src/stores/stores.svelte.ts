@@ -15,6 +15,7 @@ interface GlobalStateType {
 	currentSelectedText: string;
 	userKeys: Record<Provider, string>;
 	inputTextBox: HTMLTextAreaElement | null;
+	loadedConversations: boolean;
 	updateUserKeys: (provider: Provider, key: string) => void
 }
 
@@ -33,11 +34,13 @@ export class GlobalState implements GlobalStateType {
 	});
 	#theme: 'reallol' | 'barelycookie' = $state('reallol');
 	#inputTextBox: HTMLTextAreaElement | null = $state(null);
+	#loadedConversations: boolean = $state(false);
 
 
 	fetchConversations = async () => {
 		const response = await fetchWithAuth({ url: '/api/conversations' });
 		this.#conversations_data = (await response.json()).conversations;
+		this.#loadedConversations = true
 	}
 
 	fetchBranches = async () => { }
@@ -52,13 +55,22 @@ export class GlobalState implements GlobalStateType {
 		else return null
 	}
 
+	get loadedConversations(): boolean {
+		return this.#loadedConversations
+	}
+	set loadedConversations(loadingConversations: boolean) {
+		this.#loadedConversations = loadingConversations
+	}
+
 	get theme(): string {
-		if (this.#theme)
-			return this.#theme
+		const localStorageTheme = localStorage.getItem('theme')
+		if (localStorageTheme)
+			return localStorageTheme
 		else return 'reallol'
 	}
 	set theme(theme: string) {
 		this.#theme = theme as ('reallol' | 'barelycookie')
+		localStorage.setItem('theme', theme)
 	}
 
 	get inputTextBox(): HTMLTextAreaElement | null {

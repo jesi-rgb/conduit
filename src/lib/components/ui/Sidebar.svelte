@@ -20,10 +20,13 @@
 	let conversations: Conversation[] = $derived(
 		globalState.conversations.filter((conv: Conversation) => !conv.parent_conversation_id)
 	);
+	let loadedConversations = $derived(globalState.loadedConversations);
 
 	const user = $derived(globalState.user);
 
+	let mounted = $state(false);
 	onMount(async () => {
+		mounted = true;
 		globalState.fetchConversations();
 	});
 
@@ -106,7 +109,29 @@
 					class="text-primary group-hover:text-primary-content"
 				/></a
 			>
-			<div class="flex w-full flex-grow flex-col gap-2 overflow-y-scroll py-2">
+			<div
+				class="conversation-list flex w-full flex-grow flex-col
+				items-center gap-2 overflow-y-auto py-2"
+			>
+				{#if loadedConversations && conversations.length === 0}
+					<div class="flex w-full flex-col items-center gap-3">
+						<div
+							class="border-primary/40 bg-primary/60 dark:bg-primary/10 mx-auto h-fit w-full max-w-fit
+							rounded-xl border contrast-150"
+						>
+							<img
+								class="aspect-[512/288] rounded-xl
+								object-contain"
+								src="/media/sidebar-empty.png"
+								alt="dithered galaxy"
+								height="240"
+							/>
+						</div>
+						<div class="mx-auto flex items-center gap-2 opacity-40">
+							<span class="text-primary">No conversations, yet</span>
+						</div>
+					</div>
+				{/if}
 				{#each conversations as conv (conv.id)}
 					<a
 						id={conv.id}
@@ -185,5 +210,8 @@
 	}
 	.convo {
 		font-variation-settings: 'opsz' 12;
+	}
+	.conversation-list {
+		scrollbar-gutter: auto;
 	}
 </style>

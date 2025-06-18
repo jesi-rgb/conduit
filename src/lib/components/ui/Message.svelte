@@ -334,11 +334,6 @@
 										transition-opacity duration-100
 										group-hover:opacity-100"
 					>
-						<span class="opacity-50">
-							{new Date(message.created_at).toLocaleString('es-ES')}
-							· {popularModels.find((model) => model.id === message.generated_by)?.name ||
-								message.generated_by}
-						</span>
 						<CopyMessage {message} />
 						{#if !isBranch}
 							<TooltipExplain>
@@ -354,6 +349,11 @@
 								{/snippet}
 							</TooltipExplain>
 						{/if}
+						<span class="opacity-50">
+							{new Date(message.created_at).toLocaleString('es-ES')}
+							· {popularModels.find((model) => model.id === message.generated_by)?.name ||
+								message.generated_by}
+						</span>
 					</div>
 				{/if}
 			</div>

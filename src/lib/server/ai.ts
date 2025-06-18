@@ -56,13 +56,15 @@ export async function generateStreamingAIResponse(messages: Message[], { model, 
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${bearerToken}`,
-			'Accept': 'text/event-stream'
+			'Accept': 'text/event-stream',
+			"HTTP-Referer": "https://conduitchat.app",
+			"X-Title": "Conduit",
 		},
+
 		body: JSON.stringify({
 			model: model,
 			messages: messages,
 			temperature: 0.1,
-			max_tokens: 800,
 			stream: true // Enable streaming
 		})
 	});

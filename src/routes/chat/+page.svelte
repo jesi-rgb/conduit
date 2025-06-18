@@ -120,13 +120,14 @@
 		opacity-20 invert dark:invert-0"
 		alt=""
 	/>
-	<div
-		class="flex max-w-[70%] shrink items-center gap-3 justify-self-start
-		px-3 text-xl font-semibold"
+	<h1
+		class="flex max-w-[70%] shrink items-center gap-3
+		justify-self-start px-3 text-xl font-semibold"
 	>
 		Welcome back, {user?.user_metadata.full_name}
+
 		<Icon icon="solar:star-angle-bold-duotone" class="text-2xl" />
-	</div>
+	</h1>
 	<div
 		class="mx-auto flex h-fit shrink flex-wrap
 			justify-start gap-2"

@@ -4,7 +4,7 @@
 	import { globalState } from '../../../stores/stores.svelte';
 	import CopyMessage from './CopyMessage.svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import MarkdownItAsync from 'markdown-it-async';
 	import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async';
 	import { codeToHtml } from 'shiki';
@@ -15,12 +15,12 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { createHighlighterPlugin } from '$lib/markdown/highlights'; // Adjust path
 	import { popularModels } from '$lib/models';
+	import { getShikiHighlighter } from '$lib/shiki/highlighter'; // <-- IMPORT OUR NEW MODULE
+	import type { Highlighter } from 'shiki'; // <-- Import the type
+	import ConversationView from './ConversationView.svelte';
 
 	const { message, chatState }: { message: Message; chatState: ChatStateClass } = $props();
 	const isBranch = $derived(!!page.params.branch);
-
-	const md = MarkdownItAsync();
-	const mdStreaming = MarkdownItAsync();
 
 	let messageContainer: HTMLDivElement | null = $state(null);
 
@@ -42,6 +42,10 @@
 			return selectionRect || new DOMRect(0, 0, 0, 0);
 		}
 	});
+
+	let shiki: Highlighter | null = $state(null);
+	// --- THE KEY: A REACTIVE MAP FOR HIGHLIGHTED CODE ---
+	let highlightedCodeBlocks = $state(new Map<string, string>());
 
 	async function handleSelection() {
 		selection = window.getSelection();
@@ -95,6 +99,12 @@
 		isBranchPopupOpen = true;
 	}
 
+	const md = MarkdownItAsync({
+		// Ensure links are opened in a new tab
+		linkify: true,
+		html: true // Allow HTML tags in source
+	});
+
 	const highlights = $derived.by(() => {
 		const branches = globalState.currentBranches;
 
@@ -114,32 +124,87 @@
 			);
 	});
 
-	const mdInstance = $derived.by(() => {
-		const md = MarkdownItAsync();
+	function branchFromSelection() {
+		isBranchPopupOpen = false;
+		if (!selectionData.text) return;
 
-		// Apply your existing Shiki/code block configuration
+		chatState.branchFromSelection(message, selectionData);
+	}
+
+	let wasStreamingMessage = $state(false);
+
+	// --- HELPER FUNCTION TO POPULATE THE MAP ---
+	async function highlightAllBlocks() {
+		if (!shiki || !messageContainer) return;
+
+		const blocksToHighlight = messageContainer.querySelectorAll(
+			'div[data-highlight-pending="true"]'
+		);
+		if (blocksToHighlight.length === 0) return;
+
+		const newHighlights = new Map(highlightedCodeBlocks);
+
+		for (const wrapper of blocksToHighlight) {
+			const pre = wrapper.querySelector('pre');
+			const rawCode = pre?.textContent || '';
+			const lang = (wrapper as HTMLElement).dataset.language || 'text';
+
+			// Avoid re-highlighting if we already have it
+			if (!rawCode || newHighlights.has(rawCode)) continue;
+
+			try {
+				const highlightedHtml = shiki.codeToHtml(rawCode, {
+					lang,
+					themes: { light: 'vitesse-light', dark: 'vesper' }
+				});
+				newHighlights.set(rawCode, highlightedHtml);
+			} catch (e) {
+				console.error(`Shiki highlighting failed for lang "${lang}":`, e);
+				// Store the plain version so we don't try again
+				newHighlights.set(
+					rawCode,
+					`<pre><code>${shiki.codeToHtml(rawCode, { lang: 'text' })}</code></pre>`
+				);
+			}
+		}
+		highlightedCodeBlocks = newHighlights;
+	}
+
+	const mdInstance = $derived.by(() => {
 		md.use(
 			fromAsyncCodeToHtml(codeToHtml, {
 				themes: { light: 'vitesse-light', dark: 'vesper' }
 			})
 		);
-		const defaultFenceRenderer =
-			md.renderer.rules.fence ||
-			function (tokens, idx, options, env, renderer) {
-				return renderer.renderToken(tokens, idx, options);
-			};
-		md.renderer.rules.fence = function (tokens, idx, options, env, renderer) {
-			const token = tokens[idx];
-			const langName = token.info.trim().split(/\s+/g)[0];
-			const langBadge = langName ? `<div class="code-lang-badge">${langName}</div>` : '';
-			const originalCode = defaultFenceRenderer(tokens, idx, options, env, renderer);
-			return `<div class="code-block-wrapper">${langBadge}${originalCode}</div>`;
-		};
 
-		// Apply our new highlighter plugin with the specific highlights for this message
 		md.use(createHighlighterPlugin(highlights));
 
+		md.renderer.rules.fence = (tokens, idx) => {
+			const token = tokens[idx];
+			const rawCode = token.content;
+			const lang = token.info.trim().split(/\s+/g)[0] || 'text';
+			const langBadge = lang !== 'text' ? `<div class="code-lang-badge">${lang}</div>` : '';
+
+			// Check if we ALREADY have the highlighted version in our map
+			const highlighted = highlightedCodeBlocks.get(rawCode);
+			if (highlighted) {
+				// If yes, render it directly!
+				return `<div class="code-block-wrapper">${langBadge}${highlighted}</div>`;
+			}
+
+			// If not, render a placeholder. The key is the `data-highlight-pending` attribute
+			// and the raw code inside the pre tag.
+			const escapedCode = md.utils.escapeHtml(rawCode);
+			return `<div class="code-block-wrapper" data-highlight-pending="true" data-language="${lang}">${langBadge}<pre><code>${escapedCode}</code></pre></div>`;
+		};
 		return md;
+	});
+
+	onMount(async () => {
+		shiki = await getShikiHighlighter();
+		if (!chatState.isStreaming || chatState.streamingMessage?.id !== message.id) {
+			await highlightAllBlocks();
+		}
 	});
 
 	$effect(() => {
@@ -147,37 +212,17 @@
 		globalState.currentSelectedText = selectionData.text;
 	});
 
-	onMount(() => {
-		md.use(
-			fromAsyncCodeToHtml(codeToHtml, {
-				themes: {
-					light: 'vitesse-light',
-					dark: 'vesper'
-				}
-			})
-		);
+	$effect(() => {
+		const isCurrentlyStreamingThisMessage =
+			chatState.isStreaming && chatState.streamingMessage?.id === message.id;
 
-		const defaultFenceRenderer =
-			md.renderer.rules.fence ||
-			function (tokens, idx, options, env, renderer) {
-				return renderer.renderToken(tokens, idx, options);
-			};
+		if (wasStreamingMessage && !isCurrentlyStreamingThisMessage) {
+			// Use tick() to wait for the DOM to be updated with the final streaming content
+			highlightAllBlocks();
+		}
 
-		md.renderer.rules.fence = function (tokens, idx, options, env, renderer) {
-			const token = tokens[idx];
-			const langName = token.info.trim().split(/\s+/g)[0];
-			const langBadge = langName ? `<div class="code-lang-badge">${langName}</div>` : '';
-			const originalCode = defaultFenceRenderer(tokens, idx, options, env, renderer);
-			return `<div class="code-block-wrapper">${langBadge}${originalCode}</div>`;
-		};
+		wasStreamingMessage = isCurrentlyStreamingThisMessage;
 	});
-
-	function branchFromSelection() {
-		isBranchPopupOpen = false;
-		if (!selectionData.text) return;
-
-		chatState.branchFromSelection(message, selectionData);
-	}
 </script>
 
 <Popover.Root bind:open={isBranchPopupOpen}>
@@ -278,7 +323,7 @@
 					{/if}
 
 					<div role="presentation" class="prose prose-code:px-0">
-						{#await (chatState.isStreaming && chatState.streamingMessage?.id === message.id ? mdStreaming : mdInstance).renderAsync(message.content) then markdown}
+						{#await mdInstance.renderAsync( message.content, { isStreaming: chatState.isStreaming && chatState.streamingMessage?.id === message.id } ) then markdown}
 							{@html markdown}
 						{/await}
 					</div>
@@ -347,5 +392,17 @@
 
 		background-color: var(--color-primary);
 		color: var(--color-primary-content);
+	}
+	:global(.prose :where(pre.shiki)) {
+		color: var(--shiki-light);
+		background-color: var(--shiki-light-bg);
+		padding: 1em; /* Or whatever padding you prefer */
+		margin-top: 1.6em;
+		margin-bottom: 1.6em;
+		border-radius: 0.5rem; /* Example: match your theme */
+		overflow-x: auto;
+	}
+	:global(.code-lang-badge) {
+		font-family: var(--font-mono) !important;
 	}
 </style>

@@ -56,9 +56,20 @@
 
 	onMount(() => {
 		checkUser();
+
+		// dang stale tabs
+		setTimeout(
+			() => {
+				location.reload();
+			},
+			5 * 60 * 1000
+		);
 	});
 </script>
 
-<main class="selection:bg-primary selection:text-primary-content h-[100vh]">
+<main
+	class="selection:bg-primary selection:text-primary-content h-[100vh]
+	subpixel-antialiased"
+>
 	{@render children()}
 </main>

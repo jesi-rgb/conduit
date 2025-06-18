@@ -6,8 +6,6 @@
 	import Icon from '@iconify/svelte';
 	import ModelSelector from '$lib/components/ui/ModelSelector.svelte';
 	import { CONDUIT_OPEN_ROUTER_KEY } from '$lib/types.js';
-	import { Tooltip } from 'bits-ui';
-	import TooltipContent from '$lib/components/ui/TooltipContent.svelte';
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
 	import Message from './Message.svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
@@ -47,8 +45,7 @@
 		mounted = true;
 
 		chatState.scrollContainer = () => {
-			console.log('yea');
-			chatContainer.scrollTop = chatContainer.scrollHeight;
+			if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
 		};
 	});
 

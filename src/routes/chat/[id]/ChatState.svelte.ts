@@ -11,6 +11,7 @@ export interface ChatState {
 	title: string;
 	isLoading: boolean;
 	isStreaming: boolean;
+	wasStreaming: boolean;
 	controller: AbortController;
 	saveMainConvo: () => void;
 	sendMessage: (message: string) => void;
@@ -43,6 +44,7 @@ export class ChatStateClass implements ChatState {
 	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
 	isLoading = $state(false);
 	isStreaming = $state(false);
+	#wasStreaming = $state(false);
 	onFinishSend = () => { };
 	scrollContainer = () => { };
 	saveMainConvo = () => { };
@@ -54,6 +56,21 @@ export class ChatStateClass implements ChatState {
 		if (conv_id) {
 			this.conversation_id = conv_id
 		}
+	}
+
+	stopStreaming() {
+		this.wasStreaming = this.isStreaming;
+		this.isStreaming = false;
+		setTimeout(() => {
+			this.wasStreaming = false;
+		}, 300);
+	}
+
+	get wasStreaming() {
+		return this.#wasStreaming;
+	}
+	set wasStreaming(value: boolean) {
+		this.#wasStreaming = value;
 	}
 
 	get mainConversation() {
@@ -301,7 +318,6 @@ export class ChatStateClass implements ChatState {
 				try {
 					const parsedChunk = JSON.parse(line);
 
-					console.log(parsedChunk)
 					if (parsedChunk.type === 'chunk') {
 						if (parsedChunk.content) {
 							this.#streamingMessage!.content += parsedChunk.content;
@@ -325,7 +341,6 @@ export class ChatStateClass implements ChatState {
 
 		this.fetchMessages()
 
-		console.log('branching from ', message.id)
 
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,

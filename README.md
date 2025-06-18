@@ -1,38 +1,38 @@
-# sv
+# Conduit
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A chat app designed for natural conversation flow with intelligent context branching.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Branching Conversations**: Create tangent discussions without losing your main thread
+- **Context Isolation**: Side conversations maintain their own context, keeping the main chat focused
+- **Cost Efficient**: Reduced token usage through smart context management
+- **Clean UI**: Built with modern design principles
+
+## How It Works
+
+When you want to explore a tangent, Conduit creates a linked branch from your current conversation. These branches:
+- Maintain their own conversation history
+- Don't pollute the main thread's context
+- Allow you to explore ideas without derailing the primary discussion
+- Reduce API costs by sending fewer messages per request
+
+## Tech Stack
+
+- **Frontend**: SvelteKit
+- **Database**: Supabase with Drizzle ORM
+- **Styling**: Tailwind CSS + DaisyUI
+- **Components**: Bits UI
+
+## Getting Started
 
 ```bash
-# create a new project in the current directory
-npx sv create
+# Install dependencies
+npm install
 
-# create a new project in my-app
-npx sv create my-app
-```
+# Set up environment variables
+cp .env.example .env.local
+# Add your Supabase credentials
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
+# Run development server
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

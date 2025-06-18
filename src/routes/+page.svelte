@@ -70,7 +70,7 @@
 			'Free and open source AI chat app with conversation branching. Access 50+ models via OpenRouter with your own API key. Explore tangents without losing context.',
 		images: [
 			{
-				url: 'https://conduitchat.app/og-image.jpg',
+				url: 'https://conduitchat.app/og-image.webp',
 				width: 1200,
 				height: 630,
 				alt: 'Conduit - Free Open Source AI Chat App with Branching'

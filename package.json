@@ -46,6 +46,7 @@
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"svelte-meta-tags": "^4.4.0",
+		"svelte-motion": "^0.12.2",
 		"tailwindcss": "^4.0.0",
 		"typescript": "^5.0.0",
 		"uuid": "^11.1.0",

@@ -73,7 +73,7 @@
 				text-xl font-bold"
 			>
 				<span>Conduit</span>
-				<Icon icon="solar:star-angle-bold-duotone" class="text-2xl" />
+				<Icon icon="solar:star-rings-line-duotone" class="text-2xl" />
 			</a>
 			<a
 				href="/chat"

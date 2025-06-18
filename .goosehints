@@ -1,0 +1,14 @@
+
+this is a sveltekit 5 with runes, tailwindcss 4 and daisyui 5 app, using iconify
+and solar icons, and bits-ui components.
+
+it's a chat app connected to openrouter. you bring your own 
+key and start chatting with tons of models from open router
+
+
+the main feature is that you can highlight parts of the
+chat in order to create a branch, which opens a new
+related but separate conversation on the side so the
+context of the main app is clean. you can go on tangents
+and clarify terms you don't know without polluting the
+main conversation's context

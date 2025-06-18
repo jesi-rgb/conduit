@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { MetaTags } from 'svelte-meta-tags';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/client/supabase';
 	import type { User } from '@supabase/supabase-js';
@@ -65,6 +66,44 @@
 		checkUser();
 	});
 </script>
+
+<MetaTags
+	title="Conduit | AI conversations and branches "
+	titleTemplate="%s | Conduit"
+	description="Conduit is a chat app that allows you to interact with an LLM
+	in a non linear way."
+	canonical="https://conduitchat.app/"
+	openGraph={{
+		url: 'https://conduitchat.app/',
+		title: 'Conduit',
+		description:
+			'Conduit is a chat app that allows you to interact with an LLM in a non linear way.',
+		images: [
+			{
+				url: 'https://www.example.ie/og-image-01.jpg',
+				width: 800,
+				height: 600,
+				alt: 'Og Image Alt'
+			},
+			{
+				url: 'https://www.example.ie/og-image-02.jpg',
+				width: 900,
+				height: 800,
+				alt: 'Og Image Alt Second'
+			},
+			{ url: 'https://www.example.ie/og-image-03.jpg' },
+			{ url: 'https://www.example.ie/og-image-04.jpg' }
+		],
+		siteName: 'SiteName'
+	}}
+	twitter={{
+		creator: '@jesi_rgb',
+		cardType: 'summary_large_image',
+		title: 'Conduit | Non-Linear Chat App',
+		description:
+			'Conduit is a chat app that allows you to interact with an LLM in a non linear way.'
+	}}
+/>
 
 <div class="hero bg-base-200 min-h-screen">
 	<div class="hero-content max-w-6xl flex-col gap-8 lg:flex-row-reverse">

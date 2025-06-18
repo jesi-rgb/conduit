@@ -54,22 +54,8 @@
 		}
 	}
 
-	let timeout: NodeJS.Timeout | null = $state(null);
 	onMount(() => {
 		checkUser();
-
-		// dang stale tabs
-		timeout = setTimeout(
-			() => {
-				location.reload();
-			},
-			5 * 60 * 1000
-		);
-	});
-
-	onDestroy(() => {
-		console.log('resetin');
-		if (timeout) clearTimeout(timeout);
 	});
 </script>
 

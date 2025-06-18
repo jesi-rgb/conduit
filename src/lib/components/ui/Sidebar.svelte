@@ -18,7 +18,20 @@
 	let conversations: Conversation[] = $derived(
 		globalState.conversations.filter((conv: Conversation) => !conv.parent_conversation_id)
 	);
-	let loadedConversations = $derived(globalState.loadedConversations);
+
+	const groupConversationsByDate = $derived.by(() => {
+		return conversations.reduce(
+			(acc, conv) => {
+				const date = new Date(conv.created_at).toDateString();
+				acc[date] = acc[date] || [];
+				acc[date].push(conv);
+				return acc;
+			},
+			{} as Record<string, Conversation[]>
+		);
+	});
+
+	console.log(groupConversationsByDate);
 
 	const user = $derived(globalState.user);
 
@@ -78,7 +91,7 @@
 				class="conversation-list flex w-full flex-grow flex-col
 				items-center gap-2 overflow-y-auto py-2"
 			>
-				{#if loadedConversations && conversations.length === 0}
+				{#if conversations.length === 0}
 					<div class="flex w-full flex-col items-center gap-3">
 						<div
 							class="border-primary/40 bg-primary/60 dark:bg-primary/10 mx-auto h-fit w-full max-w-fit
@@ -97,33 +110,41 @@
 						</div>
 					</div>
 				{/if}
-				{#each conversations as conv (conv.id)}
-					<a
-						id={conv.id}
-						transition:slide={{ duration: 310 }}
-						data-sveltekit-preload-data="tap"
-						href="/chat/{conv.id}"
-						class:border-primary={conv.id === convId}
-						class="btn btn-ghost btn-sm border-base-content/10 bg-base-100/50
+				{#each Object.entries(groupConversationsByDate) as [date, conversations], g}
+					<div class="flex w-full items-center gap-2 px-3">
+						<span class="text-muted text-xs">{date}</span>
+					</div>
+					{#each conversations as conv (conv.id)}
+						<a
+							id={conv.id}
+							transition:slide={{ duration: 310 }}
+							data-sveltekit-preload-data="tap"
+							href="/chat/{conv.id}"
+							class:border-primary={conv.id === convId}
+							class="btn btn-ghost btn-sm border-base-content/10 bg-base-100/50
 						group convo w-full justify-between rounded-full border
 						pr-1 font-[500]"
-					>
-						<span class="truncate">
-							{conv.title}
-						</span>
+						>
+							<span class="truncate">
+								{conv.title}
+							</span>
 
-						<button
-							class="hover:btn-error btn
+							<button
+								class="hover:btn-error btn
 							btn-xs btn-ghost rounded-full opacity-0
 							transition-colors group-hover:opacity-100"
-							onclick={(e) => {
-								e.preventDefault();
-								deleteConversation(conv.id);
-							}}
-						>
-							<Icon icon="solar:trash-bin-trash-bold-duotone" class="" />
-						</button>
-					</a>
+								onclick={(e) => {
+									e.preventDefault();
+									deleteConversation(conv.id);
+								}}
+							>
+								<Icon icon="solar:trash-bin-trash-bold-duotone" class="" />
+							</button>
+						</a>
+					{/each}
+					{#if g < Object.keys(groupConversationsByDate).length - 1}
+						<div class="divider after:bg-primary-content before:bg-primary-content my-2"></div>
+					{/if}
 				{/each}
 			</div>
 		</div>

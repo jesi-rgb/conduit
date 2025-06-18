@@ -9,11 +9,9 @@
 
 	import type { Conversation } from '$lib/types';
 	import { page } from '$app/state';
-	import { fly, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import TooltipExplain from './TooltipExplain.svelte';
-	import { MediaQuery } from 'svelte/reactivity';
 	import ThemeToggle from './ThemeToggle.svelte';
-	import ConversationView from './ConversationView.svelte';
 
 	const convId = $derived(page.params.id);
 
@@ -36,26 +34,6 @@
 		goto('/');
 	}
 
-	async function handleGoogleLogin() {
-		const { data } = await supabase.auth.getUser();
-
-		if (data.user) {
-			goto('/chat');
-		}
-
-		try {
-			const { error: authError } = await supabase.auth.signInWithOAuth({
-				provider: 'google'
-			});
-
-			if (authError) throw authError;
-
-			// No need to redirect, as Supabase OAuth will handle it
-		} catch (e) {
-			console.error('Google login error:', e);
-		}
-	}
-
 	async function deleteConversation(convId: string) {
 		await fetchWithAuth({
 			url: `/api/conversation/${convId}`,
@@ -65,20 +43,6 @@
 		});
 		conversations = conversations.filter((conv) => conv.id !== convId);
 		goto('/chat');
-	}
-
-	async function newConversation() {
-		const nextConv = conversations.length + 1;
-		const data = await fetchWithAuth({
-			url: `/api/conversations/`,
-			options: {
-				method: 'POST',
-				body: JSON.stringify({ title: `Chat ${nextConv}` })
-			}
-		});
-		const convData = await data.json();
-		goto(`/chat/${convData.conversation.id}`);
-		globalState.fetchConversations();
 	}
 </script>
 

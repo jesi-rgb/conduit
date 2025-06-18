@@ -21,7 +21,7 @@
 			topic: 'science'
 		},
 		{
-			question: 'Who was Marie Curie?',
+			question: 'Who was Marie Skłodowska-Curie?',
 			topic: 'science'
 		},
 		{
@@ -115,7 +115,7 @@
 
 <div class="mx-auto flex h-full w-[90%] max-w-[70%] flex-col justify-end gap-10">
 	<img
-		src="/media/sidebar-empty.png"
+		src="/media/sidebar-empty.webp"
 		class="pointer-events-none mx-auto mb-auto max-w-[80%] [mask-image:radial-gradient(ellipse,black,transparent)] pt-10
 		opacity-20 invert dark:invert-0"
 		alt=""

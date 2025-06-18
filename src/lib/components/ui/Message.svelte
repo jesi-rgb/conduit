@@ -99,12 +99,6 @@
 		isBranchPopupOpen = true;
 	}
 
-	const md = MarkdownItAsync({
-		// Ensure links are opened in a new tab
-		linkify: true,
-		html: true // Allow HTML tags in source
-	});
-
 	const highlights = $derived.by(() => {
 		const branches = globalState.currentBranches;
 
@@ -171,14 +165,13 @@
 	}
 
 	const mdInstance = $derived.by(() => {
-		md.use(
-			fromAsyncCodeToHtml(codeToHtml, {
-				themes: { light: 'vitesse-light', dark: 'vesper' }
-			})
-		);
+		const md = MarkdownItAsync({
+			// Ensure links are opened in a new tab
+			linkify: true,
+			html: true // Allow HTML tags in source
+		});
 
 		md.use(createHighlighterPlugin(highlights));
-
 		md.renderer.rules.fence = (tokens, idx) => {
 			const token = tokens[idx];
 			const rawCode = token.content;
@@ -197,6 +190,13 @@
 			const escapedCode = md.utils.escapeHtml(rawCode);
 			return `<div class="code-block-wrapper" data-highlight-pending="true" data-language="${lang}">${langBadge}<pre><code>${escapedCode}</code></pre></div>`;
 		};
+
+		md.use(
+			fromAsyncCodeToHtml(codeToHtml, {
+				themes: { light: 'vitesse-light', dark: 'vesper' }
+			})
+		);
+
 		return md;
 	});
 

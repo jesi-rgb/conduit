@@ -143,11 +143,10 @@
 					</div>
 					<h4 class="text-base-content mb-2 font-semibold">Your API Key</h4>
 					<p class="text-base-content/70 text-sm text-balance">
-						Bring your own OpenRouter key for complete privacy
+						Bring your own OpenRouter key and enjoy the myriad of models available
 					</p>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
-

@@ -82,7 +82,7 @@
 				{:else}
 					<button class="btn btn-primary btn-lg" onclick={onGoogleLogin}>
 						<Icon icon="solar:login-3-bold" class="mr-2" />
-						Start with Google
+						Start branching
 					</button>
 				{/if}
 				<button class="btn btn-outline btn-lg border-subtle">
@@ -92,11 +92,7 @@
 			</div>
 
 			<!-- Key Stats -->
-			<div
-				use:createBlurFade={{ delay: 1 }}
-				class="mx-auto grid
-				grid-cols-1 gap-6 md:grid-cols-3"
-			>
+			<div use:createBlurFade={{ delay: 1 }} class="mx-auto flex justify-between gap-4">
 				<div class="stats-item">
 					<div class="text-primary text-2xl font-bold">Free</div>
 					<div class="text-base-content/70 text-sm">Open Source Forever</div>
@@ -156,4 +152,3 @@
 		transition: all 0.1s ease-in-out;
 	}
 </style>
-

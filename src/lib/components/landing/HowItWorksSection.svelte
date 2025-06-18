@@ -4,103 +4,126 @@
 </script>
 
 <!-- How It Works Section -->
-<section class="py-20 bg-base-200">
+<section class="bg-base-200 py-20">
 	<div class="container mx-auto max-w-6xl px-4">
-		<div class="text-center mb-16">
+		<div class="mb-16 text-center">
 			<div use:createBlurFade={{ delay: 0.1 }}>
-				<h2 class="text-4xl font-bold text-base-content mb-6">
-					How conversation branching works
-				</h2>
-				<p class="text-xl text-base-content/80">
-					Three simple steps to revolutionize your AI conversations
-				</p>
+				<h2 class="text-base-content mb-6 text-4xl font-bold">How conversation branching works</h2>
 			</div>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-			<div use:createBlurFade={{ delay: 0.1 }} class="text-center group">
-				<div class="w-20 h-20 rounded-full bg-primary text-primary-content mx-auto mb-6 flex items-center justify-center text-3xl font-bold transition-transform duration-300 group-hover:scale-110">
+		<div class="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+			<div use:createBlurFade={{ delay: 0.1 }} class="group text-center">
+				<div
+					class="bg-primary text-primary-content mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold transition-transform duration-300 group-hover:scale-110"
+				>
 					1
 				</div>
-				<h3 class="text-xl font-semibold text-base-content mb-4">Select Text</h3>
+				<h3 class="text-base-content mb-4 text-xl font-semibold">Select Text</h3>
 				<p class="text-base-content/80">
-					Highlight any text in the AI's response that sparks your curiosity or needs deeper exploration.
+					Highlight any text in the AI's response that sparks your curiosity or needs deeper
+					exploration.
 				</p>
 			</div>
 
-			<div use:createBlurFade={{ delay: 0.2 }} class="text-center group">
-				<div class="w-20 h-20 rounded-full bg-primary text-primary-content mx-auto mb-6 flex items-center justify-center text-3xl font-bold transition-transform duration-300 group-hover:scale-110">
+			<div use:createBlurFade={{ delay: 0.2 }} class="group text-center">
+				<div
+					class="bg-primary text-primary-content mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold transition-transform duration-300 group-hover:scale-110"
+				>
 					2
 				</div>
-				<h3 class="text-xl font-semibold text-base-content mb-4">Create Branch</h3>
+				<h3 class="text-base-content mb-4 text-xl font-semibold">Create Branch</h3>
 				<p class="text-base-content/80">
-					Click the branch button to start a new conversation thread with that selected text as context.
+					Click the branch button to start a new conversation thread with that selected text as
+					context.
 				</p>
 			</div>
 
-			<div use:createBlurFade={{ delay: 0.3 }} class="text-center group">
-				<div class="w-20 h-20 rounded-full bg-primary text-primary-content mx-auto mb-6 flex items-center justify-center text-3xl font-bold transition-transform duration-300 group-hover:scale-110">
+			<div use:createBlurFade={{ delay: 0.3 }} class="group text-center">
+				<div
+					class="bg-primary text-primary-content mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold transition-transform duration-300 group-hover:scale-110"
+				>
 					3
 				</div>
-				<h3 class="text-xl font-semibold text-base-content mb-4">Explore Freely</h3>
+				<h3 class="text-base-content mb-4 text-xl font-semibold">Explore Freely</h3>
 				<p class="text-base-content/80">
-					Dive deep into tangent topics while keeping your original conversation clean and accessible.
+					Dive deep into tangent topics while keeping your original conversation clean and
+					accessible.
 				</p>
 			</div>
 		</div>
 
 		<!-- Visual Example -->
-		<div use:createBlurFade={{ delay: 0.4 }} class="max-w-4xl mx-auto">
-			<div class="card bg-base-100 border border-primary/20 shadow-2xl">
+		<div use:createBlurFade={{ delay: 0.4 }} class="mx-auto max-w-5xl">
+			<div class="card bg-base-100 border-primary/20 border shadow-2xl">
 				<div class="card-body p-8">
-					<div class="flex items-center gap-3 mb-6">
-						<Icon icon="solar:branch-bold" class="text-2xl text-primary" />
-						<h3 class="text-xl font-semibold">Example: Research Workflow</h3>
+					<div class="mb-6 flex items-center gap-3">
+						<Icon icon="solar:branch-bold" class="text-primary text-2xl" />
+						<h3 class="text-xl font-semibold">Example: Learning WebGL</h3>
 					</div>
-					
-					<div class="space-y-4">
-						<!-- Main conversation -->
-						<div class="bg-base-200 rounded-lg p-4">
-							<div class="flex items-start gap-3">
-								<Icon icon="solar:user-bold" class="text-lg mt-1 text-primary" />
-								<div>
-									<p class="text-base-content">Explain machine learning algorithms</p>
+
+					<div class="flex gap-4">
+						<div class="w-1/2">
+							<div class="chat chat-end">
+								<div
+									class="bg-primary/15 border-primary/30 prose prose-sm max-w-3/4
+				self-end rounded-2xl rounded-br-xs border px-4 py-2"
+								>
+									what's webgl?
 								</div>
 							</div>
-						</div>
-						
-						<div class="bg-primary/5 rounded-lg p-4">
-							<div class="flex items-start gap-3">
-								<Icon icon="solar:chat-round-bold" class="text-lg mt-1 text-primary" />
-								<div>
-									<p class="text-base-content">Machine learning uses algorithms like <span class="bg-accent/20 px-1 rounded">neural networks</span>, decision trees, and <span class="bg-accent/20 px-1 rounded">random forests</span> to find patterns in data...</p>
+							<div class="chat chat-start">
+								<div class="prose prose-sm">
+									WebGL Web Graphics Library is a JavaScript API that allows developers to render
+									interactive 2D and 3D graphics within web browsers without the need for additional
+									plugins. It is based on
+									<mark class="font-bold">OpenGL ES (Embedded Systems)</mark>, a subset of the
+									OpenGL API designed for embedded devices.
+									<br /><br />
+									WebGL is widely used for creating games, data visualizations, interactive art, and
+									other graphics-intensive web applications. It enables developers to harness the power
+									of the {' '}<mark>GPU</mark> (Graphics Processing Unit) for high-performance graphics
+									rendering directly within web pages.
 								</div>
 							</div>
 						</div>
 
-						<!-- Branch indicator -->
-						<div class="flex items-center gap-2 text-sm text-primary">
-							<Icon icon="solar:arrow-right-up-bold" />
-							<span>Selected "neural networks" → New branch created</span>
-						</div>
-						
-						<!-- Branch conversation -->
-						<div class="bg-base-200 rounded-lg p-4 ml-8 border-l-4 border-primary">
-							<div class="flex items-start gap-3">
-								<Icon icon="solar:branch-bold" class="text-lg mt-1 text-primary" />
-								<div>
-									<p class="text-base-content text-sm">🌿 <strong>Branch:</strong> Tell me more about neural networks specifically</p>
-									<p class="text-base-content/70 text-sm mt-2">AI responds with detailed neural network explanation...</p>
+						<div
+							class="border-subtle bg-base-200/50 w-1/2
+							rounded-3xl border py-5
+							pl-5"
+						>
+							<div class="text-muted mb-5">Branch from OpenGL ES (Embedded Systems)</div>
+							<div class="chat chat-end">
+								<div
+									class="bg-primary/15 border-primary/30 prose prose-sm max-w-3/4
+				self-end rounded-2xl rounded-br-xs border px-4 py-2"
+								>
+									> OpenGL ES (Embedded Systems ?
+								</div>
+							</div>
+							<div class="chat chat-start">
+								<div class="prose prose-sm">
+									OpenGL ES (OpenGL for Embedded Systems) is a subset of the full OpenGL graphics
+									API designed specifically for embedded devices such as smartphones, tablets,
+									gaming consoles, and other hardware with limited resources. It provides a
+									streamlined, efficient set of features optimized for these environments, enabling
+									high-performance 3D graphics on devices with constrained processing power and
+									memory.
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="mt-6 text-center text-sm text-base-content/70">
-						Main conversation context stays clean while you explore tangents
+					<div class="divider my-1"></div>
+					<div class="text-base-content/70 mt-6 max-w-xl text-sm">
+						The left conversation talks about WebGL. To the right, a pane explains the concept of
+						OpenGL ES (Embedded Systems). AI is great for learning purposes. Sometimes, technical or
+						foreign terms can appear. You shouldn't leave any questions unanswered.
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
+

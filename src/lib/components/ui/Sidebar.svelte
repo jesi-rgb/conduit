@@ -31,8 +31,6 @@
 		);
 	});
 
-	console.log(groupConversationsByDate);
-
 	const user = $derived(globalState.user);
 
 	let mounted = $state(false);
@@ -87,32 +85,22 @@
 					class="text-primary group-hover:text-primary-content"
 				/></a
 			>
+
 			<div
 				class="conversation-list flex w-full flex-grow flex-col
 				items-center gap-2 overflow-y-auto py-2"
 			>
 				{#if conversations.length === 0}
-					<div class="flex w-full flex-col items-center gap-3">
-						<div
-							class="border-primary/40 bg-primary/60 dark:bg-primary/10 mx-auto h-fit w-full max-w-fit
-							rounded-xl border contrast-150"
-						>
-							<img
-								class="aspect-[512/288] rounded-xl
-								object-contain"
-								src="/media/sidebar-empty.png"
-								alt="dithered galaxy"
-								height="240"
-							/>
-						</div>
-						<div class="mx-auto flex items-center gap-2 opacity-40">
-							<span class="text-primary">No conversations, yet</span>
-						</div>
+					<div class="mx-auto flex items-center gap-2 opacity-40">
+						<span class="text-primary">No conversations, yet</span>
 					</div>
 				{/if}
 				{#each Object.entries(groupConversationsByDate) as [date, conversations], g}
-					<div class="flex w-full items-center gap-2 px-3">
-						<span class="text-muted text-xs">{date}</span>
+					<div class="mt-3 w-full px-3">
+						<span class="text-muted text-xs"
+							>{date} ·
+							{conversations.length} convos</span
+						>
 					</div>
 					{#each conversations as conv (conv.id)}
 						<a
@@ -122,8 +110,8 @@
 							href="/chat/{conv.id}"
 							class:border-primary={conv.id === convId}
 							class="btn btn-ghost btn-sm border-base-content/10 bg-base-100/50
-						group convo w-full justify-between rounded-full border
-						pr-1 font-[500]"
+							group convo w-full justify-between rounded-full border
+							pr-1 font-[500]"
 						>
 							<span class="truncate">
 								{conv.title}
@@ -131,8 +119,8 @@
 
 							<button
 								class="hover:btn-error btn
-							btn-xs btn-ghost rounded-full opacity-0
-							transition-colors group-hover:opacity-100"
+								btn-xs btn-ghost rounded-full opacity-0
+								transition-colors group-hover:opacity-100"
 								onclick={(e) => {
 									e.preventDefault();
 									deleteConversation(conv.id);
@@ -142,9 +130,6 @@
 							</button>
 						</a>
 					{/each}
-					{#if g < Object.keys(groupConversationsByDate).length - 1}
-						<div class="divider after:bg-primary-content before:bg-primary-content my-2"></div>
-					{/if}
 				{/each}
 			</div>
 		</div>

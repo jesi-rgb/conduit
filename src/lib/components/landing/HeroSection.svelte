@@ -35,19 +35,17 @@
 				>
 					<Icon icon="solar:code-bold" class="text-primary mr-2" />
 					<span class="text-base-content">Free & Open Source</span>
-					<span class="text-base-content/30 mx-2">•</span>
-					<Icon icon="solar:star-bold" class="text-accent mr-1" />
+					<span class="text-subtle mx-2">·</span>
+					<Icon icon="solar:star-bold" class="mr-1" />
 					<span class="text-base-content">50+ AI Models</span>
 				</div>
 			</div>
 
 			<!-- Main Heading -->
-			<div class="mb-8">
-				<h1 use:createBlurFade={{ delay: 0.2 }} class="text-primary mb-4 text-7xl font-bold">
-					Conduit
-				</h1>
+			<div class="mb-8 space-y-8">
+				<h1 use:createBlurFade={{ delay: 0.2 }} class="text-primary text-7xl font-bold">Conduit</h1>
 				<div use:createBlurFade={{ delay: 0.4 }}>
-					<h2 class="text-base-content mb-6 text-4xl font-medium">
+					<h2 class="text-base-content text-4xl font-medium">
 						Chat with AI.
 						<span class="font-semibold"><mark>Branch</mark> your conversations.</span>
 					</h2>
@@ -85,25 +83,25 @@
 						Start branching
 					</button>
 				{/if}
-				<button class="btn btn-outline btn-lg border-subtle">
+				<a
+					href="https://github.com/jesi-rgb/conduit"
+					target="_blank"
+					class="btn btn-outline btn-lg border-subtle"
+				>
 					<Icon icon="solar:book-bookmark-bold-duotone" class="mr-2" />
 					View on GitHub
-				</button>
+				</a>
 			</div>
 
 			<!-- Key Stats -->
-			<div use:createBlurFade={{ delay: 1 }} class="mx-auto flex justify-between gap-4">
-				<div class="stats-item">
+			<div use:createBlurFade={{ delay: 1 }} class="mx-auto flex gap-10">
+				<div class="">
 					<div class="text-primary text-2xl font-bold">Free</div>
 					<div class="text-base-content/70 text-sm">Open Source Forever</div>
 				</div>
-				<div class="stats-item">
+				<div class="">
 					<div class="text-primary text-2xl font-bold">50+</div>
 					<div class="text-base-content/70 text-sm">AI Models Available</div>
-				</div>
-				<div class="stats-item">
-					<div class="text-primary text-2xl font-bold">∞</div>
-					<div class="text-base-content/70 text-sm">Conversation Branches</div>
 				</div>
 			</div>
 		</div>

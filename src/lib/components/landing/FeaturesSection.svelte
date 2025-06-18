@@ -12,20 +12,23 @@
 				<h2 class="text-base-content mb-6 text-4xl font-bold md:text-5xl">
 					Conversations are rarely linear
 				</h2>
-				<p class="text-base-content/80 mx-auto max-w-3xl text-xl">
-					Do you need clarificaiton on some topic or term? Just
-					<mark>highlight it</mark>, and ask
-				</p>
+				<div class="flex flex-col gap-6">
+					<p class="text-base-content/80 mx-auto max-w-3xl text-xl">
+						Do you need clarificaiton on some topic or term?
+					</p>
+					<p class="text-2xl">
+						Just
+						<mark>highlight it</mark> and ask
+					</p>
+				</div>
 			</div>
 		</div>
 
 		<!-- Main Features Grid -->
-		<div class="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
+		<div class="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
 			<!-- Branching Feature - Large -->
 			<div use:createBlurFade={{ delay: 0.1 }} class="lg:col-span-2">
-				<div
-					class="card bg-base-100 border-primary/20 border shadow-xl transition-all duration-300 hover:shadow-2xl"
-				>
+				<div class="card bg-base-100 border-primary/20 border transition-all duration-300">
 					<div class="card-body p-8">
 						<div class="flex items-start gap-6">
 							<div class="flex-shrink-0">
@@ -54,7 +57,8 @@
 			<!-- OpenRouter Integration -->
 			<div use:createBlurFade={{ delay: 0.2 }}>
 				<div
-					class="card bg-base-100 border-primary/10 h-full border shadow-xl transition-all duration-300 hover:shadow-2xl"
+					class="card bg-base-100 border-primary/10 h-full border
+					transition-all duration-300"
 				>
 					<div class="card-body p-6">
 						<div class="bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-full">

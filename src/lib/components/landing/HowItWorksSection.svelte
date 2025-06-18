@@ -20,7 +20,7 @@
 					1
 				</div>
 				<h3 class="text-base-content mb-4 text-xl font-semibold">Select Text</h3>
-				<p class="text-base-content/80">
+				<p class="text-base-content/80 text-balance">
 					Highlight any text in the AI's response that sparks your curiosity or needs deeper
 					exploration.
 				</p>
@@ -33,7 +33,7 @@
 					2
 				</div>
 				<h3 class="text-base-content mb-4 text-xl font-semibold">Create Branch</h3>
-				<p class="text-base-content/80">
+				<p class="text-base-content/80 text-balance">
 					Click the branch button to start a new conversation thread with that selected text as
 					context.
 				</p>
@@ -46,7 +46,7 @@
 					3
 				</div>
 				<h3 class="text-base-content mb-4 text-xl font-semibold">Explore Freely</h3>
-				<p class="text-base-content/80">
+				<p class="text-base-content/80 text-balance">
 					Dive deep into tangent topics while keeping your original conversation clean and
 					accessible.
 				</p>
@@ -126,4 +126,3 @@
 		</div>
 	</div>
 </section>
-

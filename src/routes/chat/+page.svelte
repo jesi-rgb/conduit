@@ -126,7 +126,7 @@
 	>
 		Welcome back, {user?.user_metadata.full_name}
 
-		<Icon icon="solar:star-angle-bold-duotone" class="text-2xl" />
+		<Icon icon="solar:star-fall-minimalistic-bold-duotone" class="text-2xl" />
 	</h1>
 	<div
 		class="mx-auto flex h-fit shrink flex-wrap

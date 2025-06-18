@@ -5,7 +5,7 @@
 	import { supabase } from '$lib/client/supabase';
 	import type { User } from '@supabase/supabase-js';
 	import { globalState } from '../stores/stores.svelte';
-	
+
 	// Landing Page Components
 	import HeroSection from '$lib/components/landing/HeroSection.svelte';
 	import FeaturesSection from '$lib/components/landing/FeaturesSection.svelte';
@@ -87,24 +87,20 @@
 	}}
 />
 
-<HeroSection 
-	{loading} 
-	{user} 
-	onGoogleLogin={handleGoogleLogin} 
-	onContinueChat={handleContinueChat} 
+<HeroSection
+	{loading}
+	{user}
+	onGoogleLogin={handleGoogleLogin}
+	onContinueChat={handleContinueChat}
 />
 
 <FeaturesSection />
 
 <HowItWorksSection />
 
-<BenefitsSection />
-
-<CTASection 
-	{loading} 
-	{user} 
-	onGoogleLogin={handleGoogleLogin} 
-	onContinueChat={handleContinueChat} 
+<CTASection
+	{loading}
+	{user}
+	onGoogleLogin={handleGoogleLogin}
+	onContinueChat={handleContinueChat}
 />
-
-<FooterSection />

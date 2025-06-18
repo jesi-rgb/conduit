@@ -270,7 +270,7 @@
 	{#if message.role === 'user'}
 		<div class="chat chat-end">
 			<p
-				class="bg-primary/15 border-primary/30 prose max-w-3/4
+				class="bg-primary/15 border-primary/30 prose prose-sm max-w-3/4
 				self-end rounded-2xl rounded-br-xs border px-4 py-2"
 			>
 				{message.content}

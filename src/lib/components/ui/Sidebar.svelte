@@ -42,6 +42,7 @@
 			}
 		});
 		conversations = conversations.filter((conv) => conv.id !== convId);
+		globalState.currentMessages = [];
 		goto('/chat');
 	}
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/client/supabase';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import '../app.css';
 	import { globalState } from '../stores/stores.svelte';
 	import { page } from '$app/state';
@@ -54,16 +54,22 @@
 		}
 	}
 
+	let timeout: NodeJS.Timeout | null = $state(null);
 	onMount(() => {
 		checkUser();
 
 		// dang stale tabs
-		setTimeout(
+		timeout = setTimeout(
 			() => {
 				location.reload();
 			},
 			5 * 60 * 1000
 		);
+	});
+
+	onDestroy(() => {
+		console.log('resetin');
+		if (timeout) clearTimeout(timeout);
 	});
 </script>
 

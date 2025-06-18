@@ -2,6 +2,8 @@
 
 A chat app designed for natural conversation flow with intelligent context branching.
 
+![Conduit](/static/og-image.webp)
+
 ## Features
 
 - **Branching Conversations**: Create tangent discussions without losing your main thread

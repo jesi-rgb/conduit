@@ -17,8 +17,8 @@
 		{#if open}
 			<div {...wrapperProps}>
 				<div
-					class="bg-base-200 to-primary-content border-subtle
-					rounded-box max-w-sm border px-3 py-1 text-xs shadow-lg"
+					class="bg-base-200 to-primary-content border-subtle rounded-box
+					max-w-sm border px-3 py-1 text-xs text-balance shadow-lg"
 					{...props}
 					transition:fly={{ y: 10, duration: 200 }}
 				>

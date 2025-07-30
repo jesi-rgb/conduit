@@ -106,7 +106,7 @@
 					<TooltipExplain>
 						<div class="badge badge-primary badge-xs">FREE</div>
 						{#snippet content()}
-							Using free models (Kimi & Z.AI). Add your API key to use other models.
+							Using free models. Add your API key to use other models.
 						{/snippet}
 					</TooltipExplain>
 				</div>

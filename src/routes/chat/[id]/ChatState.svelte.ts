@@ -183,7 +183,7 @@ export class ChatStateClass implements ChatState {
 
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
-		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
+		const modelToUse = globalState.modelIdSelected;
 		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
 		// Create initial streaming message
@@ -302,7 +302,7 @@ export class ChatStateClass implements ChatState {
 
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
-		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
+		const modelToUse = globalState.modelIdSelected;
 		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
 		const response = await fetchWithAuth({

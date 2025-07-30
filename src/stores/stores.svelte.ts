@@ -2,6 +2,7 @@ import type { User } from '@supabase/supabase-js';
 import type { Branch, Conversation, Message } from '$lib/types';
 import { fetchWithAuth } from '$lib/client/auth';
 import { CONDUIT_OPEN_ROUTER_KEY, FALLBACK_MODEL } from '$lib/types';
+import { popularModels } from '$lib/models';
 
 type Provider = 'conduit-open-router' | 'conduit-openai' | 'conduit-deepseek';
 
@@ -155,8 +156,14 @@ export class GlobalState implements GlobalStateType {
 		const localStorageModel = localStorage.getItem('conduit-selected-model');
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 
-		// If no user API key, always use fallback model
+		// If no user API key, check if selected model is free
 		if (!userApiKey) {
+			if (localStorageModel) {
+				const selectedModel = popularModels.find((model) => model.id === localStorageModel);
+				if (selectedModel?.free) {
+					return localStorageModel;
+				}
+			}
 			return FALLBACK_MODEL;
 		}
 

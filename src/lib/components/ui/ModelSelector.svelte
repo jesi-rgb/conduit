@@ -18,6 +18,7 @@
 		Google: 'simple-icons:google',
 		Meta: 'simple-icons:meta',
 		Mistral: 'logos:mistral-ai-icon',
+		MoonshotAI: 'solar:moon-bold',
 		OpenAI: 'ri:openai-line',
 		OpenRouter: 'solar:branching-paths-up-bold'
 	};
@@ -62,9 +63,7 @@
 			)!;
 			selectedModel = { value: storedModel.id, label: storedModel.name };
 		} else {
-			const model = popularModels.find(
-				(model) => model.id === 'google/gemini-2.5-flash-preview-05-20'
-			)!;
+			const model = popularModels.find((model) => model.id === 'moonshotai/kimi-k2:free')!;
 			globalState.modelIdSelected = model.id;
 			selectedModel = { value: model.id, label: model.name };
 		}

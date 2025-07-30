@@ -27,7 +27,8 @@
 		Mistral: 'logos:mistral-ai-icon',
 		MoonshotAI: 'solar:moon-bold',
 		OpenAI: 'ri:openai-line',
-		OpenRouter: 'solar:branching-paths-up-bold'
+		OpenRouter: 'solar:branching-paths-up-bold',
+		'Z.AI': 'solar:cpu-bolt-bold'
 	};
 
 	// Group models by provider
@@ -63,6 +64,7 @@
 	});
 
 	let selectedModel: { value: string; label: string } | undefined = $state(undefined);
+
 	onMount(() => {
 		const currentModelId = globalState.modelIdSelected;
 		const storedModel: ModelInfo = popularModels.find((model) => model.id === currentModelId)!;
@@ -83,7 +85,11 @@
 		allowDeselect={false}
 		name="model"
 		items={popularModels.map((model) => {
-			return { value: model.id, label: model.name, disabled: false };
+			return {
+				value: model.id,
+				label: model.name,
+				disabled: isUsingFallback() && !model.free
+			};
 		})}
 		bind:value={selectedModel!.value}
 		onValueChange={(newSelection: string) => {
@@ -100,7 +106,7 @@
 					<TooltipExplain>
 						<div class="badge badge-primary badge-xs">FREE</div>
 						{#snippet content()}
-							Using free Kimi model. Add your API key to use other models.
+							Using free models. Add your API key to use other models.
 						{/snippet}
 					</TooltipExplain>
 				</div>
@@ -109,24 +115,20 @@
 				oninput={(e) => (searchValue = e.currentTarget.value)}
 				bind:ref={inputElement}
 				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs {isUsingFallback()
-					? 'border-primary cursor-not-allowed opacity-75'
+					? 'border-primary'
 					: ''}"
 				placeholder={selectedModel.label}
 				aria-label="Select a model"
 				defaultValue={selectedModel.label}
-				disabled={isUsingFallback()}
-				readonly={isUsingFallback()}
 			/>
-			{#if !isUsingFallback()}
-				<Combobox.Trigger class="btn btn-xs absolute top-1/2 right-2 -translate-y-1/2">
-					<TooltipExplain>
-						<Icon icon="solar:maximize-bold-duotone" />
-						{#snippet content()}
-							Select a different model
-						{/snippet}
-					</TooltipExplain>
-				</Combobox.Trigger>
-			{/if}
+			<Combobox.Trigger class="btn btn-xs absolute top-1/2 right-2 -translate-y-1/2">
+				<TooltipExplain>
+					<Icon icon="solar:maximize-bold-duotone" />
+					{#snippet content()}
+						Select a different model
+					{/snippet}
+				</TooltipExplain>
+			</Combobox.Trigger>
 		</div>
 		<Combobox.Portal>
 			<Combobox.Content
@@ -156,17 +158,25 @@
 
 											<!-- Models in this provider group -->
 											{#each group.models as model (model.id)}
+												{@const isDisabled = isUsingFallback() && !model.free}
 												<Combobox.Item
 													class="data-highlighted:bg-base-300/30 ring-subtle my-1 flex h-10 w-full
 								items-center rounded-xl px-3 py-2 text-sm capitalize outline-hidden
-								select-none data-highlighted:shadow-sm data-highlighted:ring dark:data-highlighted:shadow-xl"
+								select-none data-highlighted:shadow-sm data-highlighted:ring dark:data-highlighted:shadow-xl
+								{isDisabled ? 'cursor-not-allowed opacity-50' : ''}"
 													value={model.id}
 													label={model.name}
+													disabled={isDisabled}
 												>
 													{#snippet children({ selected })}
 														<div class="flex w-full flex-col">
-															<span class="truncate">
+															<span class="flex items-center gap-2 truncate">
 																{model.name}
+																{#if model.free}
+																	<span class="badge badge-primary badge-xs">FREE</span>
+																{:else if isUsingFallback()}
+																	<span class="badge badge-ghost badge-xs">API KEY REQUIRED</span>
+																{/if}
 															</span>
 															<span class="text-muted w-11/12 truncate text-xs">
 																{model.description}

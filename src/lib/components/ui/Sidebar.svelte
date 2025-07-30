@@ -30,6 +30,7 @@
 			{} as Record<string, Conversation[]>
 		);
 	});
+	$inspect(groupConversationsByDate);
 
 	const user = $derived(globalState.user);
 

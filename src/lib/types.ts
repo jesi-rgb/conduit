@@ -4,8 +4,6 @@ export const CONDUIT_OPEN_AI_KEY = 'conduit-open-ai';
 
 // Fallback configuration for users without API keys
 export const FALLBACK_MODEL = 'moonshotai/kimi-k2:free';
-export const FALLBACK_API_KEY =
-	'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';
 
 export type User = {
 	id: string;

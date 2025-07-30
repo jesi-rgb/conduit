@@ -1,12 +1,7 @@
 import { goto } from '$app/navigation';
 import { fetchWithAuth } from '$lib/client/auth';
-import {
-	type Message,
-	type Branch,
-	CONDUIT_OPEN_ROUTER_KEY,
-	FALLBACK_MODEL,
-	FALLBACK_API_KEY
-} from '$lib/types';
+import { type Message, type Branch, CONDUIT_OPEN_ROUTER_KEY, FALLBACK_MODEL } from '$lib/types';
+import { PUBLIC_FALLBACK_OPENROUTER_KEY } from '$env/static/public';
 import { globalState } from '../../../stores/stores.svelte';
 
 export interface ChatState {
@@ -60,9 +55,9 @@ export class ChatStateClass implements ChatState {
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	#wasStreaming = $state(false);
-	onFinishSend = () => {};
-	scrollContainer = () => {};
-	saveMainConvo = () => {};
+	onFinishSend = () => { };
+	scrollContainer = () => { };
+	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
 	#streamingReasoning = $state<string>('');
@@ -189,7 +184,7 @@ export class ChatStateClass implements ChatState {
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
-		const apiKeyToUse = userApiKey || FALLBACK_API_KEY;
+		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
 		// Create initial streaming message
 		this.#streamingMessage = {
@@ -248,7 +243,7 @@ export class ChatStateClass implements ChatState {
 	editTitle = async () => {
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
-		const apiKeyToUse = userApiKey || FALLBACK_API_KEY;
+		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
 		// Use a fast model for title generation
 		const titleModel = userApiKey ? 'openai/gpt-4.1-mini' : FALLBACK_MODEL;
 
@@ -304,7 +299,7 @@ export class ChatStateClass implements ChatState {
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
-		const apiKeyToUse = userApiKey || FALLBACK_API_KEY;
+		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
 
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/${branch}/ai`,
@@ -365,9 +360,9 @@ export class ChatStateClass implements ChatState {
 		}
 	};
 
-	fetchMessages = async () => {};
+	fetchMessages = async () => { };
 
-	onFinishStream = () => {};
+	onFinishStream = () => { };
 
 	branchOut = async (message: Message) => {
 		this.isLoading = true;

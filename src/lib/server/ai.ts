@@ -1,5 +1,6 @@
 import type { Message } from '$lib/types';
-import { FALLBACK_MODEL, FALLBACK_API_KEY } from '$lib/types';
+import { FALLBACK_MODEL } from '$lib/types';
+import { PUBLIC_FALLBACK_OPENROUTER_KEY } from '$env/static/public';
 
 type AIOptions = {
 	model: string;
@@ -12,7 +13,7 @@ export async function generateTitle(
 	{ model, endpoint, bearerToken }: AIOptions
 ): Promise<string> {
 	// Use fallback if no user API key provided
-	const finalBearerToken = bearerToken || FALLBACK_API_KEY;
+	const finalBearerToken = bearerToken || PUBLIC_FALLBACK_OPENROUTER_KEY;
 	const finalModel = bearerToken ? model : FALLBACK_MODEL;
 
 	const titlePrompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
@@ -54,7 +55,7 @@ export async function generateStreamingAIResponse(
 	{ model, endpoint, bearerToken }: AIOptions
 ): Promise<ReadableStream<string>> {
 	// Use fallback if no user API key provided
-	const finalBearerToken = bearerToken || FALLBACK_API_KEY;
+	const finalBearerToken = bearerToken || PUBLIC_FALLBACK_OPENROUTER_KEY;
 	const finalModel = bearerToken ? model : FALLBACK_MODEL;
 
 	const response = await fetch(endpoint, {

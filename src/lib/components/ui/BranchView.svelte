@@ -219,25 +219,23 @@
 				>
 					<ModelSelector />
 
-					<Tooltip.Provider disabled={localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY) != undefined}>
+					<Tooltip.Provider disabled={true}>
 						<Tooltip.Root delayDuration={0}>
 							<Tooltip.Trigger class="flex w-full gap-1">
 								<input
 									type="text"
 									bind:this={inputMessage}
 									bind:value={message}
-									placeholder="Type your message..."
+									placeholder={localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)
+										? 'Type your message...'
+										: 'Type your message (using free Kimi model)...'}
 									class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
-									disabled={chatState.isLoading ||
-										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
+									disabled={chatState.isLoading || chatState.isStreaming}
 								/>
 								<button
 									class="btn"
 									type="submit"
-									disabled={chatState.isLoading ||
-										chatState.isStreaming ||
-										!localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)}
+									disabled={chatState.isLoading || chatState.isStreaming}
 								>
 									<Icon icon="solar:star-rainbow-bold-duotone" class="text-xl" />
 								</button>

@@ -1,6 +1,9 @@
-export const CONDUIT_SELECTED_MODEL = 'conduit-selected-model'
-export const CONDUIT_OPEN_ROUTER_KEY = 'conduit-open-router'
-export const CONDUIT_OPEN_AI_KEY = 'conduit-open-ai'
+export const CONDUIT_SELECTED_MODEL = 'conduit-selected-model';
+export const CONDUIT_OPEN_ROUTER_KEY = 'conduit-open-router';
+export const CONDUIT_OPEN_AI_KEY = 'conduit-open-ai';
+
+// Fallback configuration for users without API keys
+export const FALLBACK_MODEL = 'moonshotai/kimi-k2:free';
 
 export type User = {
 	id: string;
@@ -8,7 +11,7 @@ export type User = {
 	name: string;
 	avatar_url: string;
 	created_at: Date;
-}
+};
 
 export type Conversation = {
 	id: string;
@@ -18,7 +21,7 @@ export type Conversation = {
 	updated_at: Date;
 	parent_conversation_id?: string;
 	branch_from_message_id?: string;
-}
+};
 
 export type Message = {
 	id?: string;
@@ -28,8 +31,7 @@ export type Message = {
 	reasoning?: string;
 	created_at: Date;
 	generated_by?: string;
-}
-
+};
 
 export type Branch = {
 	id?: string;

@@ -8,13 +8,13 @@
 
 @font-face {
   font-family: 'AT Name Mono Medium';
-  src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/ATNameMono-Medium.otf");
+  src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/ATNameMonoVariable-Regular.ttf");
   weight: 400;
 }
 
 @font-face {
   font-family: 'AT Name Mono Medium Italic';
-  src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/ATNameMono-MediumItalic.otf");
+  src: url("https://d29d04n4r375th.cloudfront.net/ATNameMono-MediumItalic.otf");
   weight: 400;
   font-style: italic;
 }

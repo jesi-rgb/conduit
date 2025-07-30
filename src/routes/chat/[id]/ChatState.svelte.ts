@@ -1,6 +1,7 @@
 import { goto } from '$app/navigation';
 import { fetchWithAuth } from '$lib/client/auth';
-import { type Message, type Branch, CONDUIT_OPEN_ROUTER_KEY } from '$lib/types';
+import { type Message, type Branch, CONDUIT_OPEN_ROUTER_KEY, FALLBACK_MODEL } from '$lib/types';
+import { PUBLIC_FALLBACK_OPENROUTER_KEY } from '$env/static/public';
 import { globalState } from '../../../stores/stores.svelte';
 
 export interface ChatState {
@@ -24,14 +25,17 @@ export interface ChatState {
 	fetchMessages: () => void;
 	onFinishSend: () => void;
 	onFinishStream: () => void;
-	branchOut: () => void;
-	branchFromSelection: (message: Message, selectionData: {
-		text: string,
-		nodeType: string,
-		nodeIndex: number,
-		startOffset: number,
-		endOffset: number
-	}) => Promise<void>;
+	branchOut: (message: Message) => void;
+	branchFromSelection: (
+		message: Message,
+		selectionData: {
+			text: string;
+			nodeType: string;
+			nodeIndex: number;
+			startOffset: number;
+			endOffset: number;
+		}
+	) => Promise<void>;
 }
 
 export class ChatStateClass implements ChatState {
@@ -41,7 +45,13 @@ export class ChatStateClass implements ChatState {
 	#currentBranch: Message[] = $state([]);
 	#controller: AbortController = new AbortController();
 
-	title = $derived(globalState.conversations.find(conv => conv.id == this.conversation_id)?.title!);
+	title = $derived(
+		globalState.conversations.find((conv) => conv.id == this.conversation_id)?.title!
+	);
+
+	get controller() {
+		return this.#controller;
+	}
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	#wasStreaming = $state(false);
@@ -54,7 +64,7 @@ export class ChatStateClass implements ChatState {
 
 	constructor(conv_id?: string) {
 		if (conv_id) {
-			this.conversation_id = conv_id
+			this.conversation_id = conv_id;
 		}
 	}
 
@@ -103,10 +113,10 @@ export class ChatStateClass implements ChatState {
 	}
 
 	get messages() {
-		return this.#messages
+		return this.#messages;
 	}
 	set messages(messages: Message[]) {
-		this.#messages = messages
+		this.#messages = messages;
 	}
 
 	set conversation_id(conv_id: string) {
@@ -126,49 +136,55 @@ export class ChatStateClass implements ChatState {
 			content: message,
 			created_at: new Date(),
 			conversation_id: this.conversation_id
-		}
+		};
 		this.messages.push(newMsg);
-		globalState.currentMessages.push(newMsg)
+		globalState.currentMessages.push(newMsg);
 
 		// post msg to database
 		await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}`, options: {
+			url: `/api/messages/${this.conversation_id}`,
+			options: {
 				method: 'POST',
 				body: JSON.stringify(newMsg)
 			}
-		})
+		});
 
-		this.streamResponse()
+		this.streamResponse();
 
 		this.isLoading = false;
 
-		this.scrollContainer()
+		this.scrollContainer();
 	};
 
-
 	cancelStream = async () => {
-		this.#controller.abort()
+		this.#controller.abort();
 
 		await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}`, options: {
+			url: `/api/messages/${this.conversation_id}`,
+			options: {
 				method: 'POST',
 				body: JSON.stringify(this.#streamingMessage)
 			}
-		})
+		});
 
 		if (this.messages.length == 2) {
-			this.editTitle()
+			this.editTitle();
 		}
 
-		globalState.fetchConversations()
+		globalState.fetchConversations();
 
-		this.isStreaming = false
-		this.isLoading = false
-		this.#controller = new AbortController()
-	}
+		this.isStreaming = false;
+		this.isLoading = false;
+		this.#controller = new AbortController();
+	};
 
 	streamResponse = async () => {
-		this.isStreaming = true
+		this.isStreaming = true;
+
+		// Determine if we should use fallback
+		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
+		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
 		// Create initial streaming message
 		this.#streamingMessage = {
@@ -177,7 +193,7 @@ export class ChatStateClass implements ChatState {
 			content: '',
 			reasoning: '',
 			created_at: new Date(),
-			generated_by: globalState.modelIdSelected,
+			generated_by: modelToUse,
 			conversation_id: this.conversation_id
 		};
 
@@ -188,57 +204,63 @@ export class ChatStateClass implements ChatState {
 				url: `/api/messages/${this.conversation_id}/ai`,
 				options: {
 					method: 'POST',
-					body:
-						JSON.stringify({
-							model: globalState.modelIdSelected,
-							endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-							messages: this.messages,
-							bearerToken: localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)
-						}), signal: this.#controller.signal
+					body: JSON.stringify({
+						model: modelToUse,
+						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+						messages: this.messages,
+						bearerToken: apiKeyToUse
+					}),
+					signal: this.#controller.signal
 				}
 			});
 
-			await this.#processStream(response)
+			await this.#processStream(response);
 
-			this.isStreaming = false
+			this.isStreaming = false;
 
-			globalState.currentMessages.push(this.#streamingMessage)
+			globalState.currentMessages.push(this.#streamingMessage);
 
 			if (this.messages.length == 2) {
-				this.editTitle()
+				this.editTitle();
 			}
 
-			this.onFinishStream()
-
+			this.onFinishStream();
 		} catch (error: any) {
-			console.log(error)
+			console.log(error);
 			this.messages.push({
 				id: crypto.randomUUID(),
 				role: 'assistant',
 				content: error.message,
 				created_at: new Date(),
 				conversation_id: this.conversation_id
-			})
-			this.isLoading = false
-			this.isStreaming = false
-			return
+			});
+			this.isLoading = false;
+			this.isStreaming = false;
+			return;
 		}
 	};
 
 	editTitle = async () => {
+		// Determine if we should use fallback
+		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
+		// Use a fast model for title generation
+		const titleModel = userApiKey ? 'openai/gpt-4.1-mini' : FALLBACK_MODEL;
+
 		await fetchWithAuth({
-			url: `/api/title/${this.conversation_id}/ai`, options: {
-				method: 'POST', body: JSON.stringify({
+			url: `/api/title/${this.conversation_id}/ai`,
+			options: {
+				method: 'POST',
+				body: JSON.stringify({
 					messages: this.messages,
-					model: 'openai/gpt-4.1-mini',
+					model: titleModel,
 					endpoint: 'https://openrouter.ai/api/v1/completions',
-					bearerToken: localStorage.getItem('conduit-open-router')
+					bearerToken: apiKeyToUse
 				})
 			}
 		});
 
-		globalState.fetchConversations()
-
+		globalState.fetchConversations();
 	};
 
 	sendMessageInBranch = async (message: string, branch: string) => {
@@ -250,12 +272,13 @@ export class ChatStateClass implements ChatState {
 			content: message,
 			created_at: new Date(),
 			conversation_id: this.conversation_id
-		}
+		};
 
-		this.currentBranch.push(newMsg)
+		this.currentBranch.push(newMsg);
 
 		await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}/${branch}`, options: {
+			url: `/api/messages/${this.conversation_id}/${branch}`,
+			options: {
 				method: 'POST',
 				body: JSON.stringify({
 					message: newMsg
@@ -263,26 +286,31 @@ export class ChatStateClass implements ChatState {
 			}
 		});
 
-		this.streamResponseInBranch(newMsg, branch)
+		this.streamResponseInBranch(newMsg, branch);
 
 		this.isLoading = false;
 
 		this.onFinishSend();
-	}
+	};
 
 	streamResponseInBranch = async (lastMessage: Message, branch: string) => {
-		this.isStreaming = true
+		this.isStreaming = true;
+
+		// Determine if we should use fallback
+		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
+		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
 
 		const response = await fetchWithAuth({
-			url: `/api/messages/${this.conversation_id}/${branch}/ai`, options: {
+			url: `/api/messages/${this.conversation_id}/${branch}/ai`,
+			options: {
 				method: 'POST',
-				body:
-					JSON.stringify({
-						model: globalState.modelIdSelected,
-						endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-						branchingPointDate: lastMessage.created_at,
-						bearerToken: localStorage.getItem('conduit-open-router')
-					})
+				body: JSON.stringify({
+					model: modelToUse,
+					endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+					branchingPointDate: lastMessage.created_at,
+					bearerToken: apiKeyToUse
+				})
 			}
 		});
 
@@ -298,9 +326,9 @@ export class ChatStateClass implements ChatState {
 
 		this.currentBranch.push(this.#streamingMessage);
 
-		await this.#processStream(response)
+		await this.#processStream(response);
 
-		this.isStreaming = false
+		this.isStreaming = false;
 	};
 
 	#processStream = async (response: Response) => {
@@ -322,7 +350,7 @@ export class ChatStateClass implements ChatState {
 						if (parsedChunk.content) {
 							this.#streamingMessage!.content += parsedChunk.content;
 						} else if (parsedChunk.reasoning) {
-							this.#streamingMessage!.reasoning += parsedChunk.reasoning
+							this.#streamingMessage!.reasoning += parsedChunk.reasoning;
 						}
 					}
 				} catch (parseError) {
@@ -330,7 +358,7 @@ export class ChatStateClass implements ChatState {
 				}
 			}
 		}
-	}
+	};
 
 	fetchMessages = async () => { };
 
@@ -339,43 +367,45 @@ export class ChatStateClass implements ChatState {
 	branchOut = async (message: Message) => {
 		this.isLoading = true;
 
-		this.fetchMessages()
-
+		this.fetchMessages();
 
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,
 			branch_from_message_id: message.id!.trim(),
 			title: 'New Branch',
-			user_id: globalState.user!.id,
-		}
+			user_id: globalState.user!.id
+		};
 
 		const branchData = await fetchWithAuth({
-			url: `/api/branches/${this.conversation_id}`, options: {
+			url: `/api/branches/${this.conversation_id}`,
+			options: {
 				method: 'POST',
 				body: JSON.stringify(newBranch)
 			}
-		})
-		const branchJson = await branchData.json()
-		const branchId = branchJson.branch.id
+		});
+		const branchJson = await branchData.json();
+		const branchId = branchJson.branch.id;
 
-		globalState.fetchBranches()
+		globalState.fetchBranches();
 
-		goto(`/chat/${this.conversation_id}/${branchId}`)
+		goto(`/chat/${this.conversation_id}/${branchId}`);
 
 		this.isLoading = false;
-	}
+	};
 
-	branchFromSelection = async (message: Message,
+	branchFromSelection = async (
+		message: Message,
 		selectionData: {
-			text: string,
-			nodeType: string,
-			nodeIndex: number,
-			startOffset: number,
-			endOffset: number
-		}) => {
-		this.isLoading = true
+			text: string;
+			nodeType: string;
+			nodeIndex: number;
+			startOffset: number;
+			endOffset: number;
+		}
+	) => {
+		this.isLoading = true;
 
-		this.fetchMessages()
+		this.fetchMessages();
 
 		const newBranch: Branch = {
 			parent_conversation_id: this.conversation_id,
@@ -387,21 +417,22 @@ export class ChatStateClass implements ChatState {
 			selection_start_offset: selectionData.startOffset,
 			selection_node_index: selectionData.nodeIndex,
 			selection_node_type: selectionData.nodeType
-		}
+		};
 
 		const branchData = await fetchWithAuth({
-			url: `/api/branches/${this.conversation_id}`, options: {
+			url: `/api/branches/${this.conversation_id}`,
+			options: {
 				method: 'POST',
 				body: JSON.stringify(newBranch)
 			}
-		})
-		const branchJson = await branchData.json()
-		const branchId = branchJson.branch.id
+		});
+		const branchJson = await branchData.json();
+		const branchId = branchJson.branch.id;
 
-		globalState.fetchBranches()
+		globalState.fetchBranches();
 
-		goto(`/chat/${this.conversation_id}/${branchId}`)
+		goto(`/chat/${this.conversation_id}/${branchId}`);
 
-		this.isLoading = false
-	}
+		this.isLoading = false;
+	};
 }

@@ -1,16 +1,19 @@
 import type { Message } from '$lib/types';
-
+import { FALLBACK_MODEL, FALLBACK_API_KEY } from '$lib/types';
 
 type AIOptions = {
 	model: string;
 	endpoint: string;
 	bearerToken: string;
-}
+};
 
-export async function generateTitle(messages: Message[], { model, endpoint, bearerToken }: AIOptions): Promise<string> {
-	if (!bearerToken) {
-		throw Error('API Key is not set')
-	}
+export async function generateTitle(
+	messages: Message[],
+	{ model, endpoint, bearerToken }: AIOptions
+): Promise<string> {
+	// Use fallback if no user API key provided
+	const finalBearerToken = bearerToken || FALLBACK_API_KEY;
+	const finalModel = bearerToken ? model : FALLBACK_MODEL;
 
 	const titlePrompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
 Base it on the user's initial question and the assistant's response.
@@ -25,44 +28,47 @@ Requirements:
 These are the messages in question:
 
 ${JSON.stringify(messages)}
-`
+`;
 
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${bearerToken}`,
+			Authorization: `Bearer ${finalBearerToken}`
 		},
 		body: JSON.stringify({
-			model: model,
+			model: finalModel,
 			prompt: titlePrompt,
-			temperature: 0.1,
+			temperature: 0.1
 		})
 	});
 
-	const json = await response.json()
-	const title = json.choices[0].text
+	const json = await response.json();
+	const title = json.choices[0].text;
 
 	return title;
 }
 
-export async function generateStreamingAIResponse(messages: Message[], { model, endpoint, bearerToken }: AIOptions): Promise<ReadableStream<string>> {
-	if (!bearerToken) {
-		throw Error('API Key is not set')
-	}
+export async function generateStreamingAIResponse(
+	messages: Message[],
+	{ model, endpoint, bearerToken }: AIOptions
+): Promise<ReadableStream<string>> {
+	// Use fallback if no user API key provided
+	const finalBearerToken = bearerToken || FALLBACK_API_KEY;
+	const finalModel = bearerToken ? model : FALLBACK_MODEL;
 
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${bearerToken}`,
-			'Accept': 'text/event-stream',
-			"HTTP-Referer": "https://conduitchat.app",
-			"X-Title": "Conduit",
+			Authorization: `Bearer ${finalBearerToken}`,
+			Accept: 'text/event-stream',
+			'HTTP-Referer': 'https://conduitchat.app',
+			'X-Title': 'Conduit'
 		},
 
 		body: JSON.stringify({
-			model: model,
+			model: finalModel,
 			messages: messages,
 			temperature: 0.1,
 			stream: true // Enable streaming
@@ -90,7 +96,7 @@ export async function generateStreamingAIResponse(messages: Message[], { model, 
 
 			async function processStream() {
 				try {
-					const { done, value } = await reader.read();
+					const { done, value } = await reader!.read();
 
 					if (done) {
 						controller.close();

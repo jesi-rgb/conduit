@@ -10,7 +10,7 @@
 	import Icon from '@iconify/svelte';
 	import { globalState } from '../../../stores/stores.svelte';
 
-	let noKey = $state(true);
+	let noKey = $state(false); // Changed default to false since we have fallback
 	let focusedTA = $state(false);
 	let mounted = $state(false);
 	let message = $state('');
@@ -21,7 +21,8 @@
 	onMount(() => {
 		mounted = true;
 
-		noKey = !localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+		// No longer block users without API key since we have fallback
+		noKey = false;
 
 		activeChatState.set(null);
 
@@ -81,7 +82,9 @@
 					bind:this={inputMessage}
 					bind:value={message}
 					bind:focused={focusedTA}
-					placeholder="Type your message..."
+					placeholder={localStorage?.getItem(CONDUIT_OPEN_ROUTER_KEY)
+						? 'Type your message...'
+						: 'Type your message (using free Kimi model)...'}
 					class="textarea textarea-ghost focus:border-primary focus:ring-none
 					mb-3 h-30 w-full
 					min-w-60 rounded-br-none rounded-bl-none

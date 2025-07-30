@@ -8,9 +8,16 @@
 	import { onMount } from 'svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
 	import { cubicInOut, cubicOut } from 'svelte/easing';
+	import { CONDUIT_OPEN_ROUTER_KEY, FALLBACK_MODEL } from '$lib/types';
 
 	let searchValue = $state('');
 	let inputElement: HTMLInputElement | null = $state(null);
+
+	// Check if user is using fallback model
+	const isUsingFallback = $derived(() => {
+		const userApiKey = localStorage?.getItem(CONDUIT_OPEN_ROUTER_KEY);
+		return !userApiKey;
+	});
 
 	let providerIcons = {
 		Anthropic: 'simple-icons:anthropic',
@@ -57,14 +64,14 @@
 
 	let selectedModel: { value: string; label: string } | undefined = $state(undefined);
 	onMount(() => {
-		if (globalState.modelIdSelected) {
-			const storedModel: ModelInfo = popularModels.find(
-				(model) => model.id === globalState.modelIdSelected
-			)!;
+		const currentModelId = globalState.modelIdSelected;
+		const storedModel: ModelInfo = popularModels.find((model) => model.id === currentModelId)!;
+
+		if (storedModel) {
 			selectedModel = { value: storedModel.id, label: storedModel.name };
 		} else {
-			const model = popularModels.find((model) => model.id === 'moonshotai/kimi-k2:free')!;
-			globalState.modelIdSelected = model.id;
+			// Fallback to Kimi if model not found
+			const model = popularModels.find((model) => model.id === FALLBACK_MODEL)!;
 			selectedModel = { value: model.id, label: model.name };
 		}
 	});
@@ -88,22 +95,38 @@
 		}}
 	>
 		<div class="relative w-fit">
+			{#if isUsingFallback()}
+				<div class="absolute -top-2 -left-2 z-10">
+					<TooltipExplain>
+						<div class="badge badge-primary badge-xs">FREE</div>
+						{#snippet content()}
+							Using free Kimi model. Add your API key to use other models.
+						{/snippet}
+					</TooltipExplain>
+				</div>
+			{/if}
 			<Combobox.Input
 				oninput={(e) => (searchValue = e.currentTarget.value)}
 				bind:ref={inputElement}
-				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs"
+				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs {isUsingFallback()
+					? 'border-primary cursor-not-allowed opacity-75'
+					: ''}"
 				placeholder={selectedModel.label}
 				aria-label="Select a model"
 				defaultValue={selectedModel.label}
+				disabled={isUsingFallback()}
+				readonly={isUsingFallback()}
 			/>
-			<Combobox.Trigger class="btn btn-xs absolute top-1/2 right-2 -translate-y-1/2">
-				<TooltipExplain>
-					<Icon icon="solar:maximize-bold-duotone" />
-					{#snippet content()}
-						Select a different model
-					{/snippet}
-				</TooltipExplain>
-			</Combobox.Trigger>
+			{#if !isUsingFallback()}
+				<Combobox.Trigger class="btn btn-xs absolute top-1/2 right-2 -translate-y-1/2">
+					<TooltipExplain>
+						<Icon icon="solar:maximize-bold-duotone" />
+						{#snippet content()}
+							Select a different model
+						{/snippet}
+					</TooltipExplain>
+				</Combobox.Trigger>
+			{/if}
 		</div>
 		<Combobox.Portal>
 			<Combobox.Content

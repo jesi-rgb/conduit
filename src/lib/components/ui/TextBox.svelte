@@ -45,6 +45,18 @@
 		});
 		const convData = (await data.json()).conversation;
 
+		// Immediately add the new conversation to the global state in correct chronological position
+		const conversations = [...globalState.conversations];
+		const insertIndex = conversations.findIndex(
+			(conv) => new Date(conv.created_at) < new Date(convData.created_at)
+		);
+		if (insertIndex === -1) {
+			conversations.push(convData);
+		} else {
+			conversations.splice(insertIndex, 0, convData);
+		}
+		globalState.conversations = conversations;
+
 		const newChatState = new ChatStateClass(convData.id);
 
 		newChatState!.sendMessage(message);

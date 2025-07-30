@@ -55,9 +55,9 @@ export class ChatStateClass implements ChatState {
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	#wasStreaming = $state(false);
-	onFinishSend = () => { };
-	scrollContainer = () => { };
-	saveMainConvo = () => { };
+	onFinishSend = () => {};
+	scrollContainer = () => {};
+	saveMainConvo = () => {};
 
 	#streamingMessage = $state<Message | null>(null);
 	#streamingReasoning = $state<string>('');
@@ -243,11 +243,11 @@ export class ChatStateClass implements ChatState {
 	editTitle = async () => {
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
-		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
+		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 		// Use a fast model for title generation
 		const titleModel = userApiKey ? 'openai/gpt-4.1-mini' : FALLBACK_MODEL;
 
-		await fetchWithAuth({
+		const response = await fetchWithAuth({
 			url: `/api/title/${this.conversation_id}/ai`,
 			options: {
 				method: 'POST',
@@ -260,7 +260,11 @@ export class ChatStateClass implements ChatState {
 			}
 		});
 
-		globalState.fetchConversations();
+		// Get the generated title and update the local state efficiently
+		const { title } = await response.json();
+		if (title) {
+			globalState.updateConversationTitle(this.conversation_id, title.trim());
+		}
 	};
 
 	sendMessageInBranch = async (message: string, branch: string) => {
@@ -299,7 +303,7 @@ export class ChatStateClass implements ChatState {
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 		const modelToUse = userApiKey ? globalState.modelIdSelected : FALLBACK_MODEL;
-		const apiKeyToUse = userApiKey || FALLBACK_OPENROUTER_KEY;
+		const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
 		const response = await fetchWithAuth({
 			url: `/api/messages/${this.conversation_id}/${branch}/ai`,
@@ -360,9 +364,9 @@ export class ChatStateClass implements ChatState {
 		}
 	};
 
-	fetchMessages = async () => { };
+	fetchMessages = async () => {};
 
-	onFinishStream = () => { };
+	onFinishStream = () => {};
 
 	branchOut = async (message: Message) => {
 		this.isLoading = true;

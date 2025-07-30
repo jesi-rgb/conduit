@@ -43,6 +43,18 @@ export class GlobalState implements GlobalStateType {
 		this.#loadedConversations = true;
 	};
 
+	updateConversationTitle = async (conversationId: string, newTitle: string) => {
+		// Update the conversation title in the local state without refetching all conversations
+		const conversationIndex = this.#conversations_data.findIndex(
+			(conv) => conv.id === conversationId
+		);
+		if (conversationIndex !== -1) {
+			this.#conversations_data[conversationIndex].title = newTitle;
+			// Trigger reactivity by reassigning the array
+			this.#conversations_data = [...this.#conversations_data];
+		}
+	};
+
 	fetchBranches = async () => {};
 	fetchCurrentMessages = async () => {};
 

@@ -99,7 +99,7 @@
 					<div class="mt-3 w-full px-3">
 						<span class="text-muted text-xs"
 							>{date} ·
-							{conversations.length} convos</span
+							{conversations.length} convo{conversations.length > 1 ? 's' : ''}</span
 						>
 					</div>
 					{#each conversations as conv (conv.id)}

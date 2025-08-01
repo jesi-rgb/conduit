@@ -50,6 +50,77 @@ ${JSON.stringify(messages)}
 	return title;
 }
 
+export async function generateFollowUpQuestions(
+	messages: Message[],
+	{ model, endpoint, bearerToken }: AIOptions
+): Promise<string[]> {
+	// Use fallback if no user API key provided or if bearerToken is a JWT (Supabase token)
+	const isJWT = bearerToken && bearerToken.includes('.');
+	const shouldUseFallback = !bearerToken || isJWT;
+
+	const finalBearerToken = shouldUseFallback ? PUBLIC_FALLBACK_OPENROUTER_KEY : bearerToken;
+	const finalModel = shouldUseFallback ? FALLBACK_MODEL : model;
+
+	console.log('AI function - bearerToken:', bearerToken);
+	console.log('AI function - isJWT:', isJWT);
+	console.log('AI function - shouldUseFallback:', shouldUseFallback);
+	console.log('AI function - finalBearerToken:', finalBearerToken);
+	console.log('AI function - finalModel:', finalModel);
+
+	const followUpPrompt = `Based on this conversation, suggest 3-4 short follow-up topics (3-4 words each) the user might want to explore next.
+
+Focus on:
+- Natural extensions of the current topic
+- Related concepts not yet discussed
+- Practical applications or examples
+- Alternative approaches or perspectives
+
+Return ONLY a JSON array of short strings (3-4 words each), no other text.
+Examples: ["scale larger datasets", "security implications", "alternative frameworks", "error handling implementation"]
+
+Conversation context:
+${JSON.stringify(messages)}`;
+
+	const response = await fetch(endpoint, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${finalBearerToken}`,
+			'HTTP-Referer': 'https://conduitchat.app',
+			'X-Title': 'Conduit'
+		},
+		body: JSON.stringify({
+			model: finalModel,
+			messages: [{ role: 'user', content: followUpPrompt }],
+			temperature: 0.3
+		})
+	});
+
+	console.log(response);
+
+	if (!response.ok) {
+		throw new Error(`API error: ${response.statusText}`);
+	}
+
+	const json = await response.json();
+	const result = json.choices[0].message.content.trim();
+
+	try {
+		// Clean the result string - remove any markdown formatting or extra text
+		const cleanResult = result
+			.replace(/```json\n?/g, '')
+			.replace(/```\n?/g, '')
+			.trim();
+		const questions = JSON.parse(cleanResult);
+		return Array.isArray(questions) ? questions : [];
+	} catch (error) {
+		console.error('JSON parsing error:', error);
+		console.error('Raw result:', result);
+		// Fallback if JSON parsing fails
+		return [];
+	}
+}
+
 export async function generateStreamingAIResponse(
 	messages: Message[],
 	{ model, endpoint, bearerToken }: AIOptions
@@ -119,11 +190,15 @@ export async function generateStreamingAIResponse(
 								// Skip the [DONE] message
 								if (trimmedLine === '[DONE]') continue;
 
+								// Skip empty lines
+								if (!trimmedLine) continue;
+
 								const parsedChunk = JSON.parse(trimmedLine);
 
 								controller.enqueue(parsedChunk);
 							} catch (parseError) {
 								console.error('Error parsing line:', parseError);
+								console.error('Problematic line:', line);
 							}
 						}
 					}

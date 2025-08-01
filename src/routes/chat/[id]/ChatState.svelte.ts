@@ -13,6 +13,7 @@ export interface ChatState {
 	isLoading: boolean;
 	isStreaming: boolean;
 	wasStreaming: boolean;
+	followUpQuestions: string[];
 	controller: AbortController;
 	saveMainConvo: () => void;
 	sendMessage: (message: string) => void;
@@ -26,6 +27,7 @@ export interface ChatState {
 	onFinishSend: () => void;
 	onFinishStream: () => void;
 	branchOut: (message: Message) => void;
+	getFollowUpQuestions: () => Promise<void>;
 	branchFromSelection: (
 		message: Message,
 		selectionData: {
@@ -44,6 +46,7 @@ export class ChatStateClass implements ChatState {
 	#mainConversation: Message[] = $state([]);
 	#currentBranch: Message[] = $state([]);
 	#controller: AbortController = new AbortController();
+	followUpQuestions = $state<string[]>([]);
 
 	title = $derived(
 		globalState.conversations.find((conv) => conv.id == this.conversation_id)?.title!
@@ -224,6 +227,9 @@ export class ChatStateClass implements ChatState {
 				this.editTitle();
 			}
 
+			// Fetch follow-up questions after streaming completes
+			this.getFollowUpQuestions();
+
 			this.onFinishStream();
 		} catch (error: any) {
 			console.log(error);
@@ -333,6 +339,9 @@ export class ChatStateClass implements ChatState {
 		await this.#processStream(response);
 
 		this.isStreaming = false;
+
+		// Fetch follow-up questions after streaming completes in branch
+		this.getFollowUpQuestions();
 	};
 
 	#processStream = async (response: Response) => {
@@ -395,6 +404,42 @@ export class ChatStateClass implements ChatState {
 		goto(`/chat/${this.conversation_id}/${branchId}`);
 
 		this.isLoading = false;
+	};
+
+	getFollowUpQuestions = async () => {
+		// Only fetch follow-up questions if we have at least 4 messages
+		if (this.messages.length < 4) {
+			this.followUpQuestions = [];
+			return;
+		}
+
+		try {
+			// Get user's API key (same pattern as other AI calls)
+			const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+			const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
+
+			console.log('Frontend - userApiKey:', userApiKey);
+			console.log('Frontend - apiKeyToUse:', apiKeyToUse);
+
+			const response = await fetchWithAuth({
+				url: `/api/conversation/${this.conversation_id}/follow-up`,
+				options: {
+					headers: {
+						'X-OpenRouter-Key': userApiKey || ''
+					}
+				}
+			});
+
+			if (response.ok) {
+				const { questions } = await response.json();
+				this.followUpQuestions = questions || [];
+			} else {
+				this.followUpQuestions = [];
+			}
+		} catch (error) {
+			console.error('Error fetching follow-up questions:', error);
+			this.followUpQuestions = [];
+		}
 	};
 
 	branchFromSelection = async (

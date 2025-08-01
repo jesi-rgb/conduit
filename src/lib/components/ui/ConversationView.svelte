@@ -77,6 +77,23 @@
 			</div>
 
 			{#if mounted}
+				<!-- Follow-up questions pills -->
+				{#if chatState.followUpQuestions.length > 0 && !chatState.isStreaming}
+					<div class="mb-2 flex flex-wrap gap-2">
+						{#each chatState.followUpQuestions as question}
+							<button
+								class="btn btn-sm btn-outline"
+								onclick={() => {
+									message = question;
+									inputMessage?.focus();
+								}}
+							>
+								{question}
+							</button>
+						{/each}
+					</div>
+				{/if}
+
 				<form
 					class="flex justify-between gap-1 pt-1"
 					onsubmit={(e) => {

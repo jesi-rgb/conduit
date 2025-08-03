@@ -14,10 +14,6 @@
 			return `/chat/${page.params.id}?message=${msgId}`;
 		}
 	};
-
-	console.log(
-		validate('cd8f7602-6435-45ee-883f-90716c947c13-25efcf34-0456-46b0-b06d-e036dc63fa41')
-	);
 </script>
 
 <Pane defaultSize={20} class="w-full">

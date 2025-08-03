@@ -414,9 +414,6 @@ export class ChatStateClass implements ChatState {
 			const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
 			const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
 
-			console.log('Frontend - userApiKey:', userApiKey);
-			console.log('Frontend - apiKeyToUse:', apiKeyToUse);
-
 			const response = await fetchWithAuth({
 				url: `/api/conversation/${this.conversation_id}/follow-up`,
 				options: {

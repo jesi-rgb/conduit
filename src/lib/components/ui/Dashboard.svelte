@@ -122,7 +122,9 @@
 			<div class="flex gap-2">
 				{#each periods as period}
 					<button
-						class="btn btn-sm {selectedPeriod === period.value ? 'btn-primary' : 'btn-outline'}"
+						class="btn btn-sm {selectedPeriod === period.value
+							? 'btn-primary'
+							: 'btn-outline border-subtle'}"
 						onclick={() => (selectedPeriod = period.value)}
 					>
 						{period.label}

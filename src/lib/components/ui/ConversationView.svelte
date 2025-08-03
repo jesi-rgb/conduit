@@ -9,6 +9,7 @@
 	import type { ChatStateClass } from '../../../routes/chat/[id]/ChatState.svelte.js';
 	import Message from './Message.svelte';
 	import TooltipExplain from './TooltipExplain.svelte';
+	import { fade, fly } from 'svelte/transition';
 
 	interface Props {
 		chatState: ChatStateClass;
@@ -79,17 +80,24 @@
 			{#if mounted}
 				<!-- Follow-up questions pills -->
 				{#if chatState.followUpQuestions.length > 0 && !chatState.isStreaming}
-					<div class="mb-2 flex flex-wrap gap-2">
-						{#each chatState.followUpQuestions as question}
-							<button
-								class="btn btn-sm btn-outline"
-								onclick={() => {
-									message = question;
-									inputMessage?.focus();
-								}}
-							>
-								{question}
-							</button>
+					<div
+						transition:fly={{ duration: 200, y: 10 }}
+						class="mb-2 flex flex-wrap items-center justify-end
+						gap-1 pt-2"
+					>
+						{#each chatState.followUpQuestions as question, index}
+							{#key `${chatState.followUpQuestions.length}-${index}-${question}`}
+								<button
+									class="btn btn-xs btn-outline border-subtle
+									text-muted"
+									onclick={() => {
+										message = question;
+										inputMessage?.focus();
+									}}
+								>
+									{question}
+								</button>
+							{/key}
 						{/each}
 					</div>
 				{/if}

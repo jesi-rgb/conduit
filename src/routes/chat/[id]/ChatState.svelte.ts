@@ -58,9 +58,9 @@ export class ChatStateClass implements ChatState {
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	#wasStreaming = $state(false);
-	onFinishSend = () => {};
-	scrollContainer = () => {};
-	saveMainConvo = () => {};
+	onFinishSend = () => { };
+	scrollContainer = () => { };
+	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
 	#streamingReasoning = $state<string>('');
@@ -183,6 +183,7 @@ export class ChatStateClass implements ChatState {
 
 	streamResponse = async () => {
 		this.isStreaming = true;
+		this.followUpQuestions = []
 
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
@@ -373,9 +374,9 @@ export class ChatStateClass implements ChatState {
 		}
 	};
 
-	fetchMessages = async () => {};
+	fetchMessages = async () => { };
 
-	onFinishStream = () => {};
+	onFinishStream = () => { };
 
 	branchOut = async (message: Message) => {
 		this.isLoading = true;
@@ -407,12 +408,7 @@ export class ChatStateClass implements ChatState {
 	};
 
 	getFollowUpQuestions = async () => {
-		// Only fetch follow-up questions if we have at least 4 messages
-		if (this.messages.length < 4) {
-			this.followUpQuestions = [];
-			return;
-		}
-
+		console.log('getting questions')
 		try {
 			// Get user's API key (same pattern as other AI calls)
 			const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);

@@ -26,7 +26,6 @@ export async function GET({
 			return json({ questions: [] });
 		}
 
-		// Convert database messages to Message type and filter to only user and assistant messages
 		const contextMessages: Message[] = dbMessages
 			.filter((msg) => msg.role === 'user' || msg.role === 'assistant')
 			.map((msg) => ({
@@ -43,12 +42,10 @@ export async function GET({
 			return json({ questions: [] });
 		}
 
-		// Get OpenRouter API key from request headers (not Supabase auth token)
 		const openrouterKey = request.headers.get('X-OpenRouter-Key') || '';
 
 		console.log('OpenRouter key provided:', !!openrouterKey);
 
-		// Generate follow-up questions using AI
 		const questions = await generateFollowUpQuestions(contextMessages, {
 			model: 'openai/gpt-4o-mini', // Default model when user has API key
 			endpoint: 'https://openrouter.ai/api/v1/chat/completions',

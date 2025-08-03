@@ -61,12 +61,6 @@ export async function generateFollowUpQuestions(
 	const finalBearerToken = shouldUseFallback ? PUBLIC_FALLBACK_OPENROUTER_KEY : bearerToken;
 	const finalModel = shouldUseFallback ? FALLBACK_MODEL : model;
 
-	console.log('AI function - bearerToken:', bearerToken);
-	console.log('AI function - isJWT:', isJWT);
-	console.log('AI function - shouldUseFallback:', shouldUseFallback);
-	console.log('AI function - finalBearerToken:', finalBearerToken);
-	console.log('AI function - finalModel:', finalModel);
-
 	const followUpPrompt = `Based on this conversation, suggest 3-4 short follow-up topics (3-4 words each) the user might want to explore next.
 
 Focus on:

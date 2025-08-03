@@ -9,12 +9,6 @@
 	let chatState = $derived(data.chatState);
 
 	const conversationId = $derived(page.params.id);
-	onMount(() => {
-		console.log('FUCK');
-		console.log(
-			globalState.conversations.find((conversation) => conversation.id === conversationId)
-		);
-	});
 </script>
 
 <svelte:head>

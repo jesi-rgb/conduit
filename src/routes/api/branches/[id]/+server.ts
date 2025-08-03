@@ -11,7 +11,6 @@ export async function GET({ params, request }: { request: Request }) {
 
 export async function POST({ params, request }: { request: Request }) {
 	const branchData: Branch = await request.json()
-	console.log(branchData)
 
 	const branch = await createBranch({
 		messageId: branchData.branch_from_message_id,

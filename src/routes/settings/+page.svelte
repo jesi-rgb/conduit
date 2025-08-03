@@ -15,7 +15,6 @@
 		</div>
 		<InputKey
 			validateKey={(key) => {
-				console.log(key.startsWith('sk-or'));
 				return key.startsWith('sk-or');
 			}}
 			label="Open Router Key"

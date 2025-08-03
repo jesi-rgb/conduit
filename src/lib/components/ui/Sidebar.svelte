@@ -52,7 +52,7 @@
 				method: 'DELETE'
 			}
 		});
-		conversations = conversations.filter((conv) => conv.id !== convId);
+		globalState.conversations = globalState.conversations.filter((conv) => conv.id !== convId);
 		globalState.currentMessages = [];
 		goto('/chat');
 	}

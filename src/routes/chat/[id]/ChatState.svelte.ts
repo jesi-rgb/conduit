@@ -13,6 +13,7 @@ export interface ChatState {
 	isLoading: boolean;
 	isStreaming: boolean;
 	wasStreaming: boolean;
+	followUpQuestions: string[];
 	controller: AbortController;
 	saveMainConvo: () => void;
 	sendMessage: (message: string) => void;
@@ -26,6 +27,7 @@ export interface ChatState {
 	onFinishSend: () => void;
 	onFinishStream: () => void;
 	branchOut: (message: Message) => void;
+	getFollowUpQuestions: () => Promise<void>;
 	branchFromSelection: (
 		message: Message,
 		selectionData: {
@@ -44,6 +46,7 @@ export class ChatStateClass implements ChatState {
 	#mainConversation: Message[] = $state([]);
 	#currentBranch: Message[] = $state([]);
 	#controller: AbortController = new AbortController();
+	followUpQuestions = $state<string[]>([]);
 
 	title = $derived(
 		globalState.conversations.find((conv) => conv.id == this.conversation_id)?.title!
@@ -55,9 +58,9 @@ export class ChatStateClass implements ChatState {
 	isLoading = $state(false);
 	isStreaming = $state(false);
 	#wasStreaming = $state(false);
-	onFinishSend = () => {};
-	scrollContainer = () => {};
-	saveMainConvo = () => {};
+	onFinishSend = () => { };
+	scrollContainer = () => { };
+	saveMainConvo = () => { };
 
 	#streamingMessage = $state<Message | null>(null);
 	#streamingReasoning = $state<string>('');
@@ -180,6 +183,7 @@ export class ChatStateClass implements ChatState {
 
 	streamResponse = async () => {
 		this.isStreaming = true;
+		this.followUpQuestions = []
 
 		// Determine if we should use fallback
 		const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
@@ -223,6 +227,9 @@ export class ChatStateClass implements ChatState {
 			if (this.messages.length == 2) {
 				this.editTitle();
 			}
+
+			// Fetch follow-up questions after streaming completes
+			this.getFollowUpQuestions();
 
 			this.onFinishStream();
 		} catch (error: any) {
@@ -333,6 +340,9 @@ export class ChatStateClass implements ChatState {
 		await this.#processStream(response);
 
 		this.isStreaming = false;
+
+		// Fetch follow-up questions after streaming completes in branch
+		this.getFollowUpQuestions();
 	};
 
 	#processStream = async (response: Response) => {
@@ -364,9 +374,9 @@ export class ChatStateClass implements ChatState {
 		}
 	};
 
-	fetchMessages = async () => {};
+	fetchMessages = async () => { };
 
-	onFinishStream = () => {};
+	onFinishStream = () => { };
 
 	branchOut = async (message: Message) => {
 		this.isLoading = true;
@@ -395,6 +405,37 @@ export class ChatStateClass implements ChatState {
 		goto(`/chat/${this.conversation_id}/${branchId}`);
 
 		this.isLoading = false;
+	};
+
+	getFollowUpQuestions = async () => {
+		console.log('getting questions')
+		try {
+			// Get user's API key (same pattern as other AI calls)
+			const userApiKey = localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY);
+			const apiKeyToUse = userApiKey || PUBLIC_FALLBACK_OPENROUTER_KEY;
+
+			console.log('Frontend - userApiKey:', userApiKey);
+			console.log('Frontend - apiKeyToUse:', apiKeyToUse);
+
+			const response = await fetchWithAuth({
+				url: `/api/conversation/${this.conversation_id}/follow-up`,
+				options: {
+					headers: {
+						'X-OpenRouter-Key': userApiKey || ''
+					}
+				}
+			});
+
+			if (response.ok) {
+				const { questions } = await response.json();
+				this.followUpQuestions = questions || [];
+			} else {
+				this.followUpQuestions = [];
+			}
+		} catch (error) {
+			console.error('Error fetching follow-up questions:', error);
+			this.followUpQuestions = [];
+		}
 	};
 
 	branchFromSelection = async (

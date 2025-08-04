@@ -13,10 +13,16 @@ export async function GET({ request, url }: { request: Request; url: URL }) {
 	}
 
 	const userId = user.id; // Extract user ID for cleaner code
-	const days = parseInt(url.searchParams.get('days') || '30');
+	const period = url.searchParams.get('period') || 'month';
 
-	const startDate = new Date();
-	startDate.setDate(startDate.getDate() - days);
+	let startDate: Date;
+	if (period === 'month') {
+		startDate = new Date();
+		startDate.setMonth(startDate.getMonth() - 1);
+	} else {
+		// For 'all' period, use a very old date to get all data
+		startDate = new Date('2020-01-01');
+	}
 
 	try {
 		// Message volume data - using Drizzle query builder
@@ -30,9 +36,7 @@ export async function GET({ request, url }: { request: Request; url: URL }) {
 			.innerJoin(conversations, eq(messages.conversation_id, conversations.id))
 			.where(and(eq(conversations.user_id, userId), gte(messages.created_at, startDate)))
 			.groupBy(sql`DATE(${messages.created_at})`, messages.role)
-			.orderBy(sql`date DESC`);
-
-		// Model usage data - using Drizzle query builder
+			.orderBy(sql`date DESC`); // Model usage data - using Drizzle query builder
 		const modelUsageData = await db
 			.select({
 				model: messages.generated_by,
@@ -51,9 +55,11 @@ export async function GET({ request, url }: { request: Request; url: URL }) {
 			.groupBy(messages.generated_by)
 			.orderBy(sql`count DESC`);
 
-		// Calendar heatmap data (last 365 days) - using Drizzle query builder
-		const calendarStartDate = new Date();
-		calendarStartDate.setDate(calendarStartDate.getDate() - 365);
+		// Calendar heatmap data - using Drizzle query builder
+		const calendarStartDate = period === 'all' ? new Date('2020-01-01') : new Date();
+		if (period !== 'all') {
+			calendarStartDate.setDate(calendarStartDate.getDate() - 365);
+		}
 
 		const calendarData = await db
 			.select({

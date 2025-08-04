@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { Plot, Line, BarX, Cell, Pointer, Text, Dot, HTMLTooltip } from 'svelteplot';
+	import { Plot, Line, BarX, BarY, Cell } from 'svelteplot';
 	import { fetchWithAuth } from '$lib/client/auth';
+	import { fly } from 'svelte/transition';
+	import { backInOut, backOut, bounceInOut, circInOut, cubicInOut } from 'svelte/easing';
 
 	interface AnalyticsData {
 		messageVolume: Array<{ date: string; userMessages: number; assistantMessages: number }>;
@@ -14,13 +16,14 @@
 	let data = $state<AnalyticsData | null>(null);
 	let loading = $state(true);
 	let error = $state('');
-	let selectedPeriod = $state(90);
-	let showPopup = $state(false);
+	let selectedPeriod = $state('all');
+	let hoveredModel = $state();
+	let hoveredDay = $state();
+	$inspect(hoveredModel);
 
 	const periods = [
-		{ label: '7 days', value: 7 },
-		{ label: '30 days', value: 30 },
-		{ label: '90 days', value: 90 }
+		{ label: 'Last Month', value: 'month' },
+		{ label: 'All Time', value: 'all' }
 	];
 
 	async function fetchAnalytics() {
@@ -28,7 +31,7 @@
 		error = '';
 		try {
 			const response = await fetchWithAuth({
-				url: `/api/analytics?days=${selectedPeriod}`
+				url: `/api/analytics?period=${selectedPeriod}`
 			});
 			if (!response.ok) {
 				throw new Error('Failed to fetch analytics data');
@@ -50,10 +53,10 @@
 
 	// Prepare data for charts
 	const messageVolumeData = $derived(
-		data?.messageVolume.flatMap((d) => [
-			{ date: new Date(d.date), value: d.userMessages, type: 'User' },
-			{ date: new Date(d.date), value: d.assistantMessages, type: 'Assistant' }
-		]) || []
+		data?.messageVolume.map((d) => ({
+			date: new Date(d.date),
+			messages: d.userMessages + d.assistantMessages
+		})) || []
 	);
 
 	const modelUsageData = $derived(
@@ -65,7 +68,6 @@
 			}))
 			.slice(0, 8) || []
 	);
-	$inspect(modelUsageData);
 
 	const costData = $derived(
 		data?.costData.map((d) => ({
@@ -102,6 +104,7 @@
 
 		return heatmapData;
 	});
+
 	function formatCurrency(value: number): string {
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
@@ -119,27 +122,27 @@
 	<div class="">
 		<!-- Period Selector -->
 		<div class="mb-6">
-			<div class="flex gap-2">
-				{#each periods as period}
-					<button
-						class="btn btn-sm {selectedPeriod === period.value
-							? 'btn-primary'
-							: 'btn-outline border-subtle'}"
-						onclick={() => (selectedPeriod = period.value)}
-					>
-						{period.label}
-					</button>
-				{/each}
+			<div class="flex items-center justify-between gap-2">
+				<div class="flex gap-1">
+					{#each periods as period}
+						<button
+							class="btn btn-sm {selectedPeriod === period.value
+								? 'btn-primary'
+								: 'btn-outline border-subtle'}"
+							onclick={() => (selectedPeriod = period.value)}
+						>
+							{period.label}
+						</button>
+					{/each}
+				</div>
+				{#if loading}
+					<div class="loading loading-bars self-end"></div>
+				{/if}
 			</div>
 		</div>
 	</div>
 
-	{#if loading}
-		<div class="">
-			<div class="loading loading-spinner loading-lg"></div>
-			<p>Loading analytics...</p>
-		</div>
-	{:else if error}
+	{#if error}
 		<div class="">
 			<div class="alert alert-error">
 				<span>Error: {error}</span>
@@ -150,15 +153,15 @@
 		<div class="stats mb-8 grid grid-cols-1 md:grid-cols-3">
 			<div class="stat">
 				<div class="stat-title">Total Messages</div>
-				<div class="stat-value text-primary">{formatNumber(data.totalMessages)}</div>
+				<div class="stat-value">{formatNumber(data.totalMessages)}</div>
 			</div>
 			<div class="stat">
 				<div class="stat-title">Total Cost</div>
-				<div class="stat-value text-secondary">{formatCurrency(data.totalCost)}</div>
+				<div class="stat-value">{formatCurrency(data.totalCost)}</div>
 			</div>
 			<div class="stat">
 				<div class="stat-title">Avg Cost/Message</div>
-				<div class="stat-value text-accent">
+				<div class="stat-value">
 					{data.totalMessages > 0 ? formatCurrency(data.totalCost / data.totalMessages) : '$0.0000'}
 				</div>
 			</div>
@@ -173,11 +176,14 @@
 							height={240}
 							marginLeft={40}
 							marginRight={60}
-							marginBottom={40}
+							marginBottom={70}
 							y={{ grid: true }}
-							color={{ legend: true }}
+							x={{
+								tickRotate: -15,
+								tickFormat: (d) => new Date(d).toLocaleDateString()
+							}}
 						>
-							<Line marker="dot" data={messageVolumeData} x="date" y="value" strokeWidth={2} />
+							<BarY data={messageVolumeData} x="date" y="messages" fill="var(--color-primary)" />
 						</Plot>
 					</div>
 				{:else}
@@ -189,9 +195,53 @@
 			<div class="chart-container bg-base-100 rounded-lg">
 				<h3 class="mb-4 text-lg font-semibold">Top Models by Usage</h3>
 				{#if modelUsageData.length > 0}
-					<div class="chart-wrapper h-64">
-						<Plot height={240} marginLeft={120} marginBottom={40} color={{ legend: true }}>
-							<BarX data={modelUsageData} x="count" y="model" fill="provider" />
+					<div class="chart-wrapper" onmouseleave={() => (hoveredModel = null)}>
+						<Plot
+							height={240}
+							marginLeft={80}
+							x={{ grid: true }}
+							color={{
+								legend: true,
+								scheme: [
+									'var(--color-primary)',
+									'var(--color-accent)',
+									'var(--color-info)',
+									'var(--color-success)',
+									'var(--color-warning)',
+									'var(--color-muted)'
+								]
+							}}
+						>
+							<BarX
+								onmouseover={(e, d) => {
+									hoveredModel = d;
+								}}
+								data={modelUsageData}
+								x="count"
+								y="provider"
+								fill="model"
+							/>
+
+							{#snippet overlay()}
+								{#if hoveredModel}
+									<div
+										transition:fly={{ y: 10, duration: 150 }}
+										class="bg-base-100 absolute top-0 right-0"
+									>
+										<h5
+											class="w-full text-right text-sm
+											font-semibold"
+										>
+											{hoveredModel.model}
+										</h5>
+										<p class="card-text text-right text-xs">
+											{hoveredModel.provider} ·
+											{hoveredModel.count}
+											message{hoveredModel.count == 1 ? '' : 's'}
+										</p>
+									</div>
+								{/if}
+							{/snippet}
 						</Plot>
 					</div>
 				{:else}
@@ -217,16 +267,18 @@
 			<div class="chart-container bg-base-100 rounded-lg">
 				<h3 class="mb-4 text-lg font-semibold">Activity Heatmap</h3>
 				{#if calendarHeatmapData.length > 0}
-					<div class="chart-wrapper overflow-x-auto">
+					<div class="chart-wrapper overflow-x-auto" onmouseleave={() => (hoveredDay = null)}>
 						<Plot
 							marginLeft={60}
 							padding={0}
+							aspectRatio={1}
 							color={{
 								scheme: [
 									'var(--color-base-200)',
 									'var(--color-base-300)',
 									'var(--color-muted)',
-									'var(--color-primary)'
+									'var(--color-primary)',
+									'var(--color-success)'
 								],
 								type: 'quantize',
 								legend: true
@@ -254,10 +306,32 @@
 								x="day"
 								y="month"
 								fill="count"
-								inset={0.9}
-								onclick={(d) => handleCellClick(d)}
+								inset={0.8}
+								onmouseover={(e, d) => {
+									hoveredDay = d;
+								}}
 								style="cursor: pointer;"
 							/>
+
+							{#snippet overlay()}
+								{#if hoveredDay}
+									<div
+										class="bg-base-100 absolute top-0
+										right-0 tabular-nums"
+										transition:fly={{ y: 10, duration: 200 }}
+									>
+										<h5 class="w-full text-right text-sm font-semibold">
+											{new Date(hoveredDay.date).toLocaleDateString('en-UK', {
+												month: 'short',
+												day: 'numeric'
+											})}
+										</h5>
+										<p class="card-text text-right text-xs">
+											{hoveredDay.count} message{hoveredDay.count == 1 ? '' : 's'}
+										</p>
+									</div>
+								{/if}
+							{/snippet}
 						</Plot>
 					</div>
 				{:else}

@@ -249,20 +249,6 @@
 				{/if}
 			</div>
 
-			<!-- Cost Tracking Chart -->
-			<div class="chart-container bg-base-100 rounded-lg">
-				<h3 class="mb-4 text-lg font-semibold">Daily Costs</h3>
-				{#if costData.length > 0}
-					<div class="chart-wrapper h-64">
-						<Plot height={240} marginLeft={60} marginBottom={40}>
-							<Line data={costData} x="date" y="cost" strokeWidth={2} marker="dot" />
-						</Plot>
-					</div>
-				{:else}
-					<div class="no-data">No cost data available</div>
-				{/if}
-			</div>
-
 			<!-- Calendar Heatmap -->
 			<div class="chart-container bg-base-100 rounded-lg">
 				<h3 class="mb-4 text-lg font-semibold">Activity Heatmap</h3>

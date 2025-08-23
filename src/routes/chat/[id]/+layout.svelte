@@ -26,7 +26,7 @@
 </script>
 
 <svelte:head>
-	<title>Conduit — {convTitle?.title}</title>
+	<title>{convTitle?.title} — Conduit</title>
 </svelte:head>
 
 {#if chatState && (mainConversationData || branchData)}

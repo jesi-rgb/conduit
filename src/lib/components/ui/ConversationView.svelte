@@ -128,9 +128,7 @@
 							type="text"
 							bind:this={inputMessage}
 							bind:value={message}
-							placeholder={localStorage.getItem(CONDUIT_OPEN_ROUTER_KEY)
-								? 'Type your message...'
-								: 'Type your message (using free Kimi model)...'}
+							placeholder="Ask anything"
 							class="input input-border focus:border-primary w-full min-w-60 focus:outline-none"
 							disabled={chatState.isLoading || chatState.isStreaming}
 						/>

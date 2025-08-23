@@ -94,9 +94,7 @@
 					bind:this={inputMessage}
 					bind:value={message}
 					bind:focused={focusedTA}
-					placeholder={localStorage?.getItem(CONDUIT_OPEN_ROUTER_KEY)
-						? 'Type your message...'
-						: 'Type your message (using free Kimi model)...'}
+					placeholder="Ask anything"
 					class="textarea textarea-ghost focus:border-primary focus:ring-none
 					mb-3 h-30 w-full
 					min-w-60 rounded-br-none rounded-bl-none

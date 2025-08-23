@@ -83,6 +83,17 @@ export const popularModels: ModelInfo[] = [
 		}
 	},
 	{
+		id: 'openai/gpt-oss-20b:free',
+		name: 'GPT-OSS 20B (free)',
+		provider: 'OpenAI',
+		description: 'Open-source, ultra-fast, cost-effective.',
+		free: true,
+		pricing: {
+			prompt: '0',
+			completion: '0'
+		}
+	},
+	{
 		id: 'mistralai/mistral-medium-3',
 		name: 'Mistral Medium 3',
 		provider: 'Mistral',

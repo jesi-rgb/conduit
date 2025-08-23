@@ -108,7 +108,7 @@
 							transition:slide={{ duration: 310 }}
 							data-sveltekit-preload-data="tap"
 							href="/chat/{conv.id}"
-							class:border-primary={conv.id === convId}
+							data-active={conv.id === convId}
 							class="btn btn-ghost btn-sm border-base-content/10 bg-base-100/50
 							group convo w-full justify-between rounded-full border
 							pr-1 font-[500]"
@@ -171,8 +171,9 @@
 </Pane>
 
 <style>
-	:global(.conv-active) {
-		background-color: var(--color-base-300);
+	[data-active='true'] {
+		background-color: color-mix(in oklch, var(--color-primary), transparent 75%);
+		border-color: var(--color-primary);
 	}
 	.headline {
 		font-variation-settings:

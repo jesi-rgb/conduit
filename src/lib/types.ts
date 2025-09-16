@@ -1,9 +1,12 @@
+import type { ModelInfo } from "./models";
+
 export const CONDUIT_SELECTED_MODEL = 'conduit-selected-model';
 export const CONDUIT_OPEN_ROUTER_KEY = 'conduit-open-router';
 export const CONDUIT_OPEN_AI_KEY = 'conduit-open-ai';
 
 // Fallback configuration for users without API keys
-export const FALLBACK_MODEL = 'moonshotai/kimi-k2:free';
+export const FALLBACK_MODEL = 'openai/gpt-oss-20b:free';
+export const TITLE_GEN_FALLBACK_MODEL = 'google/gemma-3n-e2b-it:free';
 
 export type User = {
 	id: string;

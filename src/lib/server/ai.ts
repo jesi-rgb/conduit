@@ -1,5 +1,5 @@
 import type { Message } from '$lib/types';
-import { FALLBACK_MODEL } from '$lib/types';
+import { FALLBACK_MODEL, TITLE_GEN_FALLBACK_MODEL } from '$lib/types';
 import { PUBLIC_FALLBACK_OPENROUTER_KEY } from '$env/static/public';
 
 type AIOptions = {
@@ -14,17 +14,19 @@ export async function generateTitle(
 ): Promise<string> {
 	// Use fallback if no user API key provided
 	const finalBearerToken = bearerToken || PUBLIC_FALLBACK_OPENROUTER_KEY;
-	const finalModel = bearerToken ? model : FALLBACK_MODEL;
+	const isFree = bearerToken === PUBLIC_FALLBACK_OPENROUTER_KEY;
+	const finalModel = isFree ? TITLE_GEN_FALLBACK_MODEL : model;
 
 	const titlePrompt = `Generate a short, concise title (3-8 words) that captures the main topic or question from this conversation. 
 Base it on the user's initial question and the assistant's response.
 
 Requirements:
-- Maximum 8 words, but use as few as possible
+- Maximum 5 words, but use as few as possible
 - Focus on the core topic/subject
 - Avoid generic phrases like "Help with" or "Question about"
 - Use specific keywords when possible
 - Make it descriptive enough to identify the conversation later.
+- Do not use any kind of formatting or special characters, as these will ruin the experience. 
 
 These are the messages in question:
 
@@ -40,11 +42,16 @@ ${JSON.stringify(messages)}
 		body: JSON.stringify({
 			model: finalModel,
 			prompt: titlePrompt,
-			temperature: 0.1
+			temperature: 0.1,
+			reasoning: {
+				enabled: false,
+				exclude: true
+			}
 		})
 	});
 
 	const json = await response.json();
+	console.log(json)
 	const title = json.choices[0].text;
 
 	return title;

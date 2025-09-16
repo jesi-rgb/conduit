@@ -343,17 +343,6 @@ export const popularModels: ModelInfo[] = [
 		}
 	},
 	{
-		id: 'moonshotai/kimi-k2:free',
-		name: 'MoonshotAI: Kimi K2 (free)',
-		provider: 'MoonshotAI',
-		description: 'Lightweight, fast & free MoE model.',
-		free: true,
-		pricing: {
-			prompt: '0',
-			completion: '0'
-		}
-	},
-	{
 		id: 'z-ai/glm-4.5-air:free',
 		name: 'Z.AI: GLM 4.5 Air (free)',
 		provider: 'Z.AI',

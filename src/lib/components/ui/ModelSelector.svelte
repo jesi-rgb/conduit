@@ -14,7 +14,7 @@
 	let inputElement: HTMLInputElement | null = $state(null);
 
 	// Check if user is using fallback model
-	const isUsingFallback = $derived(() => {
+	const isUsingFallback = $derived.by(() => {
 		const userApiKey = localStorage?.getItem(CONDUIT_OPEN_ROUTER_KEY);
 		return !userApiKey;
 	});
@@ -25,7 +25,7 @@
 		Google: 'simple-icons:google',
 		Meta: 'simple-icons:meta',
 		Mistral: 'logos:mistral-ai-icon',
-		MoonshotAI: 'solar:moon-bold',
+		// MoonshotAI: 'solar:moon-bold',
 		OpenAI: 'ri:openai-line',
 		OpenRouter: 'solar:branching-paths-up-bold',
 		'Z.AI': 'solar:cpu-bolt-bold'
@@ -72,7 +72,6 @@
 		if (storedModel) {
 			selectedModel = { value: storedModel.id, label: storedModel.name };
 		} else {
-			// Fallback to Kimi if model not found
 			const model = popularModels.find((model) => model.id === FALLBACK_MODEL)!;
 			selectedModel = { value: model.id, label: model.name };
 		}
@@ -88,7 +87,7 @@
 			return {
 				value: model.id,
 				label: model.name,
-				disabled: isUsingFallback() && !model.free
+				disabled: isUsingFallback && !model.free
 			};
 		})}
 		bind:value={selectedModel!.value}
@@ -101,7 +100,7 @@
 		}}
 	>
 		<div class="relative w-fit">
-			{#if isUsingFallback()}
+			{#if isUsingFallback}
 				<div class="absolute -top-2 -left-2 z-10">
 					<TooltipExplain>
 						<div class="badge badge-primary badge-xs">FREE</div>
@@ -114,7 +113,7 @@
 			<Combobox.Input
 				oninput={(e) => (searchValue = e.currentTarget.value)}
 				bind:ref={inputElement}
-				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs {isUsingFallback()
+				class="border-subtle rounded-box h-full min-h-[40px] min-w-60 border px-3 text-xs {isUsingFallback
 					? 'border-primary'
 					: ''}"
 				placeholder={selectedModel.label}
@@ -158,7 +157,7 @@
 
 											<!-- Models in this provider group -->
 											{#each group.models as model (model.id)}
-												{@const isDisabled = isUsingFallback() && !model.free}
+												{@const isDisabled = isUsingFallback && !model.free}
 												<Combobox.Item
 													class="data-highlighted:bg-base-300/30 ring-subtle my-1 flex h-10 w-full
 								items-center rounded-xl px-3 py-2 text-sm capitalize outline-hidden
@@ -174,7 +173,7 @@
 																{model.name}
 																{#if model.free}
 																	<span class="badge badge-primary badge-xs">FREE</span>
-																{:else if isUsingFallback()}
+																{:else if isUsingFallback}
 																	<span class="badge badge-ghost badge-xs">API KEY REQUIRED</span>
 																{/if}
 															</span>

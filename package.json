@@ -24,7 +24,7 @@
 		"@shikijs/markdown-it": "^3.6.0",
 		"@supabase/auth-helpers-sveltekit": "^0.13.0",
 		"@supabase/supabase-js": "^2.49.8",
-		"@sveltejs/adapter-auto": "^6.0.0",
+		"@sveltejs/adapter-netlify": "^5.2.3",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/typography": "^0.5.16",
